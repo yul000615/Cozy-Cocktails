@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cc-api", "cc-api.csproj", "{9CF9D30F-3122-4171-A269-435EF1ABB10A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "cc-api", "cc-api.csproj", "{9CF9D30F-3122-4171-A269-435EF1ABB10A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cc-api-test", "..\cc-api-test\cc-api-test.csproj", "{5CBFB78B-5DD1-420D-A13C-D1F11B67BA7C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{9CF9D30F-3122-4171-A269-435EF1ABB10A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9CF9D30F-3122-4171-A269-435EF1ABB10A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9CF9D30F-3122-4171-A269-435EF1ABB10A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CBFB78B-5DD1-420D-A13C-D1F11B67BA7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CBFB78B-5DD1-420D-A13C-D1F11B67BA7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CBFB78B-5DD1-420D-A13C-D1F11B67BA7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CBFB78B-5DD1-420D-A13C-D1F11B67BA7C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
