@@ -1,0 +1,23 @@
+.SignUpPage {
+    text-align: center;
+    transform: translate(-50%, -60%);
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+
+.entryField {
+    padding: 10px;
+    display: inline-block;
+}
+
+.registerBtn {
+    padding: 15px;
+    font-size: 20px;
+    margin-top: 30px;
+}
+
+.SignUpFields {
+    margin-top: 50px;
+}

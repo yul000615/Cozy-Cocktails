@@ -1,0 +1,12 @@
+.Home {
+text-align: center;
+}
+
+.HomeHeader {
+position: relative;
+}
+
+.signUpButton {
+float: right;
+margin: 10px;
+}
