@@ -1,0 +1,12 @@
+.HomePage {
+position: relative;
+}
+
+.WelcomeHeader {
+position: relative;
+}
+
+.signUpButton {
+float: right;
+margin: 10px;
+}
