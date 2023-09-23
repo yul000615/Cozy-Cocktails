@@ -1,8 +1,8 @@
-.Home {
-text-align: center;
+.HomePage {
+position: relative;
 }
 
-.HomeHeader {
+.WelcomeHeader {
 position: relative;
 }
 
