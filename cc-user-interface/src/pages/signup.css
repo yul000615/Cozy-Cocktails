@@ -12,6 +12,11 @@
     display: inline-block;
 }
 
+.errorMessage {
+    color: red;
+    align-self: center;
+}
+
 .registerBtn {
     padding: 15px;
     font-size: 20px;
