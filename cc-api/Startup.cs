@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using cc_api.Models;
 
 namespace cc_api
 {
@@ -21,9 +20,6 @@ namespace cc_api
         public void ConfigureServices(IServiceCollection services)
         {
             // Configure the DbContext and connection string
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
             services.AddControllers();
 
             // Other services and dependencies can be added here
