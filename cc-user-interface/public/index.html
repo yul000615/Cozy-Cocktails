@@ -24,6 +24,8 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
+    <link rel="stylesheet" href="style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <title>React App</title>
   </head>
   <body>
@@ -39,5 +41,32 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+  </body>
+    <div class="wrapper">
+      <from action="">
+        <h1>Welcome</h1>
+        <div class="input-box">
+          <input type="text" placeholder="Email"
+          required>
+          <i class='bx bxs-user'></i>
+        </div>
+        <div class="input-box">
+          <input type="password" 
+          placeholder="Password" required>
+          <i class='bx bxs-lock-alt' ></i>
+        </div>
+
+        <div class="remember-forget">
+          <label><input type="checkbox"> Remember me</label>
+          <a href="#">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn">Login</button>
+
+        <div class="register-link">
+          <p>Don't have an account? <a href="#">Register</a></p>
+        </div>
+      </from>
+    </div>
   </body>
 </html>

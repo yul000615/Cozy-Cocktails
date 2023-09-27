@@ -19,7 +19,7 @@ namespace cc_api.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegistrationRequest model)
+        public async Task<IActionResult> Register([FromBody] UserDto model)
         {
             if (!ModelState.IsValid)
             {
@@ -51,7 +51,7 @@ namespace cc_api.Controllers
         }
     }
 
-    public class RegistrationRequest
+    public class UserDto
     {
         [Required]
         [StringLength(50)]
