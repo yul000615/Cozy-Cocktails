@@ -16,13 +16,30 @@ namespace cc_api.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] UserDto credentials)
+        public async Task<IActionResult> Login([FromBody] LoginRequest credentials)
         {
-           
-            return Ok("User registered successfully");
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            //replace with repository Get
+            User user = new User();
+            bool validUser = user != null;
+            bool validPassword = validUser && (credentials.Password == user.Password);
+
+
+            if (!validUser || !validPassword)
+            {
+                return Unauthorized();
+            }
+
+            //Generate Access Token and Refresh Token
+
+            return Ok();
         }
 
-        public class UserDto
+        public class LoginRequest
         {
             [Required]
             [EmailAddress]
