@@ -12,6 +12,11 @@
     display: inline-block;
 }
 
+.errorMessage {
+    color: red;
+    align-self: center;
+}
+
 .registerBtn {
     padding: 15px;
     font-size: 20px;
@@ -20,4 +25,19 @@
 
 .SignUpFields {
     margin-top: 50px;
+}
+
+.Modal {
+    position: absolute;
+    height: 200px;
+    width: 200px;
+    background-color: white;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    align-content: center;
+    display: flex;
+    flex-wrap: wrap;
+    text-align: center;
+    justify-content: center;
 }
