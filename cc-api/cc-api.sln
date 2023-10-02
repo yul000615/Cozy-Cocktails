@@ -5,7 +5,10 @@ VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "cc-api", "cc-api.csproj", "{9CF9D30F-3122-4171-A269-435EF1ABB10A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cc-api-test", "..\cc-api-test\cc-api-test.csproj", "{5CBFB78B-5DD1-420D-A13C-D1F11B67BA7C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "cc-api-test", "..\cc-api-test\cc-api-test.csproj", "{5CBFB78B-5DD1-420D-A13C-D1F11B67BA7C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9CF9D30F-3122-4171-A269-435EF1ABB10A} = {9CF9D30F-3122-4171-A269-435EF1ABB10A}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

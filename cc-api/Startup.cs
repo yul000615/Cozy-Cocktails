@@ -1,3 +1,4 @@
+using cc_api.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -20,6 +21,9 @@ namespace cc_api
         public void ConfigureServices(IServiceCollection services)
         {
             // Configure the DbContext and connection string
+            services.AddDbContext<CozyCocktailsContext>(options =>
+                options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+            
             services.AddControllers();
 
             // Other services and dependencies can be added here

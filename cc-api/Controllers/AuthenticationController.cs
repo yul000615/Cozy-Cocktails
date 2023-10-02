@@ -24,9 +24,13 @@ namespace cc_api.Controllers
             }
 
             //replace with repository Get
-            User user = new User();
+            var users = _context.Users;
+            foreach (var x in users)
+                Console.WriteLine(x);
+            var user = new User();
             bool validUser = user != null;
             bool validPassword = validUser && (credentials.Password == user.Password);
+
 
 
             if (!validUser || !validPassword)
@@ -35,6 +39,7 @@ namespace cc_api.Controllers
             }
 
             //Generate Access Token and Refresh Token
+            //Authorize roles
 
             return Ok();
         }
@@ -43,11 +48,11 @@ namespace cc_api.Controllers
         {
             [Required]
             [EmailAddress]
-            public string Email { get; set; }
+            public string? Email { get; set; }
 
             [Required]
             [StringLength(100, MinimumLength = 6)]
-            public string Password { get; set; }
+            public string? Password { get; set; }
         }
     }
 }
