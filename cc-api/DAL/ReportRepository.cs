@@ -2,7 +2,7 @@
 
 namespace cc_api.DAL
 {
-    public class ReportRepository : GenericRepository<Report>
+    public class ReportRepository : GenericRepository<Report>, IReportRepository
     {
         public ReportRepository(CozyCocktailsContext context) : base(context)
         {

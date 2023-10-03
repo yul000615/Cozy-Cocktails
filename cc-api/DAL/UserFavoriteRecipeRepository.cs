@@ -2,7 +2,7 @@
 
 namespace cc_api.DAL
 {
-    public class UserFavoriteRecipeRepository : GenericRepository<UserFavoriteRecipe>
+    public class UserFavoriteRecipeRepository : GenericRepository<UserFavoriteRecipe>, IUserFavoriteRecipeRepository
     {
         public UserFavoriteRecipeRepository(CozyCocktailsContext context) : base(context)
         {

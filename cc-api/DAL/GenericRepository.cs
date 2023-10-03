@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace cc_api.DAL
 {
-    public abstract class GenericRepository <TEntity> where TEntity : class
+    public abstract class GenericRepository <TEntity> : IGenericRepository <TEntity> where TEntity : class
     {
         internal CozyCocktailsContext context;
         internal DbSet<TEntity> dbSet;

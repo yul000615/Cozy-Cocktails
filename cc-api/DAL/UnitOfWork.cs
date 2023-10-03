@@ -6,16 +6,16 @@ namespace cc_api.DAL
     public class UnitOfWork : IDisposable
     {
         private CozyCocktailsContext context = new CozyCocktailsContext();
-        private IngredientRepository? ingredientRepository;
-        private RecipeRepository? recipeRepository;
-        private RecipeIngredientRepository? recipeIngredientRepository;
-        private ReportRepository? reportRepository;
-        private ReviewRepository? reviewRepository;
-        private UserRepository? userRepository;
-        private UserBarIngredientRepository? userBarIngredientRepository;
-        private UserFavoriteRecipeRepository? userFavoriteRecipeRepository;
+        private IIngredientRepository? ingredientRepository;
+        private IRecipeRepository? recipeRepository;
+        private IRecipeIngredientRepository? recipeIngredientRepository;
+        private IReportRepository? reportRepository;
+        private IReviewRepository? reviewRepository;
+        private IUserRepository? userRepository;
+        private IUserBarIngredientRepository? userBarIngredientRepository;
+        private IUserFavoriteRecipeRepository? userFavoriteRecipeRepository;
 
-        public IngredientRepository IngredientRepository
+        public virtual IIngredientRepository IngredientRepository
         {
             get
             {
@@ -28,7 +28,7 @@ namespace cc_api.DAL
             }
         }
 
-        public RecipeRepository RecipeRepository
+        public virtual IRecipeRepository RecipeRepository
         {
             get
             {
@@ -41,7 +41,7 @@ namespace cc_api.DAL
             }
         }
 
-        public RecipeIngredientRepository RecipeIngredientRepository
+        public virtual IRecipeIngredientRepository RecipeIngredientRepository
         {
             get
             {
@@ -54,7 +54,7 @@ namespace cc_api.DAL
             }
         }
 
-        public ReportRepository ReportRepository
+        public virtual IReportRepository ReportRepository
         {
             get
             {
@@ -67,7 +67,7 @@ namespace cc_api.DAL
             }
         }
 
-        public ReviewRepository ReviewRepository
+        public virtual IReviewRepository ReviewRepository
         {
             get
             {
@@ -80,7 +80,7 @@ namespace cc_api.DAL
             }
         }
 
-        public UserRepository UserRepository
+        public virtual IUserRepository UserRepository
         {
             get
             {
@@ -93,7 +93,7 @@ namespace cc_api.DAL
             }
         }
 
-        public UserBarIngredientRepository UserBarIngredientRepository
+        public virtual IUserBarIngredientRepository UserBarIngredientRepository
         {
             get
             {
@@ -106,7 +106,7 @@ namespace cc_api.DAL
             }
         }
 
-        public UserFavoriteRecipeRepository UserFavoriteRecipeRepository
+        public virtual IUserFavoriteRecipeRepository UserFavoriteRecipeRepository
         {
             get
             {
