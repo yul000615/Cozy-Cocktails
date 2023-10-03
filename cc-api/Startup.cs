@@ -21,7 +21,7 @@ namespace cc_api
         {
             // Configure the DbContext and connection string for SQLite
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddControllers();
 
