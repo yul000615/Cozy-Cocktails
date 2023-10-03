@@ -1,3 +1,5 @@
+using cc_api.DAL;
+using cc_api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
@@ -11,9 +13,9 @@ namespace cc_api.Controllers
     [Route("api/[controller]")]
     public class AccountController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly CozyCocktailsContext _context;
 
-        public AccountController(ApplicationDbContext context)
+        public AccountController(CozyCocktailsContext context)
         {
             _context = context;
         }
@@ -31,9 +33,9 @@ namespace cc_api.Controllers
                 return BadRequest("Email is already registered.");
             }
 
-            var user = new User
+            var user = new User()
             {
-                Username = model.Username,
+ 
                 Email = model.Email,
                 // Store the password directly (not recommended for production)
                 Password = model.Password
@@ -53,9 +55,6 @@ namespace cc_api.Controllers
 
     public class UserDto
     {
-        [Required]
-        [StringLength(50)]
-        public string Username { get; set; }
 
         [Required]
         [EmailAddress]

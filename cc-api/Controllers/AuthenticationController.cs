@@ -1,6 +1,7 @@
-﻿using cc_api.Models;
+﻿using cc_api.DAL;
+using cc_api.Models;
+using cc_api.Models.Requests;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 
 namespace cc_api.Controllers
 {
@@ -8,11 +9,11 @@ namespace cc_api.Controllers
     [Route("api/auth")]
     public class AuthenticationController : ControllerBase
     {
-        private readonly CozyCocktailsContext _context;
+        private readonly UnitOfWork _unitOfWork;
 
-        public AuthenticationController(CozyCocktailsContext context)
+        public AuthenticationController(UnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpPost("login")]
@@ -23,10 +24,6 @@ namespace cc_api.Controllers
                 return BadRequest();
             }
 
-            //replace with repository Get
-            var users = _context.Users;
-            foreach (var x in users)
-                Console.WriteLine(x);
             var user = new User();
             bool validUser = user != null;
             bool validPassword = validUser && (credentials.Password == user.Password);
@@ -44,15 +41,5 @@ namespace cc_api.Controllers
             return Ok();
         }
 
-        public class LoginRequest
-        {
-            [Required]
-            [EmailAddress]
-            public string? Email { get; set; }
-
-            [Required]
-            [StringLength(100, MinimumLength = 6)]
-            public string? Password { get; set; }
-        }
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using cc_api.Models;
-
-namespace cc_api.DAL
+﻿namespace cc_api.DAL
 {
     public class UnitOfWork : IDisposable
     {
