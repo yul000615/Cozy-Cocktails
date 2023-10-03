@@ -8,7 +8,7 @@
         private RecipeIngredientRepository? recipeIngredientRepository;
         private ReportRepository? reportRepository;
         private ReviewRepository? reviewRepository;
-        private UserRepository? userRepository;
+        private IUserRepository? userRepository;
         private UserBarIngredientRepository? userBarIngredientRepository;
         private UserFavoriteRecipeRepository? userFavoriteRecipeRepository;
 
@@ -77,7 +77,7 @@
             }
         }
 
-        public UserRepository UserRepository
+        public virtual IUserRepository UserRepository
         {
             get
             {

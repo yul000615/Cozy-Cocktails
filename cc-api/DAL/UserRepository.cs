@@ -3,12 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace cc_api.DAL
 {
-    public class UserRepository : GenericRepository<User>
+    public class UserRepository : GenericRepository<User>, IUserRepository
     {
         public UserRepository(CozyCocktailsContext context) : base(context)
         {
         }
-
 
         public async Task<User> GetByEmail(string email)
         {

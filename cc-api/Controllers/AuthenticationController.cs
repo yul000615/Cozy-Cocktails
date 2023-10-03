@@ -34,7 +34,8 @@ namespace cc_api.Controllers
             var repository = _unitOfWork.UserRepository;
             var user = await repository.GetByEmail(credentials.Email);
             bool validUser = user != null;
-            bool validPassword = validUser && (_passwordService.VerifyPassword(credentials.Password, user.Password));
+            bool validPassword = validUser && (credentials.Password == user.Password);
+            //bool validPassword = validUser && (_passwordService.VerifyPassword(credentials.Password, user.Password));
 
 
             if (!validUser || !validPassword)
