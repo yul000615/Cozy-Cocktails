@@ -1,6 +1,7 @@
 ﻿using cc_api.DAL;
 using cc_api.Models;
 using cc_api.Models.Requests;
+using cc_api.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace cc_api.Controllers
@@ -10,10 +11,11 @@ namespace cc_api.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly UnitOfWork _unitOfWork;
-
-        public AuthenticationController(UnitOfWork unitOfWork)
+        private readonly BCryptPasswordHasher _passwordService;
+        public AuthenticationController(UnitOfWork unitOfWork, BCryptPasswordHasher passwordService)
         {
             _unitOfWork = unitOfWork;
+            _passwordService = passwordService;
         }
 
         [HttpPost("login")]
@@ -24,10 +26,15 @@ namespace cc_api.Controllers
                 return BadRequest();
             }
 
-            var user = new User();
-            bool validUser = user != null;
-            bool validPassword = validUser && (credentials.Password == user.Password);
+            if (credentials.Email == null || credentials.Password == null)
+            {
+                return BadRequest();
+            }
 
+            var repository = _unitOfWork.UserRepository;
+            var user = await repository.GetByEmail(credentials.Email);
+            bool validUser = user != null;
+            bool validPassword = validUser && (_passwordService.VerifyPassword(credentials.Password, user.Password));
 
 
             if (!validUser || !validPassword)

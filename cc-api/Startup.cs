@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using cc_api.DAL;
+using cc_api.Services;
 
 namespace cc_api
 {
@@ -19,7 +20,6 @@ namespace cc_api
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
             
             services.AddControllers();
-
             // Other services and dependencies can be added here
         }
 
