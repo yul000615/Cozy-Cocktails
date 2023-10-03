@@ -25,4 +25,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\cc-api\cc-api.csproj" />
+  </ItemGroup>
+
 </Project>

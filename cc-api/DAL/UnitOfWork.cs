@@ -1,7 +1,4 @@
-﻿using System;
-using cc_api.Models;
-
-namespace cc_api.DAL
+﻿namespace cc_api.DAL
 {
     public class UnitOfWork : IDisposable
     {
@@ -11,7 +8,7 @@ namespace cc_api.DAL
         private RecipeIngredientRepository? recipeIngredientRepository;
         private ReportRepository? reportRepository;
         private ReviewRepository? reviewRepository;
-        private UserRepository? userRepository;
+        private IUserRepository? userRepository;
         private UserBarIngredientRepository? userBarIngredientRepository;
         private UserFavoriteRecipeRepository? userFavoriteRecipeRepository;
 
@@ -80,7 +77,7 @@ namespace cc_api.DAL
             }
         }
 
-        public UserRepository UserRepository
+        public virtual IUserRepository UserRepository
         {
             get
             {
