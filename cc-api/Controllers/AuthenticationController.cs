@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace cc_api.Controllers
 {
     [ApiController]
-    [Route("api/auth")]
+    [Route("api/[controller]")]
     public class AuthenticationController : ControllerBase
     {
         private readonly UnitOfWork _unitOfWork;
