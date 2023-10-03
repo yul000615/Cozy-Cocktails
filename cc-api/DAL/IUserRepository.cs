@@ -2,7 +2,7 @@
 
 namespace cc_api.DAL
 {
-    public interface IUserRepository
+    public interface IUserRepository : IGenericRepository<User>
     {
         Task<User> GetByEmail(string email);
     }

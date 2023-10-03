@@ -3,16 +3,16 @@
     public class UnitOfWork : IDisposable
     {
         private CozyCocktailsContext context = new CozyCocktailsContext();
-        private IngredientRepository? ingredientRepository;
-        private RecipeRepository? recipeRepository;
-        private RecipeIngredientRepository? recipeIngredientRepository;
-        private ReportRepository? reportRepository;
-        private ReviewRepository? reviewRepository;
+        private IIngredientRepository? ingredientRepository;
+        private IRecipeRepository? recipeRepository;
+        private IRecipeIngredientRepository? recipeIngredientRepository;
+        private IReportRepository? reportRepository;
+        private IReviewRepository? reviewRepository;
         private IUserRepository? userRepository;
-        private UserBarIngredientRepository? userBarIngredientRepository;
-        private UserFavoriteRecipeRepository? userFavoriteRecipeRepository;
+        private IUserBarIngredientRepository? userBarIngredientRepository;
+        private IUserFavoriteRecipeRepository? userFavoriteRecipeRepository;
 
-        public IngredientRepository IngredientRepository
+        public virtual IIngredientRepository IngredientRepository
         {
             get
             {
@@ -25,7 +25,7 @@
             }
         }
 
-        public RecipeRepository RecipeRepository
+        public virtual IRecipeRepository RecipeRepository
         {
             get
             {
@@ -38,7 +38,7 @@
             }
         }
 
-        public RecipeIngredientRepository RecipeIngredientRepository
+        public virtual IRecipeIngredientRepository RecipeIngredientRepository
         {
             get
             {
@@ -51,7 +51,7 @@
             }
         }
 
-        public ReportRepository ReportRepository
+        public virtual IReportRepository ReportRepository
         {
             get
             {
@@ -64,7 +64,7 @@
             }
         }
 
-        public ReviewRepository ReviewRepository
+        public virtual IReviewRepository ReviewRepository
         {
             get
             {
@@ -90,7 +90,7 @@
             }
         }
 
-        public UserBarIngredientRepository UserBarIngredientRepository
+        public virtual IUserBarIngredientRepository UserBarIngredientRepository
         {
             get
             {
@@ -103,7 +103,7 @@
             }
         }
 
-        public UserFavoriteRecipeRepository UserFavoriteRecipeRepository
+        public virtual IUserFavoriteRecipeRepository UserFavoriteRecipeRepository
         {
             get
             {
