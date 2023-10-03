@@ -1,13 +1,6 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore;
-
-using cc_api.Models;
+using cc_api.DAL;
+using cc_api.Services;
 
 namespace cc_api
 {
@@ -23,8 +16,10 @@ namespace cc_api
         public void ConfigureServices(IServiceCollection services)
         {
             // Configure the DbContext and connection string
+            services.AddDbContext<CozyCocktailsContext>(options =>
+                options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+            
             services.AddControllers();
-
             // Other services and dependencies can be added here
         }
 

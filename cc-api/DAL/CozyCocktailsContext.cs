@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using cc_api.Models;
+﻿using cc_api.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace cc_api.DAL
