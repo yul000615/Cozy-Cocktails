@@ -1,0 +1,26 @@
+.CreateRecipeFields {
+    text-align: center;
+    justify-items: center;
+    display: grid;
+}
+
+.dropdown-container {
+    margin: 25px;
+    width: 350px;
+    align-self: center;
+}
+
+.quantityField {
+    display: inline-block;
+    margin-left: 20px;
+    padding-top: 20px;
+}
+
+.quantityLabel {
+    margin-left: 20px;
+    padding-top: 20px;
+}
+
+.submitBtn {
+    margin: 20px;
+}
