@@ -11,8 +11,8 @@ namespace cc_api.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly UnitOfWork _unitOfWork;
-        private readonly BCryptPasswordHasher _passwordService;
-        public AuthenticationController(UnitOfWork unitOfWork, BCryptPasswordHasher passwordService)
+        private readonly IPasswordHasher _passwordService;
+        public AuthenticationController(UnitOfWork unitOfWork, IPasswordHasher passwordService)
         {
             _unitOfWork = unitOfWork;
             _passwordService = passwordService;
@@ -34,8 +34,7 @@ namespace cc_api.Controllers
             var repository = _unitOfWork.UserRepository;
             var user = await repository.GetByEmail(credentials.Email);
             bool validUser = user != null;
-            bool validPassword = validUser && (credentials.Password == user.Password);
-            //bool validPassword = validUser && (_passwordService.VerifyPassword(credentials.Password, user.Password));
+            bool validPassword = validUser && (_passwordService.VerifyPassword(credentials.Password, user.Password));
 
 
             if (!validUser || !validPassword)

@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddScoped<UnitOfWork>();
-builder.Services.AddScoped<BCryptPasswordHasher>();
+builder.Services.AddSingleton<IPasswordHasher, BCryptPasswordHasher>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<CozyCocktailsContext>(options =>
