@@ -1,84 +1,117 @@
-import './signup.css'
-import {useState} from 'react'
-import Modal from 'react-modal'
-import {Link} from 'react-router-dom'
+import React, { useState } from 'react';
+import Modal from 'react-modal';
+import { Link } from 'react-router-dom';
 
-function ErrorMessages(error){
-  if (error.length === 0){
-    return (null);
+function ErrorMessages({ error }) {
+  if (!error) {
+    return null;
   } else {
-    return (<p class='errorMessage'>{error['error']}</p>);
+    return <p className='errorMessage'>{error}</p>;
   }
 }
 
 function SignUp() {
+  const [error, setError] = useState('');
+  const [apiError, setApiError] = useState(null);
+  const [apiSuccess, setApiSuccess] = useState(false);
+  const [first, setFirst] = useState('');
+  const [last, setLast] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [existingEmail, setExistingEmail] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
-    const [error, setError] = useState("")
-    const [first, setFirst] = useState("")
-    const [last, setLast] = useState("")
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [existingEmail, setExistingEmail] = useState(false)
-    const [modalOpen, setModalOpen] = useState(false)
+  async function registerClick() {
+    var hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+    var hasNumber = /\d/;
 
-    function registerClick() {
+    if (first.length === 0 || last.length === 0 || email.length === 0 || password.length === 0) {
+      setError('All values must be filled');
+    } else if (password.length >= 64) {
+      setError('Password must be less than 64 characters');
+    } else if (!hasSpecial.test(password) || !hasNumber.test(password)) {
+      setError('Password must contain a special character and a number');
+    } else if (existingEmail) {
+      setError('Email is already linked to an account');
+    } else {
+      setError('');
 
-      var hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
-      var hasNumber = /\d/;
+      // Sending fetch request to connect frontend and backend 
+      const formData = {
+        email,
+        password,
+        // Include other relevant fields in formData
+      };
 
-      if (first.length === 0 || last.length === 0 || email.length === 0 || password.length === 0){
-        setError('All values must be filled');
-      } else if (password.length >= 64){
-        setError('Password must be less than 64 characters');
-      } else if (!hasSpecial.test(password) || !hasNumber.test(password)){
-        setError('Password must contain special character and number');
-      } else if (existingEmail){
-        setError('Email already is linked to an account');
-      } else {
-        setError('');
-        setModalOpen(true);
+      try {
+        const response = await fetch("/api/account/register", {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (response.ok) {
+          // Handle success
+          setApiSuccess(true);
+          setModalOpen(true);
+        } else {
+          // Handle errors
+          const data = await response.json();
+          setApiError(data.error || "An error occurred during registration.");
+        }
+      } catch (error) {
+        // Handle network errors
+        console.error("Network error:", error);
+        setApiError("Network error occurred.");
       }
-
     }
-
-    function closeModal() {
-      setModalOpen(false);
-    }
-
-
-    return (
-      <div className="SignUpPage">
-        <div className="SignUpWelcome">
-          <h1>Welcome To</h1>
-          <h1>Cozy Cocktails!</h1>
-        </div>
-        <ErrorMessages error={error}/>
-        <div className="SignUpFields">
-            <label className = "entryField">
-            First Name: <input name="userFirstName" value={first} onChange={(e) => setFirst(e.target.value)}/>
-            </label>
-            <br/>
-            <label className = "entryField">
-            Last Name: <input name="userLastName" value={last} onChange={(e) => setLast(e.target.value)}/>
-            </label>
-            <br/>
-            <label className = "entryField">
-            Email: <input name="userEmail" value={email} onChange={(e) => setEmail(e.target.value)}/>
-            </label>
-            <br/>
-            <label className = "entryField">
-            Password: <input name="userPassword" value={password} onChange={(e) => setPassword(e.target.value)}/>
-            </label>
-            <br/>
-            <button className='registerBtn' onClick={registerClick}>Register</button>
-            <Modal isOpen={modalOpen} onRequestClose={closeModal} className="Modal">
-              <h2>Account Creation Successful!</h2>
-              <br/>
-              <Link to="/"><button onClick={closeModal}>Head to home page</button></Link>
-            </Modal>
-        </div>
-      </div>
-    );
   }
-  
+
+  function closeModal() {
+    setModalOpen(false);
+  }
+
+  return (
+    <div className="SignUpPage">
+      <div className="SignUpWelcome">
+        <h1>Welcome To</h1>
+        <h1>Cozy Cocktails!</h1>
+      </div>
+      <ErrorMessages error={error || apiError} />
+      <div className="SignUpFields">
+        <label className="entryField">
+          First Name: <input name="userFirstName" value={first} onChange={(e) => setFirst(e.target.value)} />
+        </label>
+        <br />
+        <label className="entryField">
+          Last Name: <input name="userLastName" value={last} onChange={(e) => setLast(e.target.value)} />
+        </label>
+        <br />
+        <label className="entryField">
+          Email: <input name="userEmail" value={email} onChange={(e) => setEmail(e.target.value)} />
+        </label>
+        <br />
+        <label className="entryField">
+          Password: <input name="userPassword" value={password} onChange={(e) => setPassword(e.target.value)} />
+        </label>
+        <br />
+        <button className='registerBtn' onClick={registerClick}>Register</button>
+        <Modal isOpen={modalOpen} onRequestClose={closeModal} className="Modal">
+          {apiSuccess ? (
+            <div>
+              <h2>Account Creation Successful!</h2>
+              <br />
+              <Link to="/"><button onClick={closeModal}>Head to home page</button></Link>
+            </div>
+          ) : (
+            <h2>Registration Error</h2>
+          )}
+        </Modal>
+      </div>
+    </div>
+  );
+}
+
 export default SignUp;
