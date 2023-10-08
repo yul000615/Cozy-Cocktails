@@ -1,4 +1,5 @@
 using cc_api.DAL;
+using cc_api.Models.Configuration;
 using cc_api.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -9,6 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddScoped<UnitOfWork>();
 builder.Services.AddSingleton<IPasswordHasher, BCryptPasswordHasher>();
+builder.Services.AddSingleton<ITokenGenerator, AccessTokenGenerator>();
+
+AuthenticationConfiguration authConfig = new AuthenticationConfiguration();
+builder.Configuration.Bind("Authentication", authConfig);
+builder.Services.AddSingleton(authConfig);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<CozyCocktailsContext>(options =>

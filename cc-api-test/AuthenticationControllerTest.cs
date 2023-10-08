@@ -22,15 +22,16 @@ namespace cc_api_test
         private readonly AuthenticationController _controller;
         private readonly Mock<UnitOfWork> _uowMock;
         private readonly Mock<IPasswordHasher> _hashMock;
+        private readonly Mock<ITokenGenerator> _tokenMock;
         #endregion
 
         #region Constructors
         public AuthenticationControllerTest()
         {
+            _hashMock = new Mock<IPasswordHasher>();
+            _tokenMock = new Mock<ITokenGenerator>();
             _uowMock = new Mock<UnitOfWork>();
-            
             var repoMock = new Mock<IUserRepository>();
-            _hashMock = new Mock<IPasswordHasher> { CallBase = true };
             repoMock.Setup(x => x.GetByEmail(It.IsAny<string>())).Returns(() => Task.FromResult(
                 new User()
                 {
@@ -43,7 +44,7 @@ namespace cc_api_test
 
             _uowMock.SetupGet(x => x.UserRepository).Returns(repoMock.Object);
             _hashMock = new Mock<IPasswordHasher>();
-            _controller = new AuthenticationController(_uowMock.Object, _hashMock.Object);
+            _controller = new AuthenticationController(_uowMock.Object, _hashMock.Object, _tokenMock.Object);
         }
         #endregion
 
@@ -59,7 +60,7 @@ namespace cc_api_test
             var response = await _controller.Login(credentials);
 
             //Assert
-            var result = response as OkResult;
+            var result = response as OkObjectResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(200);
         }

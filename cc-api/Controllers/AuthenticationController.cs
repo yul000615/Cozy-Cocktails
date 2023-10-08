@@ -1,6 +1,7 @@
 ﻿using cc_api.DAL;
 using cc_api.Models;
 using cc_api.Models.Requests;
+using cc_api.Models.Responses;
 using cc_api.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,11 +12,13 @@ namespace cc_api.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly UnitOfWork _unitOfWork;
-        private readonly IPasswordHasher _passwordService;
-        public AuthenticationController(UnitOfWork unitOfWork, IPasswordHasher passwordService)
+        private readonly IPasswordHasher _passwordHasher;
+        private readonly ITokenGenerator _tokenGenerator;
+        public AuthenticationController(UnitOfWork unitOfWork, IPasswordHasher passwordHasher, ITokenGenerator tokenGenerator)
         {
             _unitOfWork = unitOfWork;
-            _passwordService = passwordService;
+            _passwordHasher = passwordHasher;
+            _tokenGenerator = tokenGenerator;
         }
 
         [HttpPost("login")]
@@ -34,7 +37,7 @@ namespace cc_api.Controllers
             var repository = _unitOfWork.UserRepository;
             var user = await repository.GetByEmail(credentials.Email);
             bool validUser = user != null;
-            bool validPassword = validUser && (_passwordService.VerifyPassword(credentials.Password, user.Password));
+            bool validPassword = validUser && (_passwordHasher.VerifyPassword(credentials.Password, user.Password));
 
 
             if (!validUser || !validPassword)
@@ -42,10 +45,14 @@ namespace cc_api.Controllers
                 return Unauthorized();
             }
 
-            //Generate Access Token and Refresh Token
+            string token = _tokenGenerator.GenerateToken(user);
+            //Generate Refresh token
             //Authorize roles
 
-            return Ok();
+            return Ok(new LoginSuccessResponse()
+            {
+               AccessToken = token
+            });
         }
 
     }
