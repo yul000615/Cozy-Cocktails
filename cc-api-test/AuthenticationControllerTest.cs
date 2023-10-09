@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using cc_api.Controllers;
 using cc_api.DAL;
 using cc_api.Models;
+using cc_api.Models.Configuration;
 using cc_api.Models.Requests;
 using cc_api.Services;
 using FluentAssertions;
@@ -22,14 +23,18 @@ namespace cc_api_test
         private readonly AuthenticationController _controller;
         private readonly Mock<UnitOfWork> _uowMock;
         private readonly Mock<IPasswordHasher> _hashMock;
-        private readonly Mock<ITokenGenerator> _tokenMock;
+        private readonly Mock<GenericTokenGenerator> _tokenMock;
+        private readonly Mock<AccessTokenGenerator> _accessTokenMock;
+        private readonly Mock<RefreshTokenGenerator> _refreshTokenMock;
+        private readonly Mock<AuthenticationConfiguration> _configMock;
         #endregion
 
         #region Constructors
         public AuthenticationControllerTest()
         {
             _hashMock = new Mock<IPasswordHasher>();
-            _tokenMock = new Mock<ITokenGenerator>();
+
+            //UnitOfWork Mock
             _uowMock = new Mock<UnitOfWork>();
             var repoMock = new Mock<IUserRepository>();
             repoMock.Setup(x => x.GetByEmail(It.IsAny<string>())).Returns(() => Task.FromResult(
@@ -41,10 +46,16 @@ namespace cc_api_test
                     //password is "randomhash"
                     Password = "$2a$11$/EAORZ8hF6YJlU7ZxcqDtOQfg2nolwk5YMGxpuwjRnQHLaHCBAOjS"
                 }));
-
             _uowMock.SetupGet(x => x.UserRepository).Returns(repoMock.Object);
-            _hashMock = new Mock<IPasswordHasher>();
-            _controller = new AuthenticationController(_uowMock.Object, _hashMock.Object, _tokenMock.Object);
+
+            //TokenGenerator Mocks
+            _tokenMock = new Mock<GenericTokenGenerator>();
+            _configMock = new Mock<AuthenticationConfiguration>();
+            _accessTokenMock = new Mock<AccessTokenGenerator>(_configMock.Object, _tokenMock.Object);
+            _refreshTokenMock = new Mock<RefreshTokenGenerator>(_configMock.Object, _tokenMock.Object);
+
+
+            _controller = new AuthenticationController(_uowMock.Object, _hashMock.Object, _accessTokenMock.Object, _refreshTokenMock.Object);
         }
         #endregion
 
@@ -54,6 +65,8 @@ namespace cc_api_test
         {
             // Arrange
             _hashMock.Setup(x => x.VerifyPassword(It.IsAny<string>(), It.IsAny<string>())).Returns(true);
+            _accessTokenMock.Setup(x => x.GenerateToken(It.IsAny<User>())).Returns("accessToken");
+            _refreshTokenMock.Setup(x => x.GenerateToken(It.IsAny<User>())).Returns("refreshToken");
             LoginRequest credentials = new LoginRequest() { Email = "bobsmith@email.com", Password = "randomhash" };
 
             // Act

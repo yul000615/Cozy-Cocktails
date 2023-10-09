@@ -1,5 +1,5 @@
-﻿using cc_api.Models;
-using cc_api.Models.Configuration;
+﻿using cc_api.Models.Configuration;
+using cc_api.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -7,11 +7,12 @@ using System.Text;
 
 namespace cc_api.Services
 {
-    public class AccessTokenGenerator
+    public class RefreshTokenGenerator
     {
         private readonly AuthenticationConfiguration _config;
         private readonly GenericTokenGenerator _tokenGenerator;
-        public AccessTokenGenerator(AuthenticationConfiguration config, GenericTokenGenerator tokenGenerator)
+
+        public RefreshTokenGenerator(AuthenticationConfiguration config, GenericTokenGenerator tokenGenerator)
         {
             _config = config;
             _tokenGenerator = tokenGenerator;
@@ -27,11 +28,10 @@ namespace cc_api.Services
             };
 
             return _tokenGenerator.GenerateToken(
-                _config.AccessTokenSecret,
+                _config.RefreshTokenSecret,
                 _config.Issuer,
                 _config.Audience,
-                _config.AccessTokenExpirationMinutes,
-                claims
+                _config.RefreshTokenExpirationMinutes
                 );
         }
     }

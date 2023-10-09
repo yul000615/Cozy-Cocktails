@@ -1,8 +1,11 @@
 using cc_api.DAL;
 using cc_api.Models.Configuration;
 using cc_api.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,11 +13,26 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddScoped<UnitOfWork>();
 builder.Services.AddSingleton<IPasswordHasher, BCryptPasswordHasher>();
-builder.Services.AddSingleton<ITokenGenerator, AccessTokenGenerator>();
+builder.Services.AddSingleton<GenericTokenGenerator>();
+builder.Services.AddSingleton<RefreshTokenGenerator>();
+builder.Services.AddSingleton<AccessTokenGenerator>();
 
 AuthenticationConfiguration authConfig = new AuthenticationConfiguration();
 builder.Configuration.Bind("Authentication", authConfig);
 builder.Services.AddSingleton(authConfig);
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(o =>
+{
+    o.TokenValidationParameters = new TokenValidationParameters()
+    {
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authConfig.AccessTokenSecret)),
+        ValidIssuer = authConfig.Issuer,
+        ValidAudience = authConfig.Audience,
+        ValidateIssuerSigningKey = true,
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ClockSkew = TimeSpan.Zero
+    };
+});
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<CozyCocktailsContext>(options =>
@@ -35,6 +53,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

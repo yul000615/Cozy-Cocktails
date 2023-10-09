@@ -3,7 +3,9 @@ using cc_api.Models;
 using cc_api.Models.Requests;
 using cc_api.Models.Responses;
 using cc_api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace cc_api.Controllers
 {
@@ -13,12 +15,14 @@ namespace cc_api.Controllers
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly IPasswordHasher _passwordHasher;
-        private readonly ITokenGenerator _tokenGenerator;
-        public AuthenticationController(UnitOfWork unitOfWork, IPasswordHasher passwordHasher, ITokenGenerator tokenGenerator)
+        private readonly AccessTokenGenerator _accessTokenGenerator;
+        private readonly RefreshTokenGenerator _refreshTokenGenerator;
+        public AuthenticationController(UnitOfWork unitOfWork, IPasswordHasher passwordHasher, AccessTokenGenerator tokenGenerator, RefreshTokenGenerator refreshTokenGenerator)
         {
             _unitOfWork = unitOfWork;
             _passwordHasher = passwordHasher;
-            _tokenGenerator = tokenGenerator;
+            _accessTokenGenerator = tokenGenerator;
+            _refreshTokenGenerator = refreshTokenGenerator;
         }
 
         [HttpPost("login")]
@@ -45,15 +49,14 @@ namespace cc_api.Controllers
                 return Unauthorized();
             }
 
-            string token = _tokenGenerator.GenerateToken(user);
-            //Generate Refresh token
-            //Authorize roles
+            string accessToken = _accessTokenGenerator.GenerateToken(user);
+            string refreshToken = _refreshTokenGenerator.GenerateToken(user);
 
             return Ok(new LoginSuccessResponse()
             {
-               AccessToken = token
+               AccessToken = accessToken,
+               RefreshToken = refreshToken
             });
         }
-
     }
 }
