@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { Link } from 'react-router-dom';
+import './signup.css'
 
 function ErrorMessages({ error }) {
   if (!error) {
@@ -31,41 +32,46 @@ function SignUp() {
       setError('Password must be less than 64 characters');
     } else if (!hasSpecial.test(password) || !hasNumber.test(password)) {
       setError('Password must contain a special character and a number');
-    } else if (existingEmail) {
-      setError('Email is already linked to an account');
     } else {
-      setError('');
-
-      // Sending fetch request to connect frontend and backend 
-      const formData = {
-        email,
-        password,
-        // Include other relevant fields in formData
-      };
-
-      try {
-        const response = await fetch("/api/account/register", {
-          method: "POST",
-          headers: {
-            "Content-type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        });
-
-        if (response.ok) {
-          // Handle success
-          setApiSuccess(true);
-          setModalOpen(true);
-        } else {
-          // Handle errors
-          const data = await response.json();
-          setApiError(data.error || "An error occurred during registration.");
-        }
-      } catch (error) {
-        // Handle network errors
-        console.error("Network error:", error);
-        setApiError("Network error occurred.");
-      }
+       // Sending fetch request to connect frontend and backend
+       const formData = {
+         email,
+         password,
+         first,
+         last
+         // Include other relevant fields in formData
+       };
+ 
+       try {
+         const response = await fetch("https://localhost:7268/api/Account/register", {
+           method: "POST",
+           headers: {
+             "Content-type": "application/json",
+           },
+           body: JSON.stringify(formData),
+         });
+ 
+         if (response.ok) {
+           // Handle success
+           setApiSuccess(true);
+           setModalOpen(true);
+         } else {
+           // Handle errors
+           console.log(response)
+           const data = await response.json();
+           setApiError(data.error || "An error occurred during registration.");
+         }
+       } catch (error) {
+         // Handle network errors
+         console.error("Network error:", error);
+         setApiError("Network error occurred.");
+       }
+ 
+       if (existingEmail) {
+         setError('Email is already linked to an account');
+       } else {
+         setError('');
+    }
     }
   }
 
