@@ -45,7 +45,7 @@ namespace cc_api.Controllers
         }
     }
 
-    public class UserDto
+    public class RegistrationRequest
     {
         [Required]
         public string FirstName { get; set; }
