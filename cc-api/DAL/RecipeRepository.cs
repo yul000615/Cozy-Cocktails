@@ -2,7 +2,7 @@
 
 namespace cc_api.DAL
 {
-    public class RecipeRepository : GenericRepository<Recipe>
+    public class RecipeRepository : GenericRepository<Recipe>, IRecipeRepository
     {
         public RecipeRepository(CozyCocktailsContext context) : base(context)
         {
