@@ -21,14 +21,16 @@ namespace cc_api_test
         #region Fields
         private readonly AuthenticationController _controller;
         private readonly Mock<UnitOfWork> _uowMock;
-        private readonly Mock<BCryptPasswordHasher> _hashMock;
+        private readonly Mock<IPasswordHasher> _hashMock;
+        private readonly Mock<ITokenGenerator> _tokenMock;
         #endregion
 
         #region Constructors
         public AuthenticationControllerTest()
         {
+            _hashMock = new Mock<IPasswordHasher>();
+            _tokenMock = new Mock<ITokenGenerator>();
             _uowMock = new Mock<UnitOfWork>();
-            
             var repoMock = new Mock<IUserRepository>();
             repoMock.Setup(x => x.GetByEmail(It.IsAny<string>())).Returns(() => Task.FromResult(
                 new User()
@@ -36,12 +38,13 @@ namespace cc_api_test
                     FirstName = "Bob",
                     LastName = "Smith",
                     Email = "bobsmith@email.com",
-                    Password = "randomhash"
+                    //password is "randomhash"
+                    Password = "$2a$11$/EAORZ8hF6YJlU7ZxcqDtOQfg2nolwk5YMGxpuwjRnQHLaHCBAOjS"
                 }));
 
             _uowMock.SetupGet(x => x.UserRepository).Returns(repoMock.Object);
-            _hashMock = new Mock<BCryptPasswordHasher> { CallBase = true };
-            _controller = new AuthenticationController(_uowMock.Object, _hashMock.Object);
+            _hashMock = new Mock<IPasswordHasher>();
+            _controller = new AuthenticationController(_uowMock.Object, _hashMock.Object, _tokenMock.Object);
         }
         #endregion
 
@@ -50,13 +53,14 @@ namespace cc_api_test
         public async Task Login_Valid()
         {
             // Arrange
+            _hashMock.Setup(x => x.VerifyPassword(It.IsAny<string>(), It.IsAny<string>())).Returns(true);
             LoginRequest credentials = new LoginRequest() { Email = "bobsmith@email.com", Password = "randomhash" };
 
             // Act
             var response = await _controller.Login(credentials);
 
             //Assert
-            var result = response as OkResult;
+            var result = response as OkObjectResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(200);
         }
@@ -65,6 +69,7 @@ namespace cc_api_test
         public async Task Login_InvalidEmail()
         {
             // Arrange
+            _hashMock.Setup(x => x.VerifyPassword(It.IsAny<string>(), It.IsAny<string>())).Returns(false);
             LoginRequest credentials = new LoginRequest() { Email = "test@gmail.com", Password = "testpassword" };
 
             // Act
@@ -80,6 +85,7 @@ namespace cc_api_test
         public async Task Login_InvalidPassword()
         {
             // Arrange
+            _hashMock.Setup(x => x.VerifyPassword(It.IsAny<string>(), It.IsAny<string>())).Returns(false);
             LoginRequest credentials = new LoginRequest() { Email = "bobsmith@email.com", Password = "testpassword" };
 
             // Act
