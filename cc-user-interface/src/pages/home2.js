@@ -12,13 +12,10 @@ function Home2() {
           <a href="#">Services</a>
           <a href="#">Contact</a>
         </nav>
-        <div className="loginButtons">
-          <Link to="/createRecipe">
-            <button class="createButton">Create Recipe</button>
-          </Link>
-          <Link to="/myAccount"> 
-            <button className="loginButton">My Account</button>
-          </Link>
+        <div className="buttons">
+          <Link to="/createRecipe"><button class="createButton">Create Recipe</button></Link>
+          <Link to="/myAccount"><button className="myaccountButton">My Account</button></Link>
+          <Link to="/"><button className="logoutButton">Log Out</button></Link>
         </div>
       </div>
     </div>
