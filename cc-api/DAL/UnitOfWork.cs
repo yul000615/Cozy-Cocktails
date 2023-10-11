@@ -11,6 +11,7 @@
         private IUserRepository? userRepository;
         private IUserBarIngredientRepository? userBarIngredientRepository;
         private IUserFavoriteRecipeRepository? userFavoriteRecipeRepository;
+        private IRefreshTokenRepository? refreshTokenRepository;
 
         public virtual IIngredientRepository IngredientRepository
         {
@@ -113,6 +114,19 @@
                     this.userFavoriteRecipeRepository = new UserFavoriteRecipeRepository(context);
                 }
                 return userFavoriteRecipeRepository;
+            }
+        }
+
+        public virtual IRefreshTokenRepository RefreshTokenRepository
+        {
+            get
+            {
+
+                if (this.refreshTokenRepository == null)
+                {
+                    this.refreshTokenRepository = new RefreshTokenRepository(context);
+                }
+                return RefreshTokenRepository;
             }
         }
 
