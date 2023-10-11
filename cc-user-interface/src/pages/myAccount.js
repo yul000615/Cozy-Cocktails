@@ -55,6 +55,9 @@ function MyAccount() {
         <div className="LogoutButton">
           <Link to="/">Logout</Link>
         </div>
+        <div className="homeButton">
+          <Link to="/home2">Home</Link>
+        </div>
       </div>
     </div>
   );
