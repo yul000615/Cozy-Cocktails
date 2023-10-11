@@ -126,7 +126,7 @@
                 {
                     this.refreshTokenRepository = new RefreshTokenRepository(context);
                 }
-                return RefreshTokenRepository;
+                return refreshTokenRepository;
             }
         }
 
