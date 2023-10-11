@@ -20,6 +20,8 @@ namespace cc_api.DAL
 
         public virtual DbSet<RecipeIngredient> RecipeIngredients { get; set; }
 
+        public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
+
         public virtual DbSet<Report> Reports { get; set; }
 
         public virtual DbSet<Review> Reviews { get; set; }
@@ -31,7 +33,7 @@ namespace cc_api.DAL
         public virtual DbSet<UserFavoriteRecipe> UserFavoriteRecipes { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+    #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
             => optionsBuilder.UseSqlite("Data Source=.\\Database\\cozy_cocktails.db");
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -82,6 +84,23 @@ namespace cc_api.DAL
 
                 entity.HasOne(d => d.Recipe).WithMany(p => p.RecipeIngredients)
                     .HasForeignKey(d => d.RecipeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<RefreshToken>(entity =>
+            {
+                entity.HasKey(e => e.TokenId);
+
+                entity.ToTable("Refresh_Token");
+
+                entity.Property(e => e.TokenId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("token_id");
+                entity.Property(e => e.Token).HasColumnName("token");
+                entity.Property(e => e.UserId).HasColumnName("user_id");
+
+                entity.HasOne(d => d.User).WithMany(p => p.RefreshTokens)
+                    .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
