@@ -3,8 +3,6 @@ using cc_api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace cc_api.Controllers
@@ -13,11 +11,11 @@ namespace cc_api.Controllers
     [Route("api/[controller]")]
     public class AccountController : ControllerBase
     {
-        private readonly CozyCocktailsContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AccountController(CozyCocktailsContext context)
+        public AccountController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpPost("register")]
@@ -28,32 +26,26 @@ namespace cc_api.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (await EmailExists(model.Email))
+            if (await _unitOfWork.Users.EmailExists(model.Email))
             {
                 return BadRequest("Email is already registered.");
             }
 
             var user = new User()
             {
- 
                 Email = model.Email,
                 // Store the password directly (not recommended for production)
                 Password = model.Password
             };
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            _unitOfWork.Users.Add(user);
+            await _unitOfWork.SaveChangesAsync();
 
             return Ok("User registered successfully");
         }
-
-        private async Task<bool> EmailExists(string email)
-        {
-            return await _context.Users.AnyAsync(u => u.Email == email);
-        }
     }
 
-    public class UserDto
+    public class RegistrationRequest
     {
         [Required]
         public string FirstName { get; set; }
@@ -70,4 +62,3 @@ namespace cc_api.Controllers
         public string Password { get; set; }
     }
 }
-

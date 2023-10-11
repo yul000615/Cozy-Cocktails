@@ -1,6 +1,6 @@
 ﻿namespace cc_api.Services
 {
-    public class BCryptPasswordHasher
+    public class BCryptPasswordHasher : IPasswordHasher
     {
         public string HashPassword(string password)
         {

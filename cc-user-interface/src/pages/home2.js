@@ -1,7 +1,8 @@
-import './home.css';
+import React from 'react';
+import './home2.css';
 import { Link } from 'react-router-dom';
 
-function Home() {
+function Home2() {
   return (
     <div className="HomePage">
       <div className="WelcomeHeader">
@@ -12,13 +13,16 @@ function Home() {
           <a href="#">Contact</a>
         </nav>
         <div className="loginButtons">
-          <Link to="/signup"><button className="signUpButton">Sign Up</button></Link>
-          <Link to="/createRecipe"><button class="createButton">Create Recipe</button></Link>
-          <Link to="/login"><button className="loginButton">Log In</button></Link>
+          <Link to="/createRecipe">
+            <button class="createButton">Create Recipe</button>
+          </Link>
+          <Link to="/myAccount"> 
+            <button className="loginButton">My Account</button>
+          </Link>
         </div>
       </div>
     </div>
   );
 }
 
-export default Home;
+export default Home2;
