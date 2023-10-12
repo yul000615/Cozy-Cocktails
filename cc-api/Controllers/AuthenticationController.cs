@@ -82,6 +82,9 @@ namespace cc_api.Controllers
                 return NotFound();
             }
 
+            //Delete used refresh token then generate a new set
+            refreshTokenRepository.Delete(refreshTokenDto.TokenId);
+            _unitOfWork.Save();
             AuthenticatedUserResponse response = _authenticator.Authenticate(user);
             return Ok(response);
         }
