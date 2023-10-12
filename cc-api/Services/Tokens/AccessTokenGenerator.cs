@@ -5,7 +5,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace cc_api.Services
+namespace cc_api.Services.Tokens
 {
     public class AccessTokenGenerator
     {

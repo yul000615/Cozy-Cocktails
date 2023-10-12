@@ -9,6 +9,7 @@ using cc_api.Models;
 using cc_api.Models.Configuration;
 using cc_api.Models.Requests;
 using cc_api.Services;
+using cc_api.Services.Tokens;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +27,9 @@ namespace cc_api_test
         private readonly Mock<GenericTokenGenerator> _tokenMock;
         private readonly Mock<AccessTokenGenerator> _accessTokenMock;
         private readonly Mock<RefreshTokenGenerator> _refreshTokenMock;
+        private readonly Mock<RefreshTokenValidator> _refreshValidateMock;
         private readonly Mock<AuthenticationConfiguration> _configMock;
+        private readonly Mock<Authenticator> _authenticateMock;
         #endregion
 
         #region Constructors
@@ -55,7 +58,11 @@ namespace cc_api_test
             _refreshTokenMock = new Mock<RefreshTokenGenerator>(_configMock.Object, _tokenMock.Object);
 
 
-            _controller = new AuthenticationController(_uowMock.Object, _hashMock.Object, _accessTokenMock.Object, _refreshTokenMock.Object);
+            _refreshValidateMock = new Mock<RefreshTokenValidator>(_configMock.Object);
+            _authenticateMock = new Mock<Authenticator>(_uowMock.Object, _accessTokenMock.Object, _refreshTokenMock.Object);
+
+
+            _controller = new AuthenticationController(_uowMock.Object, _hashMock.Object, _authenticateMock.Object, _refreshValidateMock.Object);
         }
         #endregion
 

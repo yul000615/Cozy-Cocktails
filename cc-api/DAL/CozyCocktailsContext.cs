@@ -53,7 +53,7 @@ namespace cc_api.DAL
                 entity.ToTable("Recipe");
 
                 entity.Property(e => e.RecipeId)
-                    .ValueGeneratedNever()
+                    .ValueGeneratedOnAdd()
                     .HasColumnName("recipe_id");
                 entity.Property(e => e.Description).HasColumnName("description");
                 entity.Property(e => e.Name).HasColumnName("name");
@@ -71,7 +71,7 @@ namespace cc_api.DAL
                 entity.ToTable("Recipe_Ingredient");
 
                 entity.Property(e => e.ListId)
-                    .ValueGeneratedNever()
+                    .ValueGeneratedOnAdd()
                     .HasColumnName("list_id");
                 entity.Property(e => e.IngredientName).HasColumnName("ingredient_name");
                 entity.Property(e => e.Quantity).HasColumnName("quantity");
@@ -94,7 +94,7 @@ namespace cc_api.DAL
                 entity.ToTable("Refresh_Token");
 
                 entity.Property(e => e.TokenId)
-                    .ValueGeneratedNever()
+                    .ValueGeneratedOnAdd()
                     .HasColumnName("token_id");
                 entity.Property(e => e.Token).HasColumnName("token");
                 entity.Property(e => e.UserId).HasColumnName("user_id");
@@ -109,7 +109,7 @@ namespace cc_api.DAL
                 entity.ToTable("Report");
 
                 entity.Property(e => e.ReportId)
-                    .ValueGeneratedNever()
+                    .ValueGeneratedOnAdd()
                     .HasColumnName("report_id");
                 entity.Property(e => e.Issue).HasColumnName("issue");
                 entity.Property(e => e.RecipeId).HasColumnName("recipe_id");
@@ -124,7 +124,7 @@ namespace cc_api.DAL
                 entity.ToTable("Review");
 
                 entity.Property(e => e.ReviewId)
-                    .ValueGeneratedNever()
+                    .ValueGeneratedOnAdd()
                     .HasColumnName("review_id");
                 entity.Property(e => e.DateTime).HasColumnName("date_time");
                 entity.Property(e => e.Feedback).HasColumnName("feedback");
@@ -148,7 +148,7 @@ namespace cc_api.DAL
                 entity.HasIndex(e => e.Email, "IX_User_email").IsUnique();
 
                 entity.Property(e => e.UserId)
-                    .ValueGeneratedNever()
+                    .ValueGeneratedOnAdd()
                     .HasColumnName("user_id");
                 entity.Property(e => e.Admin).HasColumnName("admin");
                 entity.Property(e => e.Email).HasColumnName("email");
@@ -164,7 +164,7 @@ namespace cc_api.DAL
                 entity.ToTable("User_Bar_Ingredient");
 
                 entity.Property(e => e.ListId)
-                    .ValueGeneratedNever()
+                    .ValueGeneratedOnAdd()
                     .HasColumnName("list_id");
                 entity.Property(e => e.IngredientName).HasColumnName("ingredient_name");
                 entity.Property(e => e.UserId).HasColumnName("user_id");
@@ -185,7 +185,7 @@ namespace cc_api.DAL
                 entity.ToTable("User_Favorite_Recipe");
 
                 entity.Property(e => e.ListId)
-                    .ValueGeneratedNever()
+                    .ValueGeneratedOnAdd()
                     .HasColumnName("list_id");
                 entity.Property(e => e.RecipeId).HasColumnName("recipe_id");
                 entity.Property(e => e.UserId).HasColumnName("user_id");

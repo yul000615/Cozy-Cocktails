@@ -3,6 +3,7 @@ using cc_api.Models;
 using cc_api.Models.Requests;
 using cc_api.Models.Responses;
 using cc_api.Services;
+using cc_api.Services.Tokens;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -15,14 +16,15 @@ namespace cc_api.Controllers
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly IPasswordHasher _passwordHasher;
-        private readonly AccessTokenGenerator _accessTokenGenerator;
-        private readonly RefreshTokenGenerator _refreshTokenGenerator;
-        public AuthenticationController(UnitOfWork unitOfWork, IPasswordHasher passwordHasher, AccessTokenGenerator tokenGenerator, RefreshTokenGenerator refreshTokenGenerator)
+        private readonly Authenticator _authenticator;
+        private readonly RefreshTokenValidator _refreshTokenValidator;
+
+        public AuthenticationController(UnitOfWork unitOfWork, IPasswordHasher passwordHasher, Authenticator authenticator, RefreshTokenValidator refreshTokenValidator)
         {
             _unitOfWork = unitOfWork;
             _passwordHasher = passwordHasher;
-            _accessTokenGenerator = tokenGenerator;
-            _refreshTokenGenerator = refreshTokenGenerator;
+            _authenticator = authenticator;
+            _refreshTokenValidator = refreshTokenValidator;
         }
 
         [HttpPost("login")]
@@ -38,25 +40,50 @@ namespace cc_api.Controllers
                 return BadRequest();
             }
 
-            var repository = _unitOfWork.UserRepository;
-            var user = await repository.GetByEmail(credentials.Email);
+            var userRepository = _unitOfWork.UserRepository;
+            var user = await userRepository.GetByEmail(credentials.Email);
             bool validUser = user != null;
             bool validPassword = validUser && (_passwordHasher.VerifyPassword(credentials.Password, user.Password));
-
 
             if (!validUser || !validPassword)
             {
                 return Unauthorized();
             }
 
-            string accessToken = _accessTokenGenerator.GenerateToken(user);
-            string refreshToken = _refreshTokenGenerator.GenerateToken(user);
+            AuthenticatedUserResponse response = _authenticator.Authenticate(user);
+            return Ok(response);
+        }
 
-            return Ok(new LoginSuccessResponse()
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] RefreshRequest request)
+        {
+            if (!ModelState.IsValid)
             {
-               AccessToken = accessToken,
-               RefreshToken = refreshToken
-            });
+                return BadRequest();
+            }
+
+            bool isValidRefreshToken = _refreshTokenValidator.Validate(request.RefreshToken);
+            if (!isValidRefreshToken)
+            {
+                return BadRequest();
+            }
+
+            var refreshTokenRepository = _unitOfWork.RefreshTokenRepository;
+            RefreshToken refreshTokenDto = await refreshTokenRepository.GetByToken(request.RefreshToken);
+            if (refreshTokenDto == null)
+            {
+                return NotFound();
+            }
+
+            var userRepository = _unitOfWork.UserRepository;
+            User user = userRepository.GetByPrimaryKey(refreshTokenDto.UserId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            AuthenticatedUserResponse response = _authenticator.Authenticate(user);
+            return Ok(response);
         }
     }
 }

@@ -6,16 +6,19 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Text;
+using cc_api.Services.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddScoped<UnitOfWork>();
+builder.Services.AddScoped<Authenticator>();
 builder.Services.AddSingleton<IPasswordHasher, BCryptPasswordHasher>();
 builder.Services.AddSingleton<GenericTokenGenerator>();
-builder.Services.AddSingleton<RefreshTokenGenerator>();
 builder.Services.AddSingleton<AccessTokenGenerator>();
+builder.Services.AddSingleton<RefreshTokenGenerator>();
+builder.Services.AddSingleton<RefreshTokenValidator>();
 
 AuthenticationConfiguration authConfig = new AuthenticationConfiguration();
 builder.Configuration.Bind("Authentication", authConfig);
