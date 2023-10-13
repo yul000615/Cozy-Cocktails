@@ -36,10 +36,10 @@ function Login() {
 
     // Send a POST request to the backend for login
     try {
-      const response = await fetch("/cc-api/Controllers/AuthericationController", {
+      const response = await fetch("https://localhost:7268/api/Authentication/login", {
         method: "POST",
         headers: {
-          "Content-type": "application.json",
+          "Content-type": "application/json",
         },
         body: JSON.stringify({ email, password }),
       });
@@ -47,6 +47,7 @@ function Login() {
       if (response.ok) {
         // Handle success (e.g., set a flag for successful login)
         setIsSuccessfulLogin(true);
+        console.log(response.json())
       } else {
         // Handle errors (e.g., display an error message)
         const data = await response.json();
@@ -81,11 +82,11 @@ function Login() {
         <div className="LoginFields">
           <ErrorMessages error={error} />
           <label className="entryField">
-            Email: <input name="userEmail" value={email} onChange={(e) => setEmail(e.target.value)} />
+            Email: <input type="email" name="userEmail" value={email} onChange={(e) => setEmail(e.target.value)} />
           </label>
           <br />
           <label className="entryField">
-            Password: <input name="userPassword" value={password} onChange={(e) => setPassword(e.target.value)} />
+            Password: <input type="password" name="userPassword" value={password} onChange={(e) => setPassword(e.target.value)} />
           </label>
           <br />
           <div className="remember-forgot">
