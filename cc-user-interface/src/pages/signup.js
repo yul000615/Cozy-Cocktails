@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { Link } from 'react-router-dom';
-import './signup.css';
 
 Modal.setAppElement('#root');
 
