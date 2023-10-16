@@ -5,5 +5,6 @@ namespace cc_api.DAL
     public interface IUserRepository : IGenericRepository<User>
     {
         Task<User> GetByEmail(string email);
+        Task<bool> EmailExists(string email);
     }
 }
