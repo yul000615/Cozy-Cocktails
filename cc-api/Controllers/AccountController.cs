@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace cc_api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/account")]
     public class AccountController : ControllerBase
     {
         private readonly UnitOfWork _unitOfWork;
