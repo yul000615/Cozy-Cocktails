@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace cc_api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/account")]
     public class AccountController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -19,7 +19,7 @@ namespace cc_api.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] UserDto model)
+        public async Task<IActionResult> Register([FromBody] RegistrationRequest model)
         {
             if (!ModelState.IsValid)
             {
@@ -34,7 +34,6 @@ namespace cc_api.Controllers
             var user = new User()
             {
                 Email = model.Email,
-                // Store the password directly (not recommended for production)
                 Password = model.Password
             };
 
@@ -58,7 +57,6 @@ namespace cc_api.Controllers
         public string Email { get; set; }
 
         [Required]
-        [StringLength(100, MinimumLength = 6)]
         public string Password { get; set; }
     }
 }
