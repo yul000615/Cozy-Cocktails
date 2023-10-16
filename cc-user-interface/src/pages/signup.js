@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { Link } from 'react-router-dom';
-import './signup.css'
+import './signup.css';
+
+Modal.setAppElement('#root');
 
 function ErrorMessages({ error }) {
   if (!error) {
@@ -11,10 +13,11 @@ function ErrorMessages({ error }) {
   }
 }
 
-function SignUp() {
+export const SignUp = (props) =>{
   const [error, setError] = useState('');
   const [apiError, setApiError] = useState(null);
   const [apiSuccess, setApiSuccess] = useState(false);
+  
   const [first, setFirst] = useState('');
   const [last, setLast] = useState('');
   const [email, setEmail] = useState('');
@@ -22,62 +25,63 @@ function SignUp() {
   const [existingEmail, setExistingEmail] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
-  async function registerClick() {
+
+  const formData = {
+    email,
+    password,
+  };
+
+  const registerClick = async (e) => {
+    e.preventDefault();
+    console.log("Email: ", email);
+    console.log("Password: ", password);
+
+    var hasAt = /@/;
     var hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
     var hasNumber = /\d/;
 
     if (first.length === 0 || last.length === 0 || email.length === 0 || password.length === 0) {
       setError('All values must be filled');
+    } else if (!hasAt.test(email)) {
+      setError('Enter a proper email');
     } else if (password.length >= 64) {
       setError('Password must be less than 64 characters');
     } else if (!hasSpecial.test(password) || !hasNumber.test(password)) {
       setError('Password must contain a special character and a number');
+    } else if (existingEmail) {
+      setError('Email is already linked to an account');
     } else {
-       // Sending fetch request to connect frontend and backend
-       const formData = {
-         email,
-         password,
-         first,
-         last
-         // Include other relevant fields in formData
-       };
- 
-       try {
-         const response = await fetch("https://localhost:7268/api/Account/register", {
-           method: "POST",
-           headers: {
-             "Content-type": "application/json",
-           },
-           body: JSON.stringify(formData),
-         });
- 
-         if (response.ok) {
-           // Handle success
-           setApiSuccess(true);
-           setModalOpen(true);
-         } else {
-           // Handle errors
-           console.log(response)
-           const data = await response.json();
-           setApiError(data.error || "An error occurred during registration.");
-         }
-       } catch (error) {
-         // Handle network errors
-         console.error("Network error:", error);
-         setApiError("Network error occurred.");
-       }
- 
-       if (existingEmail) {
-         setError('Email is already linked to an account');
-       } else {
-         setError('');
-    }
+      setError('');
+
+      try {
+        const response = await fetch("/api/Account/register", {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (response.ok) {
+          // Handle success
+          setApiSuccess(true);
+          setModalOpen(true);
+        } else {
+          // Handle errors
+          const data = await response.json();
+          setApiError(data.error || "An error occurred during registration.");
+        }
+      } catch (error) {
+        console.error("Network error:", error);
+        setApiError("Network error occurred.");
+      }
     }
   }
 
   function closeModal() {
     setModalOpen(false);
   }
+
 
   return (
     <div className="SignUpPage">
@@ -87,21 +91,21 @@ function SignUp() {
       </div>
       <ErrorMessages error={error || apiError} />
       <div className="SignUpFields">
-        <label className="entryField">
-          First Name: <input name="userFirstName" value={first} onChange={(e) => setFirst(e.target.value)} />
-        </label>
+        <label htmlFor="name" className="entryField"></label>
+          First Name: <input name="first" value={first} onChange={(e) => setFirst(e.target.value)} 
+          type="first" id="first" />
         <br />
-        <label className="entryField">
-          Last Name: <input name="userLastName" value={last} onChange={(e) => setLast(e.target.value)} />
-        </label>
+        <label htmlFor="name" className="entryField"></label>
+          Last Name: <input name="last" value={last} onChange={(e) => setLast(e.target.value)} 
+          type="last" id="last" />
         <br />
-        <label className="entryField">
-          Email: <input name="userEmail" value={email} onChange={(e) => setEmail(e.target.value)} />
-        </label>
+        <label htmlFor="email" className="entryField"></label>
+          Email: <input name="email" onChange={(e) => setEmail(e.target.value)} 
+          type="email" id="email" />
         <br />
-        <label className="entryField">
-          Password: <input name="userPassword" value={password} onChange={(e) => setPassword(e.target.value)} />
-        </label>
+        <label htmlFor="password" className="entryField"></label>
+          Password: <input name="password" value={password} onChange={(e) => setPassword(e.target.value)} 
+          type="password" id="password" />
         <br />
         <button className='registerBtn' onClick={registerClick}>Register</button>
         <Modal isOpen={modalOpen} onRequestClose={closeModal} className="Modal">

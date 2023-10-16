@@ -3,8 +3,6 @@ using cc_api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace cc_api.Controllers
@@ -13,61 +11,41 @@ namespace cc_api.Controllers
     [Route("api/[controller]")]
     public class AccountController : ControllerBase
     {
-        private readonly CozyCocktailsContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AccountController(CozyCocktailsContext context)
+        public AccountController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] UserDto model)
+        public async Task<IActionResult> Register([FromBody] RegistrationRequest model)
         {
+            Console.WriteLine("Received data from the frontend:");
+            Console.WriteLine($"First Name: {model.FirstName}");
+            Console.WriteLine($"Last Name: {model.LastName}");
+            Console.WriteLine($"Email: {model.Email}");
+            Console.WriteLine($"Password: {model.Password}");
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (await EmailExists(model.Email))
+            if (await _unitOfWork.Users.EmailExists(model.Email))
             {
                 return BadRequest("Email is already registered.");
             }
 
             var user = new User()
             {
- 
                 Email = model.Email,
-                // Store the password directly (not recommended for production)
                 Password = model.Password
             };
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            return Ok("User registered successfully");
+            _unitOfWork.Users.Add(user);
+            await _unitOfWork.SaveChangesAsync();
+            return Ok($"User {model.FirstName} {model.LastName} with email {model.Email} registered successfully");
         }
-
-        private async Task<bool> EmailExists(string email)
-        {
-            return await _context.Users.AnyAsync(u => u.Email == email);
-        }
-    }
-
-    public class UserDto
-    {
-        [Required]
-        public string FirstName { get; set; }
-
-        [Required]
-        public string LastName { get; set; }
-
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
-
-        [Required]
-        [StringLength(100, MinimumLength = 6)]
-        public string Password { get; set; }
     }
 }
-
