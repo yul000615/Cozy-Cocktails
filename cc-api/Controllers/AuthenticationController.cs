@@ -88,5 +88,12 @@ namespace cc_api.Controllers
             AuthenticatedUserResponse response = _authenticator.Authenticate(user);
             return Ok(response);
         }
+
+        [Authorize(Roles ="Admin")]
+        [HttpPost("CheckAdmin")]
+        public IActionResult CheckAdmin()
+        {
+            return Ok();
+        }
     }
 }
