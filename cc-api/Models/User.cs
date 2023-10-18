@@ -19,6 +19,8 @@ public partial class User
 
     public virtual ICollection<Recipe> Recipes { get; set; } = new List<Recipe>();
 
+    public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
+
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 
     public virtual ICollection<UserBarIngredient> UserBarIngredients { get; set; } = new List<UserBarIngredient>();

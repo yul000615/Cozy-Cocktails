@@ -1,64 +1,50 @@
 using cc_api.DAL;
 using cc_api.Models;
+using cc_api.Models.Requests;
+using cc_api.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
 
 namespace cc_api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/account")]
     public class AccountController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly UnitOfWork _unitOfWork;
+        private readonly IPasswordHasher _passwordHasher;
 
-        public AccountController(IUnitOfWork unitOfWork)
+        public AccountController(UnitOfWork unitOfWork, IPasswordHasher passwordHasher)
         {
             _unitOfWork = unitOfWork;
+            _passwordHasher = passwordHasher;
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] UserDto model)
+        public async Task<IActionResult> Register([FromBody] RegistrationRequest model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (await _unitOfWork.Users.EmailExists(model.Email))
+            var userRepository = _unitOfWork.UserRepository;
+            if (await userRepository.EmailExists(model.Email))
             {
                 return BadRequest("Email is already registered.");
             }
 
             var user = new User()
             {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
                 Email = model.Email,
-                // Store the password directly (not recommended for production)
-                Password = model.Password
+                Password = _passwordHasher.HashPassword(model.Password)
             };
 
-            _unitOfWork.Users.Add(user);
-            await _unitOfWork.SaveChangesAsync();
+            userRepository.Insert(user);
+            _unitOfWork.Save();
 
             return Ok("User registered successfully");
         }
-    }
-
-    public class RegistrationRequest
-    {
-        [Required]
-        public string FirstName { get; set; }
-
-        [Required]
-        public string LastName { get; set; }
-
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
-
-        [Required]
-        [StringLength(100, MinimumLength = 6)]
-        public string Password { get; set; }
     }
 }

@@ -3,21 +3,27 @@ import { Link } from 'react-router-dom';
 
 function Home() {
   return (
-    <div className="HomePage">
-      <div className="WelcomeHeader">
+    <header>
+      <div className="homePage"> 
         <nav className="navigation">
-          <a href="#">Home</a>
-          <a href="#">About</a>
-          <a href="#">Services</a>
-          <a href="#">Contact</a>
-        </nav>
-        <div className="loginButtons">
-          <Link to="/signup"><button className="signUpButton">Sign Up</button></Link>
-          <Link to="/createRecipe"><button class="createButton">Create Recipe</button></Link>
-          <Link to="/login"><button className="loginButton">Log In</button></Link>
-        </div>
-      </div>
+          <div class="logo"> <p>Cozy Cocktails</p>
+          </div>
+          <div class="navigationMenu">
+            <ul>
+              <li><a href="#" class="link active">Home</a></li>
+              <li><a href="#" class="link">About</a></li>
+              <li><a href="#" class="link">Services</a></li>
+              <li><a href="#" class="link">Contact</a></li>
+            </ul>
+          </div>
+
+          <div class="navigationButton">
+            <Link to="/signup"><button className="button" id="loginBtn">Sign Up</button></Link>
+            <Link to="/login"><button className="button" id="signupBtn">Log In</button></Link>
+          </div>
+      </nav>
     </div>
+    </header>
   );
 }
 

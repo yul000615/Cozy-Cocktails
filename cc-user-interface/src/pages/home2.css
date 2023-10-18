@@ -1,12 +1,4 @@
-body {
-    background-image: url('background.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    margin: 0;
-    overflow: hidden;
-    min-height: 100vh; 
-}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
 * {
     margin: 0;
@@ -15,74 +7,81 @@ body {
     font-family: 'Poppins', sans-serif;
 }
 
-.createButton, 
-.myAccountButton {
-  width: 130px;
-  height: 30px;
-  text-align: center;
-  background: #442907;
-  border: none;
-  outline: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1em;
-  color: #fff;
-  font-weight: 500;
-  margin-left: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+body {
+    min-height: 100vh;
+    background: url('background.jpg') no-repeat;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    overflow: hidden;
 }
 
-.loginButtons {
-  display: flex;
-  align-items: center; /* Align buttons vertically in the same row */
+.homePage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 110vh;
 }
 
-.createButton {
-  margin-right: 10px; /* Add margin to create space between buttons */
+.navigation {
+    position: fixed;
+    top: 0;
+    display: flex;
+    justify-content: space-around;
+    text-decoration: none;
+    height: 100px;
+    line-height: 100px;
+    width: 100%;
+    z-index: 100;
 }
 
+.logo p{
+    font-size: 2em;
+    color: #36332d;
+    user-select: none;
+    font-weight: 600;
+    padding: 5px;
+}
 
-.navigation a {
-    position: relative;
-    font-size: 1.1em;
-    color: #442907;
+.navigationMenu ul{
+    display: flex;
+    padding: 5px;
+}
+
+.navigationMenu ul li{
+    list-style-type: none;
+}
+
+.navigationMenu ul li .link{
     text-decoration: none;
     font-weight: 500;
-    margin-right: 20px;
+    color: #4f483f;
+    padding-bottom: 7px;
+    margin: 0 25px;
 }
 
-.navigation a::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -6px;
-    width: 100%;
-    height: 3px;
-    background: #442907;
-    border-radius: 5px;
-    transform-origin: right;
-    transform: scaleX(0);
-    transition: transform .5s;
+.link:hover, .active{
+    border-bottom: 2px solid #4f483f;
 }
 
-.navigation a:hover::after {
-    transform-origin: left;
-    transform: scaleX(1);
-}
-
-.navigation .btnLogin-popup {
+.navigationButton .button{
     width: 130px;
-    height: 50px;
+    height: 40px;
     background: transparent;
-    border: 2px solid #442907;
+    border: 2px solid #4f483f;
     outline: none;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 1.1em;
-    color: #442907;
+    font-size: 1em;
     font-weight: 500;
-    margin-left: 40px;
-    transition: .5s;
+    color: #4f483f;
+}
+
+.button:hover {
+    background: #e2d3c4;
+    color: #4f483f;
+}
+
+.nav-menu-btn{
+    display: none;
 }
