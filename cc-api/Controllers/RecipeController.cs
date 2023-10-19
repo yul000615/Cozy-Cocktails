@@ -27,19 +27,23 @@ namespace cc_api.Controllers
             IEnumerable<RecipeIngredient> recipeIngredients = await recipeIngredient.GetByRecipeID(recipeID);
 
             double total_vol = 0.0;
-            double avg_ingred_abv = 0.0;
-            int vol_ingred_count = 0;
+            double alcohol_vol = 0.0;
+            /* Must be updated to account for dilution resulting from ice and mixing process */
+            /* Mixing method, shaken, stirred, over ice, etc, must be added to recipe model */
             foreach (RecipeIngredient ri in recipeIngredients)
             {
-                if (ri.QuantityDescription.Equals("oz"))
+                switch (ri.QuantityDescription)
                 {
-                    total_vol += ri.Quantity;
-                    avg_ingred_abv += ingredient.GetByPrimaryKey(ri.IngredientName).AlcoholByVolume;
-                    vol_ingred_count++;
+                    case "oz":
+                        alcohol_vol += ri.Quantity * ingredient.GetByPrimaryKey(ri.IngredientName).AlcoholByVolume;
+                        total_vol += ri.Quantity;
+                        break;
+                    default:
+                        break;
                 }
             }
 
-            return total_vol * (avg_ingred_abv / vol_ingred_count);
+            return alcohol_vol / total_vol * 100;
         }
 
         [HttpGet("display")]
