@@ -49,7 +49,7 @@ export const SignUp = (props) => {
 
 
       try {
-        const response = await fetch("http://localhost:7268/api/Account/register", {
+        const response = await fetch("https://localhost:7268/api/Account/register", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
