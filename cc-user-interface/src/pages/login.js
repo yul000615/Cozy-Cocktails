@@ -19,6 +19,20 @@ function Login() {
 
   const location = useLocation(); // Get the current location
 
+  async function refreshClick() {
+    try {
+      const response = await fetch("https://localhost:7268/api/Authentication/refresh", {
+        method: "POST",
+        credentials: "include"
+      });
+      console.log(response.json())
+    } catch (error) {
+      // Handle network errors
+      console.error("Network error:", error);
+      setError("Network error occurred.");
+    }
+  }
+
   async function loginClick() {
     // Validate user input
     if (email.length === 0 || password.length === 0) {
@@ -41,6 +55,7 @@ function Login() {
         headers: {
           "Content-type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({ email, password }),
       });
 
@@ -72,6 +87,7 @@ function Login() {
           <Link to={location.pathname === '/home2' ? '/myAccount' : '/home2'}>
             {location.pathname === '/home2' ? 'My Account' : 'Homepage 2'}
           </Link>
+          <button onClick={refreshClick}>Test Refresh</button>
         </div>
       ) : (
         <div className="LoginWelcome">

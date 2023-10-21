@@ -86,6 +86,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+var origin = builder.Configuration["Authentication:Audience"];
+app.UseCors(builder => builder.SetIsOriginAllowed((origin) => true).AllowAnyHeader().AllowAnyMethod().AllowCredentials());
 
 app.Run();
