@@ -25,6 +25,7 @@ namespace cc_api.Controllers
         {
             try
             {
+                System.Diagnostics.Debug.WriteLine("Trying to register");
                 if (!ModelState.IsValid)
                 {
                     return BadRequest("Invalid data");
@@ -51,7 +52,10 @@ namespace cc_api.Controllers
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine("Error Occurred");
+                System.Diagnostics.Debug.WriteLine( ex );
                 return StatusCode(500, "An error occurred during registration.");
+
             }
         }
     }
