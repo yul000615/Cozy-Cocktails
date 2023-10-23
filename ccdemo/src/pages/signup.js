@@ -1,8 +1,7 @@
-const React = require('react');
-const { useState } = require('react');
-const Modal = require('react-modal');
-const { Link } = require('react-router-dom');
-require('./signup.css');
+import {useState} from 'react'
+import Modal from 'react-modal'
+import { Link } from 'react-router-dom'
+import './signup.css'
 
 Modal.setAppElement('#root');
 
