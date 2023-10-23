@@ -37,19 +37,18 @@ export const SignUp = (props) => {
     if (first.length === 0 || last.length === 0 || email.length === 0 || password.length === 0) {
       setError('All values must be filled');
     } else if (!emailValidation.test(email)) {
-      setError('Enter a proper email');
+      setError('Please enter a valid email address');
     } else if (password.length > 64) {
       setError('Password must be less than 64 characters');
     } else if (!passwordValidation.test(password)) {
       setError('Password must contain a special character and a number');
     } else if (existingEmail) {
-      setError('Email is already linked to an account');
+      setError('The provided email is already registered');
     } else {
       setError('');
 
-
       try {
-        const response = await fetch("https://localhost:7268/api/Account/register", {
+        const response = await fetch("http://localhost:5164/api/Account/register", {  //MAKE SURE TO CHANGE THE URL ACCORDING TO SWAGGER AFTER RUNNING BACKEND 
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -61,6 +60,7 @@ export const SignUp = (props) => {
             Password: password,
           }),
         });
+        console.log(response);
   
         if (!response.ok) {
           const errorMessage = `HTTP error! Status: ${response.status}`;
@@ -68,13 +68,14 @@ export const SignUp = (props) => {
           console.error(errorMessage, errorResponse); 
           throw new Error(errorMessage);
         }
+        const responseData = await response.text();
+        console.log("Response Data:", responseData);
   
-        const data = await response.json();
         setApiSuccess(true);
         setModalOpen(true);
       } catch (error) {
         console.error('Error during fetch:', error);
-        setApiError("A network error occurred.");
+        setApiError("A network error occurred. Please try again later.");
         setModalOpen(true);
       }
     };
@@ -83,7 +84,6 @@ export const SignUp = (props) => {
   function closeModal() {
     setModalOpen(false);
   }
-
 
   return (
     <div className="SignUpPage">
@@ -94,19 +94,19 @@ export const SignUp = (props) => {
       <ErrorMessages error={error || apiError} />
       <div className="SignUpFields">
         <label htmlFor="name" className="entryField"></label>
-          First Name: <input name="firstName" value={first} onChange={(e) => setFirst(e.target.value)}
+          First Name: <input name="first" value={first} onChange={(e) => setFirst(e.target.value)} 
           type="first" id="first" />
         <br />
         <label htmlFor="name" className="entryField"></label>
-          Last Name: <input name="lastName" value={last} onChange={(e) => setLast(e.target.value)}
+          Last Name: <input name="last" value={last} onChange={(e) => setLast(e.target.value)} 
           type="last" id="last" />
         <br />
         <label htmlFor="email" className="entryField"></label>
-          Email: <input name="email" onChange={(e) => setEmail(e.target.value)}
+          Email: <input name="email" onChange={(e) => setEmail(e.target.value)} 
           type="email" id="email" />
         <br />
         <label htmlFor="password" className="entryField"></label>
-          Password: <input name="password" value={password} onChange={(e) => setPassword(e.target.value)}
+          Password: <input name="password" value={password} onChange={(e) => setPassword(e.target.value)} 
           type="password" id="password" />
         <br />
         <button className='registerBtn' onClick={registerClick}>Register</button>
