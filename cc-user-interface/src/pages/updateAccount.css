@@ -1,0 +1,53 @@
+.updatePage {
+    text-align: center;
+    transform: translate(-50%, -60%);
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+
+.submitButton {
+    margin: 10px;
+}
+
+.welcomeHeader {
+    padding: 30px;
+}
+
+.errorMessage {
+    color: red;
+    align-self: center;
+}
+
+.entryFields * {
+    margin: 10px;
+}
+
+
+
+body.activeModal{
+    overflow-y: hidden;
+}
+
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border: 1px solid #ccc;
+    padding: 40px;
+    z-index: 1000;
+    border-radius: 10px;
+    width: 400px; /* adjust width as needed */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.content {
+    text-align: center;
+}
+
+.close-modal {
+    margin-top: 20px;
+}
