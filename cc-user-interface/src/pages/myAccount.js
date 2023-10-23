@@ -46,7 +46,7 @@ function MyAccount() {
             <button className="myAccountButton">Delete My Account</button>
           </div>
           <div className="myAccountButtonContainer">
-            <button className="myAccountButton">Update Account Information</button>
+            <Link to='/updateAccount'><button className="myAccountButton">Update Account Information</button></Link>
           </div>
           <div className="myAccountButtonContainer">
             <button className="myAccountButton">Download My Data</button>

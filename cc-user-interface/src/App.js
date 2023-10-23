@@ -6,6 +6,7 @@ import SignUp from './pages/signup';
 import Login from './pages/login';
 import MyAccount from './pages/myAccount';
 import CreateRecipe from './pages/createRecipe';
+import UpdateAccount from './pages/updateAccount';
 import { BrowserRouter as Router, Routes, Route }
     from 'react-router-dom';
 
@@ -19,6 +20,7 @@ function App() {
             <Route exact path='/signup' element={<SignUp />} />
             <Route exact path='/myAccount' element={<MyAccount />} />
             <Route exact path='/createRecipe' element={<CreateRecipe />} /> 
+            <Route exact path='/updateAccount' element={<UpdateAccount />} /> 
         </Routes>
     </Router>
   );

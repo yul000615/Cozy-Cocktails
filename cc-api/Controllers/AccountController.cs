@@ -3,11 +3,12 @@ using cc_api.Models;
 using cc_api.Models.Requests;
 using cc_api.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace cc_api.Controllers
 {
     [ApiController]
-    [Route("api/account")]
+    [Route("api/[controller]")]
     public class AccountController : ControllerBase
     {
         private readonly UnitOfWork _unitOfWork;
@@ -22,29 +23,40 @@ namespace cc_api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegistrationRequest model)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                System.Diagnostics.Debug.WriteLine("Trying to register");
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest("Invalid data");
+                }
+
+                var userRepository = _unitOfWork.UserRepository;
+                if (await userRepository.EmailExists(model.Email))
+                {
+                    return BadRequest("Email is already registered.");
+                }
+
+                var user = new User()
+                {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Email = model.Email,
+                    Password = _passwordHasher.HashPassword(model.Password)
+                };
+
+                userRepository.Insert(user);
+                _unitOfWork.Save();
+
+                return Ok("User registered successfully");
             }
-
-            var userRepository = _unitOfWork.UserRepository;
-            if (await userRepository.EmailExists(model.Email))
+            catch (Exception ex)
             {
-                return BadRequest("Email is already registered.");
+                System.Diagnostics.Debug.WriteLine("Error Occurred");
+                System.Diagnostics.Debug.WriteLine( ex );
+                return StatusCode(500, "An error occurred during registration.");
+
             }
-
-            var user = new User()
-            {
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Email = model.Email,
-                Password = _passwordHasher.HashPassword(model.Password)
-            };
-
-            userRepository.Insert(user);
-            _unitOfWork.Save();
-
-            return Ok("User registered successfully");
         }
     }
 }

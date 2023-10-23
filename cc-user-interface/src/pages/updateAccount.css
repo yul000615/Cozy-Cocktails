@@ -1,0 +1,25 @@
+.updatePage {
+    text-align: center;
+    transform: translate(-50%, -60%);
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+
+.submitButton {
+    margin: 10px;
+}
+
+.welcomeHeader {
+    padding: 30px;
+}
+
+.errorMessage {
+    color: red;
+    align-self: center;
+}
+
+.entryFields * {
+    margin: 10px;
+}

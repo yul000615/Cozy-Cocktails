@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import Modal from 'react-modal';
-import { Link } from 'react-router-dom';
+
+import {useState} from 'react'
+import Modal from 'react-modal'
+import { Link } from 'react-router-dom'
 import './signup.css'
 
 Modal.setAppElement('#root');
@@ -13,7 +14,7 @@ function ErrorMessages({ error }) {
   }
 }
 
-export const SignUp = (props) =>{
+export const SignUp = (props) => {
   const [error, setError] = useState('');
   const [apiError, setApiError] = useState(null);
   const [apiSuccess, setApiSuccess] = useState(false);
@@ -25,63 +26,64 @@ export const SignUp = (props) =>{
   const [existingEmail, setExistingEmail] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
-
-  const formData = {
-    email,
-    password,
-  };
-
   const registerClick = async (e) => {
     e.preventDefault();
     console.log("Email: ", email);
     console.log("Password: ", password);
 
-    var hasAt = /@/;
-    var hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
-    var hasNumber = /\d/;
+    var emailValidation = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
+    var passwordValidation = /^(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])(?=.*\d).*$/;
 
     if (first.length === 0 || last.length === 0 || email.length === 0 || password.length === 0) {
       setError('All values must be filled');
-    } else if (!hasAt.test(email)) {
-      setError('Enter a proper email');
-    } else if (password.length >= 64) {
+    } else if (!emailValidation.test(email)) {
+      setError('Please enter a valid email address');
+    } else if (password.length > 64) {
       setError('Password must be less than 64 characters');
-    } else if (!hasSpecial.test(password) || !hasNumber.test(password)) {
+    } else if (!passwordValidation.test(password)) {
       setError('Password must contain a special character and a number');
     } else if (existingEmail) {
-      setError('Email is already linked to an account');
+      setError('The provided email is already registered');
     } else {
       setError('');
 
       try {
-        const response = await fetch("/api/Account/register", {
+        const response = await fetch("http://localhost:5164/api/Account/register", {
           method: "POST",
           headers: {
-            "Content-type": "application/json",
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify({
+            FirstName: first,
+            LastName: last,
+            Email: email,
+            Password: password,
+          }),
         });
-
-        if (response.ok) {
-          // Handle success
-          setApiSuccess(true);
-          setModalOpen(true);
-        } else {
-          // Handle errors
-          const data = await response.json();
-          setApiError(data.error || "An error occurred during registration.");
+        console.log(response);
+  
+        if (!response.ok) {
+          const errorMessage = `HTTP error! Status: ${response.status}`;
+          const errorResponse = await response.text(); 
+          console.error(errorMessage, errorResponse); 
+          throw new Error(errorMessage);
         }
+        const responseData = await response.text();
+        console.log("Response Data:", responseData);
+  
+        setApiSuccess(true);
+        setModalOpen(true);
       } catch (error) {
-        console.error("Network error:", error);
-        setApiError("Network error occurred.");
+        console.error('Error during fetch:', error);
+        setApiError("A network error occurred. Please try again later.");
+        setModalOpen(true);
       }
-    }
+    };
   }
 
   function closeModal() {
     setModalOpen(false);
   }
-
 
   return (
     <div className="SignUpPage">
