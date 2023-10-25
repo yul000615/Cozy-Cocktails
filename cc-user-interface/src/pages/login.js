@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import Modal from 'react-modal';
+import React, { useState, useContext } from 'react';
+import AppContext from '../AppContext';
 import { Link, useLocation } from 'react-router-dom';
 
 function ErrorMessages({ error }) {
@@ -14,37 +14,14 @@ function Login() {
   const [error, setError] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [modalOpen, setModalOpen] = useState(false);
   const [isSuccessfulLogin, setIsSuccessfulLogin] = useState(false);
-
+  const context = useContext(AppContext);
   const location = useLocation(); // Get the current location
-
-  async function refreshClick() {
-    try {
-      const response = await fetch("https://localhost:7268/api/Authentication/refresh", {
-        method: "POST",
-        credentials: "include"
-      });
-      console.log(response.json())
-    } catch (error) {
-      // Handle network errors
-      console.error("Network error:", error);
-      setError("Network error occurred.");
-    }
-  }
 
   async function loginClick() {
     // Validate user input
-    if (email.length === 0 || password.length === 0) {
+    if (!isInputValid()) {
       setError('All values must be filled');
-      return;
-    }
-
-    setError('');
-
-    // Check for the exception
-    if (email === "abc@gmail.com" && password === "abc1!") {
-      setIsSuccessfulLogin(true);
       return;
     }
 
@@ -59,24 +36,23 @@ function Login() {
         body: JSON.stringify({ email, password }),
       });
 
+      const data = await response.json();
+
       if (response.ok) {
-        // Handle success (e.g., set a flag for successful login)
+        context.setAccessToken(data.accessToken);
         setIsSuccessfulLogin(true);
-        console.log(response.json())
       } else {
-        // Handle errors (e.g., display an error message)
-        const data = await response.json();
         setError(data.error || "Invalid credentials");
       }
     } catch (error) {
-      // Handle network errors
-      console.error("Network error:", error);
       setError("Network error occurred.");
     }
   }
 
-  function closeModal() {
-    setModalOpen(false);
+  function isInputValid() {
+    const isEmailEmpty = email.length === 0;
+    const isPasswordEmpty = password.length === 0;
+    return (isEmailEmpty || isPasswordEmpty) ? false : true;
   }
 
   return (
@@ -87,7 +63,6 @@ function Login() {
           <Link to={location.pathname === '/home2' ? '/myAccount' : '/home2'}>
             {location.pathname === '/home2' ? 'My Account' : 'Homepage 2'}
           </Link>
-          <button onClick={refreshClick}>Test Refresh</button>
         </div>
       ) : (
         <div className="LoginWelcome">
@@ -109,19 +84,6 @@ function Login() {
             <a href="#">Forgot Password?</a>
           </div>
           <button className='registerBtn' onClick={loginClick}>Submit</button>
-          <Modal isOpen={modalOpen} onRequestClose={closeModal} className="Modal">
-            {isSuccessfulLogin ? (
-              <div>
-                <h2>Login Successful!</h2>
-                <br />
-                <Link to={location.pathname === '/home2' ? '/myAccount' : '/home2'}>
-                  {location.pathname === '/home2' ? 'My Account' : 'Homepage 2'}
-                </Link>
-              </div>
-            ) : (
-              <h2>Login Error</h2>
-            )}
-          </Modal>
         </div>
       )}
     </div>

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useState} from 'react'; 
+import AppContext from './AppContext';
 import './App.css';
 import Home from './pages/home';
 import Home2 from './pages/home2';
@@ -10,20 +11,51 @@ import UpdateAccount from './pages/updateAccount';
 import { BrowserRouter as Router, Routes, Route }
     from 'react-router-dom';
 
-function App() {
-  return (
-    <Router>
-        <Routes>
-            <Route exact path='/' element={<Home />} />
-            <Route exact path='/home2' element={<Home2 />} />
-            <Route exact path='/login' element={<Login />} />
-            <Route exact path='/signup' element={<SignUp />} />
-            <Route exact path='/myAccount' element={<MyAccount />} />
-            <Route exact path='/createRecipe' element={<CreateRecipe />} /> 
-            <Route exact path='/updateAccount' element={<UpdateAccount />} /> 
-        </Routes>
-    </Router>
-  );
-}
+    function App() {
+      const [accessToken, setAccessToken] = useState('no token.')
+    
+      const tokenHandler = {
+        token: accessToken,
+        setAccessToken,
+        refresh
+      }
 
-export default App;
+      async function refresh() {
+        try {
+          const response = await fetch("https://localhost:7268/api/Authentication/login", {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json",
+            },
+            credentials: "include",
+          });
+    
+          const data = await response.json();
+    
+          if (response.ok) {
+            context.setAccessToken(data.accessToken);
+          } else {
+            context.setAccessToken('');
+          }
+        } catch (error) {
+        }
+      }
+    
+      return (
+        <AppContext.Provider value={tokenHandler}>
+          <Router>
+            <Routes>
+                <Route exact path='/' element={<Home />} />
+                <Route exact path='/home2' element={<Home2 />} />
+                <Route exact path='/login' element={<Login />} />
+                <Route exact path='/signup' element={<SignUp />} />
+                <Route exact path='/myAccount' element={<MyAccount />} />
+                <Route exact path='/createRecipe' element={<CreateRecipe />} /> 
+                <Route exact path='/updateAccount' element={<UpdateAccount />} /> 
+            </Routes>
+        </Router>
+        </AppContext.Provider>
+      );
+    }
+    
+    export default App;
