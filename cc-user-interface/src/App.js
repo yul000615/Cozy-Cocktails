@@ -33,9 +33,9 @@ import { BrowserRouter as Router, Routes, Route }
           const data = await response.json();
     
           if (response.ok) {
-            context.setAccessToken(data.accessToken);
+            setAccessToken(data.accessToken);
           } else {
-            context.setAccessToken('');
+            setAccessToken('');
           }
         } catch (error) {
         }
