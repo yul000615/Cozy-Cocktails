@@ -51,41 +51,58 @@ namespace cc_api.Controllers
             }
 
             AuthenticatedUserResponse response = _authenticator.Authenticate(user);
+            string refreshToken = _authenticator.CreateAndSaveRefreshToken(user);
+            var cookieOptions = new CookieOptions()
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(10)
+            };
+            
+            Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
             return Ok(response);
         }
 
         [HttpPost("refresh")]
-        public async Task<IActionResult> Refresh([FromBody] RefreshRequest request)
+        public async Task<IActionResult> Refresh()
         {
-            if (!ModelState.IsValid)
+            var refreshToken = Request.Cookies["refreshToken"];
+            if (refreshToken == null)
             {
                 return BadRequest();
             }
 
-            bool isValidRefreshToken = _refreshTokenValidator.Validate(request.RefreshToken);
+            bool isValidRefreshToken = _refreshTokenValidator.Validate(refreshToken);
             if (!isValidRefreshToken)
             {
-                return BadRequest();
+                return Unauthorized();
             }
 
             var refreshTokenRepository = _unitOfWork.RefreshTokenRepository;
-            RefreshToken refreshTokenDto = await refreshTokenRepository.GetByToken(request.RefreshToken);
+            RefreshToken refreshTokenDto = await refreshTokenRepository.GetByToken(refreshToken);
             if (refreshTokenDto == null)
             {
-                return NotFound();
+                return Unauthorized();
             }
 
             var userRepository = _unitOfWork.UserRepository;
             User user = userRepository.GetByPrimaryKey(refreshTokenDto.UserId);
             if (user == null)
             {
-                return NotFound();
+                return Unauthorized();
             }
 
             //Delete used refresh token then generate a new set
             refreshTokenRepository.Delete(refreshTokenDto.TokenId);
             _unitOfWork.Save();
+
             AuthenticatedUserResponse response = _authenticator.Authenticate(user);
+            string newRefreshToken = _authenticator.CreateAndSaveRefreshToken(user);
+            var cookieOptions = new CookieOptions()
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(10)
+            };
+            Response.Cookies.Append("refreshToken", newRefreshToken, cookieOptions);
             return Ok(response);
         }
     }

@@ -20,8 +20,16 @@ namespace cc_api.Services
         public virtual AuthenticatedUserResponse Authenticate(User user)
         {
             string accessToken = _accessTokenGenerator.GenerateToken(user);
-            string refreshToken = _refreshTokenGenerator.GenerateToken(user);
 
+            return new AuthenticatedUserResponse()
+            {
+                AccessToken = accessToken
+            };
+        }
+
+        public virtual string CreateAndSaveRefreshToken(User user)
+        {
+            string refreshToken = _refreshTokenGenerator.GenerateToken(user);
             RefreshToken refreshTokenDto = new RefreshToken()
             {
                 Token = refreshToken,
@@ -31,11 +39,7 @@ namespace cc_api.Services
             tokenRepository.Insert(refreshTokenDto);
             _unitOfWork.Save();
 
-            return new AuthenticatedUserResponse()
-            {
-                AccessToken = accessToken,
-                RefreshToken = refreshToken
-            };
+            return refreshToken;
         }
     }
 }
