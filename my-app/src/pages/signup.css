@@ -1,0 +1,43 @@
+.SignUpPage {
+    text-align: center;
+    transform: translate(-50%, -60%);
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+
+.entryField {
+    padding: 10px;
+    display: inline-block;
+}
+
+.errorMessage {
+    color: red;
+    align-self: center;
+}
+
+.registerBtn {
+    padding: 15px;
+    font-size: 20px;
+    margin-top: 30px;
+}
+
+.SignUpFields {
+    margin-top: 50px;
+}
+
+.Modal {
+    position: absolute;
+    height: 200px;
+    width: 200px;
+    background-color: white;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    align-content: center;
+    display: flex;
+    flex-wrap: wrap;
+    text-align: center;
+    justify-content: center;
+}

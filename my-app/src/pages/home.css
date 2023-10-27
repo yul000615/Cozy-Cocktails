@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: url('background.jpg') no-repeat;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    overflow: hidden;
+}
+
+.homePage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 110vh;
+}
+
+.navigation {
+    position: fixed;
+    top: 0;
+    display: flex;
+    justify-content: space-around;
+    text-decoration: none;
+    height: 100px;
+    line-height: 100px;
+    width: 100%;
+    z-index: 100;
+}
+
+.logo p{
+    font-size: 2em;
+    color: #36332d;
+    user-select: none;
+    font-weight: 600;
+    padding: 5px;
+}
+
+.navigationMenu ul{
+    display: flex;
+    padding: 5px;
+}
+
+.navigationMenu ul li{
+    list-style-type: none;
+}
+
+.navigationMenu ul li .link{
+    text-decoration: none;
+    font-weight: 500;
+    color: #4f483f;
+    padding-bottom: 7px;
+    margin: 0 25px;
+}
+
+.link:hover, .active{
+    border-bottom: 2px solid #4f483f;
+}
+
+.navigationButton .button{
+    width: 130px;
+    height: 40px;
+    background: transparent;
+    border: 2px solid #4f483f;
+    outline: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 500;
+    color: #4f483f;
+    padding: 5px;
+}
+
+.button:hover {
+    background: #e2d3c4;
+    color: #4f483f;
+}
+
+.nav-menu-btn{
+    display: none;
+}
