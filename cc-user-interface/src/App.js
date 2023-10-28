@@ -7,6 +7,7 @@ import Login from './pages/login';
 import MyAccount from './pages/myAccount';
 import CreateRecipe from './pages/createRecipe';
 import UpdateAccount from './pages/updateAccount';
+import Recipes from './pages/recipes';
 import { BrowserRouter as Router, Routes, Route }
     from 'react-router-dom';
 
@@ -21,6 +22,7 @@ function App() {
             <Route exact path='/myAccount' element={<MyAccount />} />
             <Route exact path='/createRecipe' element={<CreateRecipe />} /> 
             <Route exact path='/updateAccount' element={<UpdateAccount />} /> 
+            <Route exact path='/recipes' element={<Recipes />} />
         </Routes>
     </Router>
   );

@@ -46,21 +46,32 @@ namespace cc_api.Controllers
             return alcohol_vol / total_vol * 100;
         }
 
-        [HttpGet("display")]
-        public async Task<IActionResult> Display(long recipeID) /* GetMethod */
+        [HttpGet]
+        public IActionResult GetRecipes()
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            Recipe recipe = _unitOfWork.RecipeRepository.GetByPrimaryKey(recipeID);
+            return Ok(_unitOfWork.RecipeRepository.GetAll());
+        }
+
+        [HttpPost("display")]
+        public async Task<IActionResult> Display([FromBody] DisplayRequest request) /* GetMethod */
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            Recipe recipe = _unitOfWork.RecipeRepository.GetByPrimaryKey(request.ID);
             if (recipe == null)
             {
                 return NotFound();
             }
 
-            double abv = await CalcABVAsync(recipeID);
+            double abv = await CalcABVAsync(request.ID);
 
             return Ok(new DisplayRecipeResponse()
             {
