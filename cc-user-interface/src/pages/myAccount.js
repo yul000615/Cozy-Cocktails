@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './myAccount.css';
+import DeleteAccount from './deleteAccount';
 
 function MyAccount() {
   // Replace with real one later
@@ -43,7 +44,7 @@ function MyAccount() {
             <button className="myAccountButton">Edit Profile Picture</button>
           </div>
           <div className="myAccountButtonContainer">
-            <button className="myAccountButton">Delete My Account</button>
+            <DeleteAccount></DeleteAccount>
           </div>
           <div className="myAccountButtonContainer">
             <Link to='/updateAccount'><button className="myAccountButton">Update Account Information</button></Link>
