@@ -12,6 +12,8 @@ export default function UpdateAccount() {
 
     var passwordMismatch = false;
     const [currentPassword, setCurrentPassword] = useState('');
+    const [currentEmail, setCurrentEmail] = useState('');
+
     const [passwordCorrect, setPasswordCorrect] = useState(false);
     const [email, setEmail] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -80,6 +82,8 @@ export default function UpdateAccount() {
                 <ErrorMessages error={error} />
                 <div className='entryFields'>
                     <label htmlFor="currentPassword" hidden={passwordCorrect}>
+                        Enter email: <input name="email" value={currentEmail} onChange={(e) => setCurrentEmail(e.target.value)}
+                        type="currentEmail" id="currentEmail" />
                         Enter password: <input name="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)}
                         type="currentPassword" id="currentPassword" />
                         <button className="submitButton" onClick={passwordSubmit}>Submit</button>

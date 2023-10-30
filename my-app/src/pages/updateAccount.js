@@ -11,23 +11,48 @@ export default function UpdateAccount() {
     }
 
     var passwordMismatch = false;
+
     const [currentPassword, setCurrentPassword] = useState('');
+    const [currentEmail, setCurrentEmail] = useState('');
+
     const [passwordCorrect, setPasswordCorrect] = useState(false);
+
     const [email, setEmail] = useState('');
     const [newPassword, setNewPassword] = useState('');
+    const [newEmail, setNewEmail] = useState('');
+    const [updateModalOpen, setUpdateModalOpen] = useState(false);
     const [error, setError] = useState('');
     const [modalOpen, setModalOpen] = useState(false);
 
-    function passwordSubmit() {
-        //call into database and check password
-        passwordMismatch = false;
-
-    if (passwordMismatch){
-                setError('password incorrect');
-        } else {
-            setError('');
-            setPasswordCorrect(true);
-        }
+    function verifySubmit() {
+        fetch('https://localhost:7268/api/Authentication/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: currentEmail,
+                password: currentPassword,
+            }),
+        })
+            .then((response) => {
+                if (response.status === 200) {
+                    setUpdateModalOpen(true); // Set updateModalOpen to true when verification is successful
+                    return response.json();
+                } else if (response.status === 401) {
+                    setError('Invalid email or password');
+                    throw new Error('Unauthorized');
+                } else {
+                    setError('An error occurred while verifying credentials');
+                    throw new Error('Verification Error');
+                }
+            })
+            .then((data) => {
+                setPasswordCorrect(true);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     }
 
     function toggleModal() {
@@ -67,6 +92,12 @@ export default function UpdateAccount() {
         }
     }
 
+    if (updateModalOpen) {
+        document.body.classList.add('active-modal');
+    } else {
+        document.body.classList.remove('active-modal');
+    }
+
     if (modalOpen) {
         document.body.classList.add('active-modal');
     } else {
@@ -80,22 +111,47 @@ export default function UpdateAccount() {
                 <ErrorMessages error={error} />
                 <div className='entryFields'>
                     <label htmlFor="currentPassword" hidden={passwordCorrect}>
+                        Enter email: <input name="email" value={currentEmail} onChange={(e) => setCurrentEmail(e.target.value)}
+                        type="currentEmail" id="currentEmail" />
+                        <br />
                         Enter password: <input name="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)}
                         type="currentPassword" id="currentPassword" />
-                        <button className="submitButton" onClick={passwordSubmit}>Submit</button>
-                    </label>
-                    <label htmlFor="email" hidden={!passwordCorrect}>
-                        New email: <input name="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                        type="email" id="email" />
-                    </label>
-                    <br />
-                    <label htmlFor="newPassword" hidden={!passwordCorrect}>
-                        New password: <input name="newPassword" value={newPassword} onChange={(e) => setNewPassword(e.target.value)}
-                        type="newPassword" id="newPassword" />
                         <br />
-                        <button className="submitButton" onClick={updateSubmit}>Update</button>
+                        <button className="submitButton" onClick={verifySubmit}>Submit</button>
                     </label>
-
+    
+                    {updateModalOpen && (
+                        <div className="update-popup">
+                            <div className="overlay" onClick={toggleModal}></div>
+                            <div className="content">
+                                <label htmlFor="newEmail">New email: </label>
+                                <input
+                                    name="newEmail"
+                                    value={newEmail}
+                                    onChange={(e) => setNewEmail(e.target.value)}
+                                    type="email"
+                                    id="newEmail"
+                                />
+                                <br />
+                                <label htmlFor="newPassword">New password: </label>
+                                <input
+                                    name="newPassword"
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    type="password"
+                                    id="newPassword"
+                                />
+                                <br />
+                                <button className="updateButton" onClick={updateSubmit}>
+                                    Update
+                                </button>
+                                <button className="close-modal" onClick={toggleModal}>
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    )}
+    
                     {modalOpen && (
                         <div className="popup">
                             <div className="overlay" onClick={toggleModal}></div>
@@ -103,10 +159,10 @@ export default function UpdateAccount() {
                                 <h1>Updated Successfully!</h1>
                                 <button className="close-modal" onClick={toggleModal}>Close</button>
                             </div>
-                            </div>
+                        </div>
                     )}
                 </div>
             </div>
         </>
     );
-}
+} 

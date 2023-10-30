@@ -30,6 +30,20 @@ body.activeModal{
     overflow-y: hidden;
 }
 
+.Update-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border: 1px solid #ccc;
+    padding: 40px;
+    z-index: 1000;
+    border-radius: 10px;
+    width: 400px; /* adjust width as needed */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 .popup {
     position: fixed;
     top: 50%;
