@@ -1,4 +1,4 @@
-.updatePage {
+.UpdateAccountPage {
     text-align: center;
     transform: translate(-50%, -60%);
     margin: 0;
@@ -7,12 +7,9 @@
     left: 50%;
 }
 
-.submitButton {
-    margin: 10px;
-}
-
-.welcomeHeader {
-    padding: 30px;
+.entryField {
+    padding: 10px;
+    display: inline-block;
 }
 
 .errorMessage {
@@ -20,34 +17,27 @@
     align-self: center;
 }
 
-.entryFields * {
-    margin: 10px;
+.registerBtn {
+    padding: 15px;
+    font-size: 20px;
+    margin-top: 30px;
 }
 
-
-
-body.activeModal{
-    overflow-y: hidden;
+.UpdateFields {
+    margin-top: 50px;
 }
 
-.popup {
-    position: fixed;
+.Modal {
+    position: absolute;
+    height: 200px;
+    width: 200px;
+    background-color: white;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: white;
-    border: 1px solid #ccc;
-    padding: 40px;
-    z-index: 1000;
-    border-radius: 10px;
-    width: 400px; /* adjust width as needed */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.content {
+    align-content: center;
+    display: flex;
+    flex-wrap: wrap;
     text-align: center;
-}
-
-.close-modal {
-    margin-top: 20px;
+    justify-content: center;
 }
