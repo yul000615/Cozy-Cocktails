@@ -1,112 +1,116 @@
 import './updateAccount.css';
 import React, { useState } from 'react';
+import Modal from 'react-modal';
+import { Link } from 'react-router-dom';
 
-export default function UpdateAccount() {
-    function ErrorMessages({ error }) {
-        if (!error) {
-            return null;
-        } else {
-            return <p className='errorMessage'>{error}</p>;
-        }
-    }
+Modal.setAppElement('#root');
 
-    var passwordMismatch = false;
-    const [currentPassword, setCurrentPassword] = useState('');
-    const [passwordCorrect, setPasswordCorrect] = useState(false);
-    const [email, setEmail] = useState('');
-    const [newPassword, setNewPassword] = useState('');
+function ErrorMessages({ error }) {
+  if (!error) {
+    return null;
+  } else {
+    return <p className='errorMessage'>{error}</p>;
+  }
+}
+
+export const UpdateAccount = (props) => {
     const [error, setError] = useState('');
+    const [apiError, setApiError] = useState(null);
+    const [apiSuccess, setApiSuccess] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
 
-    function passwordSubmit() {
-        //call into database and check password
-        passwordMismatch = false;
+    const [email, setEmail] = useState('');
+    const [newEmail, setNewEmail] = useState('');
+    const [newPassword, setNewPassword] = useState('');
 
-    if (passwordMismatch){
-                setError('password incorrect');
+    const registerClick = async (e) => {
+        e.preventDefault();
+    
+        var emailValidation = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
+        var passwordValidation = /^(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])(?=.*\d).*$/;
+    
+        if (email.length === 0 || newEmail.length === 0 || newPassword.length === 0) {
+          setError('All values must be filled');
+        } else if (!emailValidation.test(email) || !emailValidation.test(newEmail)) {
+          setError('Please enter a valid email address');
+        } else if (newPassword.length > 64) {
+          setError('Password must be less than 64 characters');
+        } else if (!passwordValidation.test(newPassword)) {
+          setError('Password must contain a special character and a number');
         } else {
-            setError('');
-            setPasswordCorrect(true);
-        }
-    }
-
-    function toggleModal() {
-        setModalOpen(!modalOpen);
-    }
-
-    function updateSubmit() {
-        var hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
-        var hasNumber = /\d/;
-        var hasAt = /@/;
-        var noErrors = true;
-
-    if (email.length > 0){
-                if (!hasAt.test(email)){
-                setError('Must be a proper email');
-                noErrors = false;
+          setError('');
+    
+          try {
+            const response = await fetch("https://localhost:7268/api/Account/update", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                email: email,
+                newEmail: newEmail,
+                newPassword: newPassword
+              }),
+            });
+            console.log(response);
+            if (!response.ok) {
+              const errorMessage = `HTTP error! Status: ${response.status}`;
+              const errorResponse = await response.text(); 
+              console.error(errorMessage, errorResponse); 
+              setError(errorResponse);
             } else {
-                setError('');
+              const responseData = await response.text();
+              console.log("Response Data:", responseData);
+              setApiSuccess(true);
+              setModalOpen(true);
             }
-        }
-
-        if (newPassword.length > 0 && noErrors){
-            if (newPassword.length >= 64) {
-                setError('Password must be less than 64 characters');
-                noErrors = false;
-            } else if (!hasSpecial.test(newPassword) || !hasNumber.test(newPassword)) {
-                setError('Password must contain a special character and a number');
-                noErrors = false;
-            }
-            else {
-                setError('');
-            }
-        }
-
-        if (noErrors) {
+          } catch (error) {
+            console.error('Error during fetch:', error);
+            setApiError(error.message);
             setModalOpen(true);
-        }
-    }
-
-    if (modalOpen) {
-        document.body.classList.add('active-modal');
-    } else {
-        document.body.classList.remove('active-modal');
-    }
+          }
+        };
+      }
+    
+      function closeModal() {
+        setModalOpen(false);
+      }
 
     return (
-        <>
-            <div className="updatePage">
-                <h1 className='welcomeHeader'>Update Your Account</h1>
-                <ErrorMessages error={error} />
-                <div className='entryFields'>
-                    <label htmlFor="currentPassword" hidden={passwordCorrect}>
-                        Enter password: <input name="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)}
-                        type="currentPassword" id="currentPassword" />
-                        <button className="submitButton" onClick={passwordSubmit}>Submit</button>
-                    </label>
-                    <label htmlFor="email" hidden={!passwordCorrect}>
-                        New email: <input name="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                        type="email" id="email" />
-                    </label>
-                    <br />
-                    <label htmlFor="newPassword" hidden={!passwordCorrect}>
-                        New password: <input name="newPassword" value={newPassword} onChange={(e) => setNewPassword(e.target.value)}
-                        type="newPassword" id="newPassword" />
-                        <br />
-                        <button className="submitButton" onClick={updateSubmit}>Update</button>
-                    </label>
-
-                    {modalOpen && (
-                        <div className="popup">
-                            <div className="overlay" onClick={toggleModal}></div>
-                            <div className="content">
-                                <h1>Updated Successfully!</h1>
-                                <button className="close-modal" onClick={toggleModal}>Close</button>
-                            </div>
-                            </div>
-                    )}
+        <div className="UpdateAccountPage">
+          <div className="UpdateAccountWelcome">
+            <h1>Update Account</h1>
+          </div>
+          <ErrorMessages error={error || apiError} />
+          
+          <div className="UpdateFields">
+            <label htmlFor="email" className="entryField"></label>
+              Current Email: <input name="email" onChange={(e) => setEmail(e.target.value)} 
+              type="email" id="email" />
+            <br />
+            <label htmlFor="newEmail" className="entryField"></label>
+              New Email: <input name="newEmail" onChange={(e) => setNewEmail(e.target.value)} 
+              type="email" id="newEmail" />
+            <br />
+            <label htmlFor="newPassword" className="entryField"></label>
+              New Password: <input name="newPassword" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} 
+              type="password" id="newPassword" />
+            <br />
+            <button className='registerBtn' onClick={registerClick}>Update</button>
+            <Modal isOpen={modalOpen} onRequestClose={closeModal} className="Modal">
+              {apiSuccess ? (
+                <div>
+                  <h2>Account Updated Successfully!</h2>
+                  <br />
+                  <Link to="/"><button onClick={closeModal}>Please Login Again</button></Link>
                 </div>
-            </div>
-        </>
-    );
-}
+              ) : (
+                <ErrorMessages error={error || apiError} />
+              )}
+            </Modal>
+          </div>
+        </div>
+      );
+    }
+
+export default UpdateAccount;
