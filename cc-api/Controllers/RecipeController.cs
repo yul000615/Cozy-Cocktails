@@ -4,6 +4,7 @@ using cc_api.Models.Requests;
 using cc_api.Models.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
@@ -133,8 +134,8 @@ namespace cc_api.Controllers
             return Ok();
         }
 
-        [HttpDelete("delete")] /* Placeholder Method */
-        public IActionResult Delete(int recipeID) /* DeleteMethod */
+        [HttpDelete("delete")]
+        public async Task<IActionResult> Delete(long recipeID) /* DeleteMethod */
         {
             if (!ModelState.IsValid)
             {
@@ -147,10 +148,38 @@ namespace cc_api.Controllers
                 return NotFound();
             }
 
+            IEnumerable<RecipeIngredient> recipeIngredients = 
+                await _unitOfWork.RecipeIngredientRepository.GetByRecipeID(recipeID);
+            foreach (RecipeIngredient recipeIngredient in recipeIngredients)
+            {
+                _unitOfWork.RecipeIngredientRepository.Delete(recipeIngredient);
+            }
+
+            IEnumerable<Review> reviews = 
+                await _unitOfWork.ReviewRepository.GetByRecipeID(recipeID);
+            foreach (Review review in reviews)
+            {
+                _unitOfWork.ReviewRepository.Delete(review);
+            }
+
+            IEnumerable<Report> reports = 
+                await _unitOfWork.ReportRepository.GetByRecipeID(recipeID);
+            foreach (Report report in reports)
+            {
+                _unitOfWork.ReportRepository.Delete(report);
+            }
+
+            IEnumerable<UserFavoriteRecipe> userFavoriteRecipes = 
+                await _unitOfWork.UserFavoriteRecipeRepository.GetByRecipeID(recipeID);
+            foreach (UserFavoriteRecipe UFR in userFavoriteRecipes)
+            {
+                _unitOfWork.UserFavoriteRecipeRepository.Delete(UFR);
+            }
+
             _unitOfWork.RecipeRepository.Delete(recipe);
             _unitOfWork.Save();
 
-            return Ok();
+            return Ok("Recipe Deleted");
         }
     }
 }
