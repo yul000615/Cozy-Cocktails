@@ -89,3 +89,7 @@
 .LogInFields {
     margin-top: 50px;
 }
+
+.ResetModal *{
+    margin: 10px;
+}
