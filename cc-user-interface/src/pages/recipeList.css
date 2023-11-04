@@ -1,0 +1,36 @@
+.ViewRecipeFields {
+    justify-items: center;
+    display: grid;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    text-align: center;
+    transform: translate(-50%, -60%);
+    margin: 0;
+    width: 100%;
+}
+
+.dropdown-container {
+    margin: 25px;
+    width: 350px;
+    align-self: center;
+    justify-self: center;
+}
+
+
+.submitBtn {
+    margin: auto;
+    margin-top: 30px;
+    width: 50%;
+}
+
+.recipeForm {
+    justify-content: center;
+    display:grid;
+    align-items: center;
+    text-align: center;
+}
+
+.entryField {
+    border-bottom: none;
+}
