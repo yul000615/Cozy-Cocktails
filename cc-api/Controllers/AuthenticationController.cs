@@ -6,6 +6,8 @@ using cc_api.Services;
 using cc_api.Services.Tokens;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 
 namespace cc_api.Controllers
@@ -18,13 +20,15 @@ namespace cc_api.Controllers
         private readonly IPasswordHasher _passwordHasher;
         private readonly Authenticator _authenticator;
         private readonly RefreshTokenValidator _refreshTokenValidator;
+        private readonly TokenReader _tokenReader;
 
-        public AuthenticationController(UnitOfWork unitOfWork, IPasswordHasher passwordHasher, Authenticator authenticator, RefreshTokenValidator refreshTokenValidator)
+        public AuthenticationController(UnitOfWork unitOfWork, IPasswordHasher passwordHasher, Authenticator authenticator, RefreshTokenValidator refreshTokenValidator, TokenReader tokenReader)
         {
             _unitOfWork = unitOfWork;
             _passwordHasher = passwordHasher;
             _authenticator = authenticator;
             _refreshTokenValidator = refreshTokenValidator;
+            _tokenReader = tokenReader;
         }
 
         [HttpPost("login")]
@@ -104,6 +108,29 @@ namespace cc_api.Controllers
             };
             Response.Cookies.Append("refreshToken", newRefreshToken, cookieOptions);
             return Ok(response);
+        }
+
+
+        [Authorize(Roles = "User")]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout([FromHeader] string authorization)
+        {
+            bool tokenExtracted = _tokenReader.GetTokenFromHeader(authorization, out var token);
+            if (!tokenExtracted)
+            {
+                return Unauthorized();
+            }
+
+            var userInfo = _tokenReader.ReadToken(token);
+            var userRepository = _unitOfWork.UserRepository;
+            var user = await userRepository.GetByEmail(userInfo.Email);
+
+            var refreshTokenRepository = _unitOfWork.RefreshTokenRepository;
+            await refreshTokenRepository.DeleteAllByUserId(user.UserId);
+            _unitOfWork.Save();
+
+            Response.Cookies.Delete("refreshToken");
+            return Ok();
         }
     }
 }
