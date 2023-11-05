@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import Modal from 'react-modal';
+import React, { useState, useContext } from 'react';
+import AppContext from '../AppContext';
 import { Link, useLocation } from 'react-router-dom';
+import Modal from 'react-modal';
 
 function ErrorMessages({ error }) {
   if (!error) {
@@ -11,26 +12,21 @@ function ErrorMessages({ error }) {
 }
 
 function Login() {
+  var emailValidation = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
   const [error, setError] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [modalOpen, setModalOpen] = useState(false);
   const [isSuccessfulLogin, setIsSuccessfulLogin] = useState(false);
-
+  const context = useContext(AppContext);
   const location = useLocation(); // Get the current location
+  const [modalOpen, setModalOpen] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetMessage, setResetMessage] = useState('');
 
   async function loginClick() {
     // Validate user input
-    if (email.length === 0 || password.length === 0) {
+    if (!isInputValid()) {
       setError('All values must be filled');
-      return;
-    }
-
-    setError('');
-
-    // Check for the exception
-    if (email === "abc@gmail.com" && password === "abc1!") {
-      setIsSuccessfulLogin(true);
       return;
     }
 
@@ -41,27 +37,47 @@ function Login() {
         headers: {
           "Content-type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({ email, password }),
       });
 
+      const data = await response.json();
+
       if (response.ok) {
-        // Handle success (e.g., set a flag for successful login)
+        context.setAccessToken(data.accessToken);
         setIsSuccessfulLogin(true);
-        console.log(response.json())
       } else {
-        // Handle errors (e.g., display an error message)
-        const data = await response.json();
         setError(data.error || "Invalid credentials");
       }
     } catch (error) {
-      // Handle network errors
-      console.error("Network error:", error);
       setError("Network error occurred.");
     }
   }
 
+  function isInputValid() {
+    const isEmailEmpty = email.length === 0;
+    const isPasswordEmpty = password.length === 0;
+    return (isEmailEmpty || isPasswordEmpty) ? false : true;
+  }
+
   function closeModal() {
     setModalOpen(false);
+    setResetEmail('');
+    setResetMessage('');
+  }
+
+  function openModal(e) {
+    e.preventDefault();
+    e.nativeEvent.stopImmediatePropagation();
+    setModalOpen(true);
+  }
+
+  function resetSubmit(){
+    if (!emailValidation.test(resetEmail)) {
+      setResetMessage('Please enter a valid email address');
+    } else{
+      setResetMessage('Email sent! Check your email for further instruction.')
+    }
   }
 
   return (
@@ -90,21 +106,18 @@ function Login() {
           </label>
           <br />
           <div className="remember-forgot">
-            <a href="#">Forgot Password?</a>
+            <a href='#' onClick={openModal}>Forgot Password?</a>
           </div>
           <button className='registerBtn' onClick={loginClick}>Submit</button>
-          <Modal isOpen={modalOpen} onRequestClose={closeModal} className="Modal">
-            {isSuccessfulLogin ? (
-              <div>
-                <h2>Login Successful!</h2>
-                <br />
-                <Link to={location.pathname === '/home2' ? '/myAccount' : '/home2'}>
-                  {location.pathname === '/home2' ? 'My Account' : 'Homepage 2'}
-                </Link>
+          <Modal size="md" isOpen={modalOpen} onRequestClose={closeModal} className="Modal" backdrop="static" maskClosable={false} shouldCloseOnOverlayClick={false}>
+            {
+              <div className='ResetModal'>
+                <h1>Enter your email below:</h1>
+                <input type="resetEmail" name="resetEmail" value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} />
+                <button onClick={resetSubmit}>Submit</button>
+                <p>{resetMessage}</p>
               </div>
-            ) : (
-              <h2>Login Error</h2>
-            )}
+            }
           </Modal>
         </div>
       )}

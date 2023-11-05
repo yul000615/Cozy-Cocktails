@@ -21,6 +21,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 110vh;
+    flex-flow: column;
 }
 
 .navigation {
@@ -84,4 +85,35 @@ body {
 
 .nav-menu-btn{
     display: none;
+}
+
+.ingredientList{
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    min-height: 75%;
+    flex: 1;
+    position: absolute;
+    left: 0;
+    align-items: center;
+}
+
+.ingredientSelect{
+    width: 200px;
+    overflow: hidden;
+    flex: 1
+}
+
+.deleteButton{
+    margin-left: 10px;
+}
+
+.list {
+    justify-content: center;
+    display: grid;
+    align-items: center;
+}
+
+.ingredientSubmit {
+    width: 25%
 }

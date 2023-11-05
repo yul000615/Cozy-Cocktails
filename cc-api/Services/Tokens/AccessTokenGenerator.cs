@@ -21,10 +21,14 @@ namespace cc_api.Services.Tokens
             List<Claim> claims = new List<Claim>()
             {
                 new Claim("id", user.UserId.ToString()),
-                new Claim(ClaimTypes.Role, user.Admin == 0 ? "User" : "Admin"),
+                new Claim(ClaimTypes.Role, "User"),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}")
             };
+            if (user.Admin == 1)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+            }
 
             return _tokenGenerator.GenerateToken(
                 _config.AccessTokenSecret,

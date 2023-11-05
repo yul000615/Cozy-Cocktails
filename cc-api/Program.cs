@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Text;
 using cc_api.Services.Tokens;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,7 +46,30 @@ builder.Services.AddDbContext<CozyCocktailsContext>(options =>
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(o => {
+    OpenApiSecurityScheme securityDefinition = new OpenApiSecurityScheme()
+    {
+        Name = "Authorization",
+        BearerFormat = "JWT",
+        Scheme = "Bearer",
+        Description = "Specify the authorization token",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+    };
+    o.AddSecurityDefinition("Bearer", securityDefinition);
+
+    OpenApiSecurityRequirement securityRequirement = new OpenApiSecurityRequirement();
+    OpenApiSecurityScheme secondSecurityDefinition = new OpenApiSecurityScheme
+    {
+        Reference = new OpenApiReference
+        {
+            Type = ReferenceType.SecurityScheme,
+            Id = "Bearer"
+        }
+    };
+    securityRequirement.Add(secondSecurityDefinition, new string[] { });
+    o.AddSecurityRequirement(securityRequirement);
+});
 
 var app = builder.Build();
 
@@ -62,6 +86,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+var origin = builder.Configuration["Authentication:Audience"];
+app.UseCors(builder => builder.SetIsOriginAllowed((origin) => true).AllowAnyHeader().AllowAnyMethod().AllowCredentials());
 
 app.Run();

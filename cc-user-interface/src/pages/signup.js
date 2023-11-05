@@ -1,4 +1,3 @@
-
 import {useState} from 'react'
 import Modal from 'react-modal'
 import { Link } from 'react-router-dom'
@@ -18,13 +17,13 @@ export const SignUp = (props) => {
   const [error, setError] = useState('');
   const [apiError, setApiError] = useState(null);
   const [apiSuccess, setApiSuccess] = useState(false);
+  const [existingEmail, setExistingEmail] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   
   const [first, setFirst] = useState('');
   const [last, setLast] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [existingEmail, setExistingEmail] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
 
   const registerClick = async (e) => {
     e.preventDefault();
@@ -61,21 +60,22 @@ export const SignUp = (props) => {
           }),
         });
         console.log(response);
-  
         if (!response.ok) {
           const errorMessage = `HTTP error! Status: ${response.status}`;
           const errorResponse = await response.text(); 
           console.error(errorMessage, errorResponse); 
-          throw new Error(errorMessage);
-        }
-        const responseData = await response.text();
-        console.log("Response Data:", responseData);
+          setError(errorResponse);
+          //throw new Error(errorMessage);
+        } else {
+          const responseData = await response.text();
+          console.log("Response Data:", responseData);
   
-        setApiSuccess(true);
-        setModalOpen(true);
+          setApiSuccess(true);
+          setModalOpen(true);
+        }
       } catch (error) {
         console.error('Error during fetch:', error);
-        setApiError("A network error occurred. Please try again later.");
+        setApiError(error.message);
         setModalOpen(true);
       }
     };
@@ -118,7 +118,7 @@ export const SignUp = (props) => {
               <Link to="/"><button onClick={closeModal}>Head to home page</button></Link>
             </div>
           ) : (
-            <h2>Registration Error</h2>
+            <ErrorMessages error={error || apiError} />
           )}
         </Modal>
       </div>
