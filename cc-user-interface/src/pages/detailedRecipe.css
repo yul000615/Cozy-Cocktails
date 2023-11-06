@@ -1,0 +1,13 @@
+.titleBar {
+    display: flex;
+    align-items: center;
+}
+
+.reportBtn {
+    height: 25%;
+    margin-left: 20px;
+}
+
+.ReportModal *{
+    margin: 10px;
+}

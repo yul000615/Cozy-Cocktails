@@ -115,6 +115,7 @@ function Login() {
                 <h1>Enter your email below:</h1>
                 <input type="resetEmail" name="resetEmail" value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} />
                 <button onClick={resetSubmit}>Submit</button>
+                <button onClick={closeModal}>Close</button>
                 <p>{resetMessage}</p>
               </div>
             }
