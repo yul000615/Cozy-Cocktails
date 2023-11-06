@@ -3,104 +3,95 @@ import Autosuggest from 'react-autosuggest';
 import './recipeList.css';
 import { Link } from 'react-router-dom';
 
+function ErrorMessages({ error }) {
+  if (!error) {
+    return null;
+  } else {
+    return <p className='errorMessage'>{error}</p>;
+  }
+}
+
 export default function RecipeList() {
-    const [name, setName] = useState('');
-    const [recipeNames, setRecipeNames] = useState([
-        'Long Island Iced Tea',
-        'Margarita',
-        'Martini',
-        'Mojito',
-        'Bloody Mary',
-    ]);
+  const [name, setName] = useState('');
+  const [error, setError] = useState('');
+  const [apiError, setApiError] = useState(null);
+  const [apiSuccess, setApiSuccess] = useState(false);
+  const [recipeNames, setRecipeNames] = useState([
+    'Long Island Iced Tea',
+    'Margarita',
+    'Martini',
+    'Mojito',
+    'Bloody Mary',
+  ]);
 
-    const [selectedRecipe, setSelectedRecipe] = useState('');
+  const [selectedRecipe, setSelectedRecipe] = useState('');
 
-    const [suggestions, setSuggestions] = useState([]);
-    const [value, setValue] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [value, setValue] = useState('');
 
-    const getSuggestions = (value) => {
-        const inputValue = value.trim().toLowerCase();
-        const inputLength = inputValue.length;
+  const getSuggestions = (value) => {
+    const inputValue = value.trim().toLowerCase();
+    const inputLength = inputValue.length;
 
-        return inputLength === 0
-            ? []
-            : recipeNames.filter(
-                  (name) => name.toLowerCase().slice(0, inputLength) === inputValue
-              );
-    };
+    return inputLength === 0
+      ? []
+      : recipeNames.filter((name) => name.toLowerCase().slice(0, inputLength) === inputValue);
+  };
 
-    const onChange = (event, { newValue }) => {
-        setValue(newValue);
-        setName(newValue);
-    };
+  const onChange = (event, { newValue }) => {
+    setValue(newValue);
+    const selected = getSuggestions(newValue)[0];
+    if (selected) {
+      setSelectedRecipe(selected);
+    } else {
+      setSelectedRecipe('');
+    }
+  };
 
-    const onSuggestionsFetchRequested = ({ value }) => {
-        setSuggestions(getSuggestions(value));
-    };
+  const renderSuggestion = (suggestion) => <div>{suggestion}</div>;
 
-    const onSuggestionsClearRequested = () => {
-        setSuggestions([]);
-    };
+  const inputProps = {
+    placeholder: 'cocktail name',
+    value,
+    onChange: onChange,
+    style: { fontStyle: 'italic' },
+  };
 
-    const renderSuggestion = (suggestion) => <div>{suggestion}</div>;
+  const theme = {
+    suggestion: {
+      backgroundColor: 'white',
+    },
+    suggestionsList: {
+      listStyleType: 'none',
+      padding: 0,
+    },
+  };
 
-    const inputProps = {
-        placeholder: 'cocktail name',
-        value,
-        onChange: onChange,
-        style: { fontStyle: 'italic' },
-    };
+  return (
+    <div className="ViewRecipeFields">
+      <h1>Recipe search</h1>
+      <ErrorMessages error={error || apiError} />
+      <form className="recipeForm">
+        <label className="entryField">
+          {' '}
+          <Autosuggest
+            suggestions={suggestions}
+            onSuggestionsFetchRequested={({ value }) => setSuggestions(getSuggestions(value))}
+            onSuggestionsClearRequested={() => setSuggestions([])}
+            getSuggestionValue={(suggestion) => suggestion}
+            renderSuggestion={renderSuggestion}
+            inputProps={inputProps}
+            theme={theme}
+          />
+        </label>
+        <br />
 
-    const submitClick = (e) => {
-        e.preventDefault();
-        const form = e.target.closest('form');
-        const formData = new FormData(form);
-        console.log(...formData);
-    
-        if (name) {
-            setSelectedRecipe(name);
-        }
-    };
-    
-
-    const theme = {
-        suggestion: {
-            backgroundColor: 'white',
-        },
-        suggestionsList: {
-            listStyleType: 'none',
-            padding: 0,
-        },
-    };
-
-    return (
-        <div className="ViewRecipeFields">
-            <h1>Recipe search</h1>
-            <form onSubmit={submitClick} className="recipeForm">
-                <label className="entryField">
-                    {' '}
-                    <Autosuggest
-                        suggestions={suggestions}
-                        onSuggestionsFetchRequested={onSuggestionsFetchRequested}
-                        onSuggestionsClearRequested={onSuggestionsClearRequested}
-                        getSuggestionValue={(suggestion) => suggestion}
-                        renderSuggestion={renderSuggestion}
-                        inputProps={inputProps}
-                        theme={theme}
-                    />
-                </label>
-                <br />
-
-                {selectedRecipe ? (
-                    <Link to={`/viewRecipe?name=${selectedRecipe}`} className="submitBtn">
-                        Search
-                    </Link>
-                ) : (
-                    <button className="submitBtn" type="submit" onClick={submitClick}>
-                        Search
-                    </button>
-                )}
-            </form>
-        </div>
-    );
+        {selectedRecipe && (
+          <Link to={`/viewRecipe?name=${selectedRecipe}`} className="submitBtn">
+            Search
+          </Link>
+        )}
+      </form>
+    </div>
+  );
 }
