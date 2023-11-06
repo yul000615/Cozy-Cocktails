@@ -2,14 +2,20 @@ import React, {useState} from 'react';
 import AppContext from './AppContext';
 import './App.css';
 import Home from './pages/home';
+import React, {useState} from 'react'; 
+import AppContext from './AppContext';
+import './App.css';
+import Home from './pages/home';
 import Home2 from './pages/home2';
 import SignUp from './pages/signup';
 import Login from './pages/login';
 import MyAccount from './pages/myAccount';
 import CreateRecipe from './pages/createRecipe';
+import UpdateAccount from './pages/updateAccount';
+import ResetPassword from './pages/resetPassword';
+import Recipes from './pages/recipes'
 import RecipeList from './pages/recipeList';
 import ViewRecipe from './pages/viewRecipe';
-import UpdateAccount from './pages/updateAccount';
 import { BrowserRouter as Router, Routes, Route }
     from 'react-router-dom';
 
@@ -53,9 +59,11 @@ import { BrowserRouter as Router, Routes, Route }
                 <Route exact path='/signup' element={<SignUp />} />
                 <Route exact path='/myAccount' element={<MyAccount />} />
                 <Route exact path='/createRecipe' element={<CreateRecipe />} /> 
+                <Route exact path='/updateAccount' element={<UpdateAccount />} /> 
+                <Route exact path='/resetPassword' element={<ResetPassword />} /> 
+                <Route exact path='/recipes' element={<Recipes />} /> 
                 <Route exact path='/recipeList' element={<RecipeList />} /> 
                 <Route exact path='/viewRecipe' element={<ViewRecipe />} />
-                <Route exact path='/updateAccount' element={<UpdateAccount />} /> 
             </Routes>
         </Router>
         </AppContext.Provider>
