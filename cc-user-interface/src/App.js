@@ -18,7 +18,7 @@ import { BrowserRouter as Router, Routes, Route }
       const tokenHandler = {
         token: accessToken,
         setAccessToken,
-        refresh
+        refresh,
       }
 
       async function refresh() {
