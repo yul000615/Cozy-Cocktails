@@ -52,8 +52,7 @@ import { BrowserRouter as Router, Routes, Route }
                 <Route exact path='/signup' element={<SignUp />} />
                 <Route exact path='/myAccount' element={<MyAccount />} />
                 <Route exact path='/createRecipe' element={<CreateRecipe />} /> 
-                <Route exact path='/updateAccount' element={<UpdateAccount />} /> 
-                <Route exact path='/resetPassword' element={<ResetPassword />} />
+                <Route exact path='/updateAccount' element={<UpdateAccount />} />
                 <Route exact path='/recipeList' element={<RecipeList />} /> 
                 <Route exact path='/viewRecipe' element={<ViewRecipe />} />
             </Routes>
