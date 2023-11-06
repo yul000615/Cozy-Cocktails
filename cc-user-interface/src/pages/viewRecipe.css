@@ -1,0 +1,141 @@
+.ViewRecipe {
+    justify-items: center;
+    display: grid;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    text-align: center;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    width: 80%;
+    height: 80%;
+    background-color: rgba(255, 255, 255);
+    padding: px;
+    font-size: 18px;
+    border-radius: 30px;
+}
+
+.recipeHeader {
+    margin-top: 100px;
+    font-size: 24px;
+}
+
+.recipeRate {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.additionalInfo {
+    text-align: left;
+    margin-top: 10px;
+    margin-bottom: 0;
+    font-size: 18px;
+}
+
+.submitBtn {
+    margin: auto;
+    margin-top: 30px;
+    width: 50%;
+    font-size: 18px;
+}
+
+.reportBtn {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+.reportButton {
+    margin-left: 10px;
+    padding: 2px 2px;
+    border-radius: 4px;
+    border: black 1.5px solid;
+    background: white;
+    cursor: pointer;
+    font-size: 0.8em;
+    color: red;
+}
+
+.editorBtn {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.logoutButton {
+    margin-left: 10px;
+    padding: 2px 2px;
+    border-radius: 4px;
+    border: black 1.5px solid;
+    background: white;
+    cursor: pointer;
+    font-size: 0.8em;
+    color: red;
+}
+
+.deleteButton,
+.editButton {
+    margin-left: 10px;
+    padding: 2px 2px;
+    border-radius: 4px;
+    border: black 1.5px solid;
+    background: white;
+    cursor: pointer;
+    font-size: 0.8em;
+    color: black;
+}
+
+.recipeForm {
+    justify-content: center;
+    display: grid;
+    align-items: center;
+    text-align: center;
+}
+
+.usernameText {
+    font-size: 14px;
+}
+
+.recipeContent {
+    display: flex;
+}
+
+.imageSection {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    margin-right: 20px;
+    margin-bottom: 20px;
+}
+
+.ingredientSection,
+.directionSection {
+    flex: 1;
+    text-align: left;
+    padding-left: 20px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.ingredientSection ul {
+    padding-left: 20px;
+    font-size: 18px;
+}
+
+.directionSection ol {
+    padding-left: 20px;
+    padding-right: 20px;
+    font-size: 18px;
+}
+
+.imageSection img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
