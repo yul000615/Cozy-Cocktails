@@ -2,10 +2,6 @@ import React, {useState} from 'react';
 import AppContext from './AppContext';
 import './App.css';
 import Home from './pages/home';
-import React, {useState} from 'react'; 
-import AppContext from './AppContext';
-import './App.css';
-import Home from './pages/home';
 import Home2 from './pages/home2';
 import SignUp from './pages/signup';
 import Login from './pages/login';
@@ -13,8 +9,7 @@ import MyAccount from './pages/myAccount';
 import CreateRecipe from './pages/createRecipe';
 import UpdateAccount from './pages/updateAccount';
 import ResetPassword from './pages/resetPassword';
-import Recipes from './pages/recipes'
-
+import Recipes from './pages/recipes';
 import { BrowserRouter as Router, Routes, Route }
     from 'react-router-dom';
 
@@ -60,8 +55,7 @@ import { BrowserRouter as Router, Routes, Route }
                 <Route exact path='/createRecipe' element={<CreateRecipe />} /> 
                 <Route exact path='/updateAccount' element={<UpdateAccount />} /> 
                 <Route exact path='/resetPassword' element={<ResetPassword />} /> 
-                <Route exact path='/recipes' element={<Recipes />} /> 
-
+                <Route exact path='/recipes' element={<Recipes />} />
             </Routes>
         </Router>
         </AppContext.Provider>
