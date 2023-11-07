@@ -58,7 +58,7 @@ namespace cc_api.Controllers
             return Ok(_unitOfWork.RecipeRepository.GetAll());
         }
 
-        [HttpPost("display")]
+        [HttpPost("getRecipes")]
         public async Task<IActionResult> Display([FromBody] DisplayRequest request) /* GetMethod */
         {
             if (!ModelState.IsValid)
@@ -81,8 +81,8 @@ namespace cc_api.Controllers
             });
         }
 
-        [HttpPost("create")]
-        public IActionResult Create([FromBody] RecipeRequest request) /* PostMethod */
+        [HttpPost("createRecipe")]
+        public IActionResult CreateRecipe([FromBody] RecipeRequest request) /* PostMethod */
         {
             if (!ModelState.IsValid)
             {
@@ -120,8 +120,8 @@ namespace cc_api.Controllers
             return Ok("Recipe Created!");
         }
 
-        [HttpPut("update")] /* Placeholder Method */
-        public IActionResult Update(Recipe recipe) /* PutMethod */
+        [HttpPut("updateRecipe")] /* Placeholder Method */
+        public IActionResult UpdateRecipe(Recipe recipe) /* PutMethod */
         {
             if (!ModelState.IsValid)
             {
@@ -134,8 +134,8 @@ namespace cc_api.Controllers
             return Ok();
         }
 
-        [HttpDelete("delete")]
-        public async Task<IActionResult> Delete(long recipeID) /* DeleteMethod */
+        [HttpDelete("deleteRecipe")]
+        public async Task<IActionResult> DeleteRecipe(long recipeID)
         {
             if (!ModelState.IsValid)
             {
