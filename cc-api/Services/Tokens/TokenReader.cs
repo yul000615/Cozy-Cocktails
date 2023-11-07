@@ -26,11 +26,13 @@ namespace cc_api.Services.Tokens
             var handler = new JwtSecurityTokenHandler();
             var decodedToken = handler.ReadToken(encodedToken) as JwtSecurityToken;
 
+            var userId = long.Parse(decodedToken.Claims.First(claim => claim.Type == "id").Value);
             var userName = decodedToken.Claims.First(claim => claim.Type == ClaimTypes.Name).Value;
             var userEmail = decodedToken.Claims.First(claim => claim.Type == ClaimTypes.Email).Value;
 
             return new TokenUserInfo()
             {
+                Id = userId,
                 Name = userName,
                 Email = userEmail
             };
