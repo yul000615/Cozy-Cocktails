@@ -2,16 +2,27 @@ import React from 'react'
 import './detailedRecipe.css';
 import { useState} from 'react';
 import Modal from 'react-modal';
+import Heart from "react-animated-heart";
 
 const DetailedRecipe = ({ closeDetailed, recipe }) => {
 
     //check if the user is logged in to give them the option to rate or favorite
     //users do not need to be logged in to report recipes
-    const [loggedIn, setLoggedIn] = useState(true)
+    const [loggedIn, setLoggedIn] = useState(true);
     const [issue, setIssue] = useState("");
     const [reportOpen, setReportOpen] = useState(false);
     const [reportMessage, setReportMessage] = useState("");
 
+    //favorited is true if the recipe is in the user's favorite recipe list
+    const [favorited, setFavorited] = useState(false);
+
+    function LoggedInItems (){
+        if (!loggedIn){
+            return null;
+        } else{
+            return <Heart hidden={!loggedIn} isClick={favorited} onClick={favoriteClick} />;
+        }
+    }
 
     function openReport(){
         setReportOpen(true);
@@ -29,12 +40,23 @@ const DetailedRecipe = ({ closeDetailed, recipe }) => {
         }
     }
 
+    function favoriteClick(){
+        if (favorited) {
+            //make backend call to remove the favorite and set the heart to grey if successful
+            setFavorited(false);
+        } else {
+            //make backend call to add to favorites and set the heart to red if successful
+            setFavorited(true);
+        }
+    }
+
     return(
         <div className='detailedRecipeBackground'>
             <div className='detailedRecipeContainer'>
                 <div className='titleBar'>
                     <h1>Detailed View: {recipe.name}</h1>
-                    <button className='reportBtn' onClick={openReport}>Report</button>
+                    <button hidden={!loggedIn} className='reportBtn' onClick={openReport}>Report</button>
+                    <LoggedInItems/>
                 </div>
 
                 <div className='body'>
