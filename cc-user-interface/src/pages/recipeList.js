@@ -87,11 +87,19 @@ export default function RecipeList() {
         <br />
 
         {selectedRecipe && (
-          <Link to={`/viewRecipe?name=${selectedRecipe}`} className="submitBtn">
-            Search
-          </Link>
+          <div class="navigationButton">
+            <Link to={`/detailedRecipe?name=${selectedRecipe}`}>
+              <button className="button">Search</button>
+            </Link>
+          </div>
         )}
+        <div className="navigationButton">
+          <Link to="/">
+            <button className="button">Back</button>
+          </Link>
+        </div>
       </form>
+
     </div>
   );
 }
