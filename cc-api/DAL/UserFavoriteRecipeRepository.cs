@@ -1,4 +1,5 @@
 ﻿using cc_api.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace cc_api.DAL
 {
@@ -6,6 +7,11 @@ namespace cc_api.DAL
     {
         public UserFavoriteRecipeRepository(CozyCocktailsContext context) : base(context)
         {
+        }
+
+        public async Task<IEnumerable<UserFavoriteRecipe>> GetByRecipeID(long recipeID)
+        {
+            return await context.UserFavoriteRecipes.Where(x => x.RecipeId == recipeID).ToListAsync();
         }
     }
 }
