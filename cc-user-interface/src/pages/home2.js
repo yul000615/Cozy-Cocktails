@@ -1,7 +1,9 @@
 import './home2.css';
 import { Link } from 'react-router-dom';
 import Select from "react-select";
-import {useState} from 'react';
+import {useState, useContext} from 'react';
+import AppContext from '../AppContext';
+import Logout from './logout';
 
 function UserIngredients() {
 
@@ -78,6 +80,7 @@ function UserIngredients() {
 }
 
 function Home2() {
+  const context = useContext(AppContext);
 
   return (
     <header>
@@ -95,7 +98,7 @@ function Home2() {
           <div class="navigationButton">
             <Link to="/createRecipe"><button className="button" id="createRecipeBtn">Create Recipe</button></Link>
             <Link to="/myAccount"><button className="button" id="myAccountBtn">My Account</button></Link>
-            <Link to="/"><button className="button" id="logoutBtn">Log Out</button></Link>
+            <Logout/>
           </div>
         </nav>
         <UserIngredients/>

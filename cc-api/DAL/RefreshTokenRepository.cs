@@ -15,5 +15,14 @@ namespace cc_api.DAL
             RefreshToken refreshToken = await context.RefreshTokens.FirstOrDefaultAsync(x => x.Token == token);
             return refreshToken;
         }
+
+        public async Task DeleteAllByUserId(long id)
+        {
+            List<RefreshToken> tokens = await context.RefreshTokens.Where(x => x.UserId == id).ToListAsync();
+            foreach (RefreshToken token in tokens)
+            {
+                context.RefreshTokens.Remove(token);
+            }
+        }
     }
 }

@@ -20,6 +20,7 @@ builder.Services.AddSingleton<GenericTokenGenerator>();
 builder.Services.AddSingleton<AccessTokenGenerator>();
 builder.Services.AddSingleton<RefreshTokenGenerator>();
 builder.Services.AddSingleton<RefreshTokenValidator>();
+builder.Services.AddSingleton<cc_api.Services.Tokens.TokenReader>();
 
 AuthenticationConfiguration authConfig = new AuthenticationConfiguration();
 builder.Configuration.Bind("Authentication", authConfig);
