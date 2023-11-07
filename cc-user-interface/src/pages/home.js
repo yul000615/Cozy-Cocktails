@@ -8,12 +8,12 @@ function Home() {
         <nav className="navigation">
           <div class="logo"> <p>Cozy Cocktails</p>
           </div>
-          <div class="navigationMenu">
+          <div className="navigationMenu">
             <ul>
-              <li><a href="#" class="link active">Home</a></li>
-              <li><a href="#" class="link">About</a></li>
-              <li><a href="#" class="link">Services</a></li>
-              <li><a href="#" class="link">Contact</a></li>
+              <li><a href="#" className="link active">Home</a></li>
+              <li><Link to="/recipeList" className="link">Recipe Search</Link></li>
+              <li><a href="#" className="link">Services</a></li>
+              <li><a href="#" className="link">FAQ</a></li>
             </ul>
           </div>
 
