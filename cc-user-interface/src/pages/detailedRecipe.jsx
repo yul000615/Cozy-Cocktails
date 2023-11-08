@@ -1,85 +1,151 @@
-import React from 'react'
-import './detailedRecipe.css';
-import { useState} from 'react';
-import Modal from 'react-modal';
-import Heart from "react-animated-heart";
+import './home.css';
+import { Link } from 'react-router-dom';
+import Select from "react-select";
+import { useState } from 'react';
 
-const DetailedRecipe = ({ closeDetailed, recipe }) => {
+function FilterSearch() {
+  const [name, setName] = useState('');
+  const [error, setError] = useState('');
+  const [apiError, setApiError] = useState(null);
+  const [apiSuccess, setApiSuccess] = useState(false);
+  const [ingredientNames, setingredientNames] = useState();
+  const [selectedIngredient, setSelectedIngredient] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [value, setValue] = useState('');
 
-    //check if the user is logged in to give them the option to rate or favorite
-    //users do not need to be logged in to report recipes
-    const [loggedIn, setLoggedIn] = useState(true);
-    const [issue, setIssue] = useState("");
-    const [reportOpen, setReportOpen] = useState(false);
-    const [reportMessage, setReportMessage] = useState("");
+  const getSuggestions = (value) => {
+    const inputValue = value.trim().toLowerCase();
+    const inputLength = inputValue.length;
 
-    //favorited is true if the recipe is in the user's favorite recipe list
-    const [favorited, setFavorited] = useState(false);
+    return inputLength === 0
+      ? []
+      : ingredientNames.filter((name) => name.toLowerCase().slice(0, inputLength) === inputValue);
+  };
 
-    function LoggedInItems (){
-        if (!loggedIn){
-            return null;
-        } else{
-            return <Heart hidden={!loggedIn} isClick={favorited} onClick={favoriteClick} />;
-        }
+  const onChange = (event, { newValue }) => {
+    setValue(newValue);
+    const selected = getSuggestions(newValue)[0];
+    if (selected) {
+      setSelectedIngredient(selected);
+    } else {
+      setSelectedIngredient('');
     }
+  };
+  const renderSuggestion = (suggestion) => <div>{suggestion}</div>;
+  const inputStyle = {
+    fontStyle: 'italic',
+  };
 
-    function openReport(){
-        setReportOpen(true);
-    }
-
-    function closeReport(){
-        setReportOpen(false);
-    }
-
-    function reportSubmit(){
-        if (issue.length==0) {
-            setReportMessage('Must enter an issue before submitting');
-        } else{
-            setReportMessage('Thank you! We will review your report shortly.')
-        }
-    }
-    function favoriteClick(){
-        if (favorited) {
-            //make backend call to remove the favorite and set the heart to grey if successful
-            setFavorited(false);
-        } else {
-            //make backend call to add to favorites and set the heart to red if successful
-            setFavorited(true);
-        }
-    }
-
-    return(
-        <div className='detailedRecipeBackground'>
-            <div className='detailedRecipeContainer'>
-                <div className='titleBar'>
-                    <h1>Detailed View: {recipe.name}</h1>
-                    <button hidden={!loggedIn} className='reportBtn' onClick={openReport}>Report</button>
-                    <LoggedInItems/>
-                </div>
-
-                <div className='body'>
-                    <p>{recipe.description}</p>
-                </div>
-
-                <div className='footer'>
-                <button onClick={() => closeDetailed(false)}>Close</button>
-                </div>
-                <Modal size="md" isOpen={reportOpen} onRequestClose={closeReport} className="Modal" backdrop="static" maskClosable={false} shouldCloseOnOverlayClick={false}>
-                    {
-                    <div className='ReportModal'>
-                        <h1>Describe your issue with this recipe:</h1>
-                        <input type="issue" name="issue" value={issue} onChange={(e) => setIssue(e.target.value)} />
-                        <button onClick={reportSubmit}>Submit</button>
-                        <br/>
-                        <button onClick={closeReport}>Close</button>
-                        <p>{reportMessage}</p>
-                    </div>
-                    }
-                </Modal>
-            </div>
-        </div>
-    )
+  return (
+    <div className="entryField">
+      <h2>By keyword</h2>
+      <input
+        name="filterKeyword"
+        placeholder="enter a keyword"
+        label="cocktail name"
+        style={inputStyle}
+      />
+    </div>
+  );
 }
 
-export default DetailedRecipe
+function FilterList() {
+  const [selectedOption, setSelectedOption] = useState('');
+  const [ingredients, setIngredients] = useState([]);
+  const ingredientList = ['Vodka', 'Rum', 'Gin', 'Tequila', 'Vermouth'];
+  const optionList = [];
+
+  for (var i in ingredientList) {
+    if (!ingredients.includes(ingredientList[i])) {
+      optionList.push({ value: ingredientList[i].toLowerCase(), label: ingredientList[i] });
+    }
+  }
+
+  function handleSelect(data) {
+    setSelectedOption(data);
+  }
+
+  const deleteByValue = value => {
+    setIngredients(oldValues => {
+      return oldValues.filter(ingredient => ingredient !== value)
+    })
+  }
+
+  const addValue = value => {
+    var ingredientList = ingredients.slice()
+    ingredientList.push(value);
+    setIngredients(ingredientList);
+    setSelectedOption(ingredientList[0])
+  }
+
+  return (
+    <div>
+      <div class='entryField'>
+        <h2>By ingredients</h2>
+        <Select
+          clasName='ingredientSelect'
+          options={optionList}
+          value={selectedOption}
+          onChange={handleSelect}
+          isSearchable={true}
+          menuPlacement='auto'
+          menuPosition='auto'
+          autosize={false}
+          styles={{ width: '50%',}} />
+        <button className="ingredientSubmit" onClick={() => addValue(selectedOption['label'])}>Add</button>
+      </div>
+      <ul className='list'>
+        {ingredients.map(ingredient => {
+          return (
+            <li key={ingredient} className='ingredient'>
+              <span>{ingredient}</span>
+              <button className='deleteButton' onClick={() => deleteByValue(ingredient)}>Delete</button>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  )
+}
+
+function Home() {
+  return (
+      <header>
+        <div className="homePage">
+          <nav className="navigation">
+            <div class="logo">
+              <p>Cozy Cocktails</p>
+            </div>
+            <div className="navigationMenu">
+              <ul>
+                <li><a href="#" className="link active">Home</a></li>
+                <li><Link to="/recipeList" className="link">Recipe Search</Link></li>
+                <li><a href="#" className="link">Services</a></li>
+                <li><a href="#" className="link">FAQ</a></li>
+              </ul>
+            </div>
+
+            <div class="navigationButton">
+              <Link to="/signup">
+                <button className="button" id="loginBtn">Sign Up</button>
+              </Link>
+              <Link to="/login">
+                <button className="button" id="signupBtn">Log In</button>
+              </Link>
+            </div>
+          </nav>
+
+          <div className="filterContainer">
+            <h1>Cocktail Finder</h1>
+            <div className="container">
+            <div className="filterSearch"><FilterSearch /></div>
+            <div className="filterList"><FilterList /></div>
+            </div>
+            <button className="submitBtn" id="submitButton">Search</button>
+          </div>
+        </div>
+      </header>
+  );
+}
+export default Home;
+
