@@ -1,10 +1,11 @@
 .titleBar {
     display: flex;
     align-items: center;
+    overflow: hidden;
 }
 
 .reportBtn {
-    height: 25%;
+    display: inline;
     margin-left: 20px;
 }
 

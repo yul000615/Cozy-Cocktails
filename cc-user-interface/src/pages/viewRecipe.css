@@ -39,16 +39,16 @@
     font-size: 18px;
 }
 
-.reportBtn {
+/* .reportBtn {
     display: flex;
     justify-content: flex-end;
     margin-top: 20px;
     position: absolute;
     top: 20px;
     left: 20px;
-}
+} */
 
-.reportButton {
+/* .reportButton {
     margin-left: 10px;
     padding: 2px 2px;
     border-radius: 4px;
@@ -57,7 +57,7 @@
     cursor: pointer;
     font-size: 0.8em;
     color: red;
-}
+} */
 
 .editorBtn {
     display: flex;
