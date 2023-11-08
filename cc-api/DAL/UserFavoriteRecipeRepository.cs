@@ -18,5 +18,10 @@ namespace cc_api.DAL
         {
             return await context.UserFavoriteRecipes.Where(x => x.UserId == userID).ToListAsync();
         }
+
+        public async Task<UserFavoriteRecipe> GetByContent(long userID, long recipeID)
+        {
+            return await context.UserFavoriteRecipes.Where(x => x.UserId == userID && x.RecipeId == recipeID).FirstOrDefaultAsync();
+        }
     }
 }
