@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Autosuggest from 'react-autosuggest';
 import './recipeList.css';
 import { Link } from 'react-router-dom';
+import DetailedRecipe from './detailedRecipe'
 
 function ErrorMessages({ error }) {
   if (!error) {
@@ -16,6 +17,11 @@ export default function RecipeList() {
   const [error, setError] = useState('');
   const [apiError, setApiError] = useState(null);
   const [apiSuccess, setApiSuccess] = useState(false);
+  //Start of ported code
+  const [recipes, setRecipes] = useState([]);
+  const [openDetailed, setOpenDetailed] = useState(false);
+  const [recipe, setRecipe] = useState();
+  //End of ported code
   const [recipeNames, setRecipeNames] = useState([
     'Long Island Iced Tea',
     'Margarita',
@@ -23,6 +29,21 @@ export default function RecipeList() {
     'Mojito',
     'Bloody Mary',
   ]);
+
+  //Start of ported code
+  const fetchRecipes = () => {
+    fetch("https://localhost:7268/api/Recipe")
+    .then((response) => response.json())
+    .then(data => setRecipes(data))
+    .catch((error) => {
+        console.log(error)
+    })
+  }
+
+  useEffect(() => {
+    fetchRecipes()
+  }, [])
+  //End of ported code
 
   const [selectedRecipe, setSelectedRecipe] = useState('');
 
@@ -85,6 +106,28 @@ export default function RecipeList() {
           />
         </label>
         <br />
+
+        //Start of ported code P.S. IDK if this being in the form will break it or not
+        {recipes?.length > 0
+          ? (
+            <div className = "container">
+              {recipes.map((recipe) => (
+                <button 
+                  onClick={() => {setOpenDetailed(true); setRecipe(recipe)}
+                }>{recipe.name}</button>
+              ))}
+            </div>
+          ) : (
+            <div className = "empty">
+              <h2>No Recipies Found</h2>
+            </div>
+          )}
+
+        {openDetailed && <DetailedRecipe
+          closeDetailed={setOpenDetailed}
+          recipe={recipe}
+        />}
+        //End of ported code
 
         {selectedRecipe && (
           <div class="navigationButton">
