@@ -39,7 +39,6 @@ const DetailedRecipe = ({ closeDetailed, recipe }) => {
             setReportMessage('Thank you! We will review your report shortly.')
         }
     }
-
     function favoriteClick(){
         if (favorited) {
             //make backend call to remove the favorite and set the heart to grey if successful
