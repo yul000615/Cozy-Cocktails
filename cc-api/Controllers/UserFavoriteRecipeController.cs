@@ -70,7 +70,7 @@ namespace cc_api.Controllers
             _unitOfWork.UserFavoriteRecipeRepository.Insert(UFR);
             _unitOfWork.Save();
 
-            return Ok("Recipe Favorited");
+            return Ok("Recipe favorited");
         }
 
         [HttpDelete("unfavorite")]
@@ -87,7 +87,7 @@ namespace cc_api.Controllers
                 return NotFound();
             }
 
-            _unitOfWork.UserFavoriteRecipeRepository.Delete(favID);
+            _unitOfWork.UserFavoriteRecipeRepository.Delete(UFR);
             _unitOfWork.Save();
 
             return Ok("Favorite removed");

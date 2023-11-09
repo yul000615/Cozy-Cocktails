@@ -21,7 +21,7 @@ namespace cc_api.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        private async Task<double> CalcABVAsync(long recipeID)
+        private async Task<double> _CalcABVAsync(long recipeID)
         {
             IRecipeIngredientRepository recipeIngredient = _unitOfWork.RecipeIngredientRepository;
             IIngredientRepository ingredient = _unitOfWork.IngredientRepository;
@@ -72,7 +72,7 @@ namespace cc_api.Controllers
                 return NotFound();
             }
 
-            double abv = await CalcABVAsync(request.ID);
+            double abv = await _CalcABVAsync(request.ID);
 
             return Ok(new DisplayRecipeResponse()
             {
@@ -117,7 +117,7 @@ namespace cc_api.Controllers
             _unitOfWork.RecipeRepository.Insert(recipe);
             _unitOfWork.Save();
 
-            return Ok("Recipe Created!");
+            return Ok("Recipe Created");
         }
 
         [HttpPut("updateRecipe")] /* Placeholder Method */
@@ -131,7 +131,7 @@ namespace cc_api.Controllers
             _unitOfWork.RecipeRepository.Update(recipe);
             _unitOfWork.Save();
 
-            return Ok();
+            return Ok("Recipe Updated");
         }
 
         [HttpDelete("deleteRecipe")]
