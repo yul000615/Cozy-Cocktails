@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { FaStar, FaStarHalfAlt } from 'react-icons/fa';
+import { useContext } from 'react';
 import './detailedRecipe.css';
 import Modal from 'react-modal';
 import Heart from "react-animated-heart";
+import AppContext from '../AppContext';
 
 const recipeDetails = {
     'Long Island Iced Tea': {
@@ -76,7 +78,10 @@ const getUsername = () => {
 };
 
 const DetailedRecipe = ({ closeDetailed, recipe }) => {
-    const [loggedIn, setLoggedIn] = useState(true);
+var loggedIn;
+const context = useContext(AppContext);
+loggedIn = (context.token !== 'no token');
+console.log(context.token);
 const [issue, setIssue] = useState("");
 const [reportOpen, setReportOpen] = useState(false);
 const [reportMessage, setReportMessage] = useState("");
@@ -99,7 +104,7 @@ function closeReport(){
 }
 
 function reportSubmit(){
-    if (issue.length==0) {
+    if (issue.length===0) {
         setReportMessage('Must enter an issue before submitting');
     } else{
         setReportMessage('Thank you! We will review your report shortly.')
@@ -114,22 +119,6 @@ function favoriteClick(){
         setFavorited(true);
     }
 }
-
-    function openReport() {
-        setReportOpen(true);
-    }
-
-    function closeReport() {
-        setReportOpen(false);
-    }
-
-    function reportSubmit() {
-        if (issue.length === 0) {
-            setReportMessage('Must enter an issue before submitting');
-        } else {
-            setReportMessage('Thank you! We will review your report shortly.')
-        }
-    }
 
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
@@ -168,17 +157,8 @@ function favoriteClick(){
     return (
         <div className='detailedRecipeBackground'>
             <div className='detailedRecipeContainer'>
-                <div className='titleBar'>
-                    <button className='reportBtn' onClick={openReport}>Report</button>
-                </div>
-
                 <div className='body'>
                     <p>{selectedRecipe.description}</p>
-                </div>
-                <div className='footer'>
-                    <Link to="/recipeList">
-                        <button>Close</button>
-                    </Link>
                 </div>
                 <Modal size="md" isOpen={reportOpen} onRequestClose={closeReport} className="Modal" backdrop="static" maskClosable={false} shouldCloseOnOverlayClick={false}>
                     <div className='ReportModal'>
@@ -204,6 +184,10 @@ function favoriteClick(){
                         <p>Prep Time: {selectedRecipe.prepTime}</p>
                         <p>ABV: {selectedRecipe.ABV}</p>
                     </div>
+                    <div className="actionBtns">
+                        <button className='reportBtn' onClick={openReport}>Report</button>
+                        <LoggedInItems/>
+                    </div>
                 </div>
                 <div className="recipeContent">
                     <div className="imageSection">
@@ -225,6 +209,11 @@ function favoriteClick(){
                             ))}
                         </ol>
                     </div>
+                </div>
+                <div className='footer'>
+                    <Link to="/recipeList">
+                        <button>Close</button>
+                    </Link>
                 </div>
             </div>
         </div>
