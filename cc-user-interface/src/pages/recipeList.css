@@ -10,18 +10,24 @@
 
 .dropdown-container {
     margin: 25px;
-    width: 350px;
+    width: 100px;
     align-self: center;
     justify-self: center;
 }
 
 
-.submitBtn {
-    margin: auto;
-    margin-top: 30px;
-    width: 50%;
-    height: 50%;
-    text-decoration: none;
+.navigationButton .button {
+    width: 130px;
+    height: 40px;
+    background: transparent;
+    border: 1px solid black;
+    outline: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 500;
+    color: black;
+    padding: 5px;
 }
 
 .recipeForm {
