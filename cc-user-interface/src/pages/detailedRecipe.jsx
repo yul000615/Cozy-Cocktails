@@ -6,6 +6,7 @@ import './detailedRecipe.css';
 import Modal from 'react-modal';
 import Heart from "react-animated-heart";
 import AppContext from '../AppContext';
+import ReactStars from "react-rating-stars-component";
 
 const recipeDetails = {
     'Long Island Iced Tea': {
@@ -83,15 +84,25 @@ const context = useContext(AppContext);
 loggedIn = (context.token !== 'no token');
 console.log(context.token);
 const [issue, setIssue] = useState("");
+const [feedback, setFeedback] = useState("");
 const [reportOpen, setReportOpen] = useState(false);
+const [rateOpen, setRateOpen] = useState(false);
+console.log(rateOpen);
+const [rateMessage, setRateMessage] = useState("");
 const [reportMessage, setReportMessage] = useState("");
+const [rating, setRating] = useState(0);
 
 const [favorited, setFavorited] = useState(false);
 function LoggedInItems (){
     if (!loggedIn){
         return null;
     } else{
-        return <Heart hidden={!loggedIn} isClick={favorited} onClick={favoriteClick} />;
+        return (
+        <>
+        <Heart hidden={!loggedIn} isClick={favorited} onClick={favoriteClick} />
+        <button className="actionBtn" onClick={openRate}>Rate</button>
+        </>
+        );
     }
 }
 
@@ -101,6 +112,30 @@ function openReport(){
 
 function closeReport(){
     setReportOpen(false);
+    setReportMessage('');
+}
+
+function rateSubmit(){
+    console.log(rating)
+    if (rating==0) {
+        setRateMessage('Must give a rating');
+    } else if (feedback.length ===0){
+        setRateMessage('Must leave a feedback message');
+    } else {
+        //insert backend logic for rating here and run the below if successful
+        setRateMessage('')
+        setRateOpen(false);
+    }
+}
+
+function openRate(){
+    setRateOpen(true);
+    setRating(0);
+}
+
+function closeRate(){
+    setRateOpen(false);
+    setRateMessage('');
 }
 
 function reportSubmit(){
@@ -119,6 +154,12 @@ function favoriteClick(){
         setFavorited(true);
     }
 }
+
+const handleRating = (rate) => {
+    setRating(rate)
+
+    // other logic
+  }
 
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
@@ -161,13 +202,30 @@ function favoriteClick(){
                     <p>{selectedRecipe.description}</p>
                 </div>
                 <Modal size="md" isOpen={reportOpen} onRequestClose={closeReport} className="Modal" backdrop="static" maskClosable={false} shouldCloseOnOverlayClick={false}>
-                    <div className='ReportModal'>
+                    <div className='ActionModal'>
                         <h1>Describe your issue with this recipe:</h1>
                         <input type="issue" name="issue" value={issue} onChange={(e) => setIssue(e.target.value)} />
                         <button onClick={reportSubmit}>Submit</button>
                         <br/>
                         <button onClick={closeReport}>Close</button>
                         <p>{reportMessage}</p>
+                    </div>
+                </Modal>
+                <Modal size="md" isOpen={rateOpen} onRequestClose={closeRate} className="Modal" backdrop="static" maskClosable={false} shouldCloseOnOverlayClick={false}>
+                    <div className='ActionModal'> 
+                        <ReactStars
+                            count={5}
+                            onChange={handleRating}
+                            size={55}
+                            activeColor="#ffd700"
+                            className="ratingStars"
+                        />
+                        <h1>Give your feedback!</h1>
+                        <input type="feedback" name="feedback" value={feedback} onChange={(e) => setFeedback(e.target.value)} />
+                        <button onClick={rateSubmit}>Submit</button>
+                        <br/>
+                        <button onClick={closeRate}>Close</button>
+                        <p>{rateMessage}</p>
                     </div>
                 </Modal>
                 <div className="recipeHeader">
@@ -185,8 +243,8 @@ function favoriteClick(){
                         <p>ABV: {selectedRecipe.ABV}</p>
                     </div>
                     <div className="actionBtns">
-                        <button className='reportBtn' onClick={openReport}>Report</button>
                         <LoggedInItems/>
+                        <button className='actionBtn' onClick={openReport}>Report</button>
                     </div>
                 </div>
                 <div className="recipeContent">

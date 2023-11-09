@@ -62,10 +62,11 @@
     margin-left: 10px;
 }
 
-.reportBtn {
+.actionBtn {
     display: inline;
     justify-content: flex-end;
     margin-top: 20px;
+    margin-left: 20px;
     /* position: absolute; */
     top: 20px;
     right: 120px;
