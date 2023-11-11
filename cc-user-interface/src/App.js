@@ -16,7 +16,7 @@ import { BrowserRouter as Router, Routes, Route }
     from 'react-router-dom';
 
     function App() {
-      const [accessToken, setAccessToken] = useState('no token.')
+      const [accessToken, setAccessToken] = useState('no token')
     
       const tokenHandler = {
         token: accessToken,

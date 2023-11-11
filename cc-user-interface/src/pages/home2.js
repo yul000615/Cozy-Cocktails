@@ -88,10 +88,7 @@ function Home2() {
         <nav className="navigation">
           <div class="navigationMenu">
             <ul>
-              <li><a href="#" class="link active">Home</a></li>
-              <li><a href="#" class="link">About</a></li>
-              <li><a href="#" class="link">Services</a></li>
-              <li><a href="#" class="link">Contact</a></li>
+              <li><Link to="/recipeList" className="link">Recipe Search</Link></li>
             </ul>
           </div>
 
