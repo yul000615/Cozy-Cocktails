@@ -47,7 +47,7 @@ export const SignUp = (props) => {
       setError('');
 
       try {
-        const response = await fetch("http://localhost:5164/api/Account/register", {
+        const response = await fetch("https://localhost:7268/api/Account/register", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
