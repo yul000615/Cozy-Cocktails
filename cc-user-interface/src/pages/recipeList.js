@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import Autosuggest from 'react-autosuggest';
 import './recipeList.css';
 import { Link } from 'react-router-dom';
+import AppContext from '../AppContext';
+import { useContext } from 'react';
 
 function ErrorMessages({ error }) {
   if (!error) {
@@ -23,6 +25,15 @@ export default function RecipeList() {
     'Mojito',
     'Bloody Mary',
   ]);
+  var loggedIn;
+  const context = useContext(AppContext);
+  loggedIn = (context.token !== 'no token');
+  var routeString;
+  if (loggedIn){
+      routeString = "/home2"
+  }else {
+      routeString = "/"
+  }
 
   const [selectedRecipe, setSelectedRecipe] = useState('');
 
@@ -94,7 +105,7 @@ export default function RecipeList() {
           </div>
         )}
         <div className="navigationButton">
-          <Link to="/">
+          <Link to={routeString}>
             <button className="button">Back</button>
           </Link>
         </div>
