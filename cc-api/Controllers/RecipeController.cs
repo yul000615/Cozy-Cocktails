@@ -2,6 +2,8 @@
 using cc_api.Models;
 using cc_api.Models.Requests;
 using cc_api.Models.Responses;
+using cc_api.Services.Tokens;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -15,6 +17,14 @@ namespace cc_api.Controllers
     public class RecipeController : ControllerBase
     {
         private readonly UnitOfWork _unitOfWork;
+        private readonly Dictionary<string, string> _filterDict =
+            new Dictionary<string, string>
+            {
+                { "highestRated", "" },
+                { "lowestRated", "" },
+                { "favorited", "" },
+                { "", "" }
+            };
 
         public RecipeController(UnitOfWork unitOfWork)
         {
@@ -47,6 +57,7 @@ namespace cc_api.Controllers
             return alcohol_vol / total_vol * 100;
         }
 
+        // Delete this method later
         [HttpGet]
         public IActionResult GetRecipes()
         {
@@ -59,26 +70,130 @@ namespace cc_api.Controllers
         }
 
         [HttpPost("getRecipes")]
-        public async Task<IActionResult> Display([FromBody] DisplayRequest request) /* GetMethod */
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> GetRecipes([FromBody] DisplayRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            Recipe recipe = _unitOfWork.RecipeRepository.GetByPrimaryKey(request.ID);
-            if (recipe == null)
+            TokenUserInfo? tokenUserInfo = null;
+            IEnumerable<Recipe> foundRecipes = new List<Recipe> ();
+
+            if (request.favorited)
             {
-                return NotFound();
+                tokenUserInfo = new TokenReader().ReadToken(Request.Headers["Authorization"]);
+                IEnumerable<UserFavoriteRecipe> UFRs = await _unitOfWork.UserFavoriteRecipeRepository.GetByUserID(tokenUserInfo.Id);
+                foreach (UserFavoriteRecipe UFR in UFRs)
+                {
+                    foundRecipes.Append(_unitOfWork.RecipeRepository.GetByPrimaryKey(UFR.RecipeId));
+                }
             }
 
-            double abv = await _CalcABVAsync(request.ID);
-
-            return Ok(new DisplayRecipeResponse()
+            if (!string.IsNullOrEmpty(request.searchQuery))
             {
-                displayRecipe = recipe,
-                displayABV = abv
-            });
+                if (request.favorited)
+                {
+                    if (!foundRecipes.Any())
+                    {
+                        return NoContent();
+                    }
+
+                    List<Recipe> temp = new List<Recipe>();
+                    foreach (Recipe recipe in foundRecipes)
+                    {
+                        if (recipe.Name.Contains(request.searchQuery))
+                        {
+                            temp.Add(recipe);
+                        }
+                    }
+                    foundRecipes = temp;
+                }
+                else
+                {
+                    foundRecipes = await _unitOfWork.RecipeRepository.GetByName(request.searchQuery);
+                }
+            }else
+            {
+                if (!request.favorited)
+                {
+                    foundRecipes = _unitOfWork.RecipeRepository.GetAll();
+                }
+            }
+
+            /*
+            if (request.filters.Any())
+            {
+                if (request.searchQuery)
+                {
+                    if (!foundRecipes.Any())
+                    {
+                        return NoContent();
+                    }
+                    // run filter logic on foundRecipes
+                }else
+                {
+                    foundRecipes = _unitOfWork.RecipeRepository.GetByFilters(request.filters);
+                }
+            }else
+            {
+                if (!request.searchQuery)
+                {
+                    foundRecipes = _unitOfWork.RecipeRepository.GetAll();
+                }
+            }
+            */
+
+            if (request.useBarIngredints)
+            {
+                if (!foundRecipes.Any())
+                {
+                    return NoContent();
+                }
+
+                HashSet<Ingredient> barIngredients = new HashSet<Ingredient>();
+
+                if (request.loggedIn)
+                {
+                    if (tokenUserInfo == null)
+                    {
+                        tokenUserInfo = new TokenReader().ReadToken(Request.Headers["Authorization"]);
+                    }
+
+                    IEnumerable<UserBarIngredient> UBIs = await _unitOfWork.UserBarIngredientRepository.GetByUserID(tokenUserInfo.Id);
+                    foreach (UserBarIngredient UBI in UBIs)
+                    {
+                        barIngredients.Add(_unitOfWork.IngredientRepository.GetByPrimaryKey(UBI.IngredientName));
+                    }
+
+                }else
+                {
+                    foreach (string ingredient in request.barIngredients)
+                    {
+                        barIngredients.Add(_unitOfWork.IngredientRepository.GetByPrimaryKey(ingredient));
+                    }
+                }
+
+                List<Recipe> temp = new List<Recipe>();
+                foreach (Recipe recipe in foundRecipes)
+                {
+                    bool includeRecipe = true;
+                    IEnumerable<RecipeIngredient> RIs = await _unitOfWork.RecipeIngredientRepository.GetByRecipeID(recipe.RecipeId);
+                    foreach (RecipeIngredient RI in RIs)
+                    {
+                        if (!barIngredients.Contains(_unitOfWork.IngredientRepository.GetByPrimaryKey(RI.IngredientName)))
+                        {
+                            includeRecipe = false; break;
+                        }
+                    }
+                    if (includeRecipe) { temp.Add(recipe); }
+                }
+                foundRecipes = temp;
+            }
+
+            // Add ABV to recipe model
+            return foundRecipes.Any() != true ? NoContent() : Ok(foundRecipes);
         }
 
         [HttpPost("createRecipe")]

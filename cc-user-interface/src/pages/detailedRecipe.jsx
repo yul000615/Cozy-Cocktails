@@ -92,7 +92,7 @@ const [rateMessage, setRateMessage] = useState("");
 const [reportMessage, setReportMessage] = useState("");
 const [rating, setRating] = useState(0);
 
-const [favorited, setFavorited] = useState(false);
+const [favorited, setFavorited] = useState(null);
 function LoggedInItems (){
     if (!loggedIn){
         return null;
@@ -148,10 +148,42 @@ function reportSubmit(){
 function favoriteClick(){
     if (favorited) {
         //make backend call to remove the favorite and set the heart to grey if successful
-        setFavorited(false);
+        fetch("https://localhost:7268/api/UserFavoriteRecipe/unfavorite", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                favID: favorited.listId
+            }),
+        })
+        .then(
+            response => response.json(),
+            error => console.log("Error: ", error)
+        )
+        .then(
+            data => console.log(data),
+            setFavorited(null)
+        )
     } else {
         //make backend call to add to favorites and set the heart to red if successful
-        setFavorited(true);
+        fetch("https://localhost:7268/api/UserFavoriteRecipe/favorite", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            "Authorization": f`Bearer ${context.accessToken}`
+            },
+            body: JSON.stringify({
+                recipeID: recipe.recipeId
+            }),
+        })
+        .then(
+            response => response.json(),
+            error => console.log("Error: ", error)
+        )
+        .then(
+            data => setFavorited(data)
+        )
     }
 }
 
