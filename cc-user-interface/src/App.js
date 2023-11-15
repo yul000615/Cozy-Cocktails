@@ -21,7 +21,8 @@ import { BrowserRouter as Router, Routes, Route }
       const tokenHandler = {
         token: accessToken,
         setAccessToken,
-        refresh
+        refresh,
+        logout
       }
 
       async function refresh() {
@@ -44,6 +45,24 @@ import { BrowserRouter as Router, Routes, Route }
         } catch (error) {
         }
       }
+
+      async function logout() {
+        try {
+          const response = await fetch("https://localhost:7268/api/Authentication/logout", {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json",
+              "Authorization": `Bearer ${tokenHandler.token}`
+            },
+            credentials: "include",
+          });
+    
+          tokenHandler.setAccessToken('');
+          return true;
+        } catch (error) {
+          return false;
+        }
+    }
     
       return (
         <AppContext.Provider value={tokenHandler}>

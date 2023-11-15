@@ -1,12 +1,14 @@
 import "./deleteAccount.css";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Navigate } from "react-router-dom";
 import Modal from "react-modal";
+import AppContext from "../AppContext";
 
 Modal.setAppElement("#root");
 
 
 export default function DeleteAccount() {
+    const context = useContext(AppContext);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState('');
@@ -24,17 +26,44 @@ export default function DeleteAccount() {
         setIsValidated(false);
     }
     
-    function validateCredentials() {
-        if (email === "pass") {
-            setIsValidated(true);
-        } else {
-            setError("Invalid credentials.")
+    async function validateCredentials() {
+        try {
+            const response = await fetch("https://localhost:7268/api/Account/verify", {
+              method: "POST",
+              headers: {
+                "Content-type": "application/json",
+                "Authorization": `Bearer ${context.token}`
+              },
+              body: JSON.stringify({ email, password }),
+            }); 
+            if (response.ok) {
+                setIsValidated(true);
+            } else {
+                setError("Invalid credentials.")
+            }
+        } catch (error) {
+        setError("Network error occured.")
         }
     }
 
-    function deleteAccountRequest() {
-        setIsAccountDeleted(true);
-        closeModal();
+    async function deleteAccountRequest() {
+        try {
+            const logoutSuccessful = await context.logout();
+            if (logoutSuccessful) {
+                const response = await fetch("https://localhost:7268/api/Account/delete", {
+                method: "DELETE",
+                headers: {
+                    "Content-type": "application/json",
+                    "Authorization": `Bearer ${context.token}`
+                },
+                }); 
+                if (response.ok) {
+                    setIsAccountDeleted(true);
+                }
+            }
+        } catch (error) {
+            setError("Network error occured.")
+        }
     }
 
     return (
