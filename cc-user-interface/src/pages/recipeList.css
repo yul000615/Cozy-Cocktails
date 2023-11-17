@@ -15,8 +15,12 @@
     justify-self: center;
 }
 
+.searchButtons {
+    margin-left: 20%;
+    text-align: center;
+}
 
-.navigationButton .button {
+.searchButton .button {
     width: 130px;
     height: 40px;
     background: transparent;

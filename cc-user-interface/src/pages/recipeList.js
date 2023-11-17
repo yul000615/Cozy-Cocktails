@@ -17,6 +17,14 @@ export default function RecipeList() {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [apiError, setApiError] = useState(null);
+  const [isFavoritedChecked, setFavoritedIsChecked] = useState(false);
+  const handleFavoritedOnChange = () => {
+    setFavoritedIsChecked(!isFavoritedChecked);
+  };
+  const [isIngredientsChecked, setIngredientsIsChecked] = useState(false);
+  const handleIngredientsOnChange = () => {
+    setIngredientsIsChecked(!isIngredientsChecked);
+  };
   const [apiSuccess, setApiSuccess] = useState(false);
   const [recipeNames, setRecipeNames] = useState([
     'Long Island Iced Tea',
@@ -27,13 +35,43 @@ export default function RecipeList() {
   ]);
   var loggedIn;
   const context = useContext(AppContext);
-  loggedIn = (context.token !== 'no token');
+  loggedIn = (context.token !== 'no token' && context.token !== '');
+  console.log(context.token);
   var routeString;
   if (loggedIn){
       routeString = "/home2"
   }else {
       routeString = "/"
   }
+
+  function LoggedInItems (){
+    console.log(loggedIn)
+    if (!loggedIn){
+        return null;
+    } else{
+        return (
+          <><div className="FavoritedButton">
+            <input
+              type="checkbox"
+              id="favorite"
+              name="favorite"
+              value="Favorited"
+              checked={isFavoritedChecked}
+              onChange={handleFavoritedOnChange} />
+            From Favorites
+          </div><div className="IngredientsButton">
+              <input
+                type="checkbox"
+                id="ingredients"
+                name="ingredients"
+                value="ingredients"
+                checked={isIngredientsChecked}
+                onChange={handleIngredientsOnChange} />
+              Uses Your Ingredients
+            </div></>
+        );
+    }
+}
 
   const [selectedRecipe, setSelectedRecipe] = useState('');
 
@@ -95,19 +133,21 @@ export default function RecipeList() {
             theme={theme}
           />
         </label>
+        <LoggedInItems/>
         <br />
-
-        {selectedRecipe && (
-          <div class="navigationButton">
-            <Link to={`/detailedRecipe?name=${selectedRecipe}`}>
-              <button className="button">Search</button>
+        <div className="searchButtons">
+          {selectedRecipe && (
+            <div class="navigationButton">
+              <Link to={`/detailedRecipe?name=${selectedRecipe}`}>
+                <button className="button">Search</button>
+              </Link>
+            </div>
+          )}
+          <div className="navigationButton">
+            <Link to={routeString}>
+              <button className="button">Back</button>
             </Link>
           </div>
-        )}
-        <div className="navigationButton">
-          <Link to={routeString}>
-            <button className="button">Back</button>
-          </Link>
         </div>
       </form>
 

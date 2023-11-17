@@ -23,7 +23,7 @@ export default function CreateRecipe() {
     const [modalOpen, setModalOpen] = useState(false);
     var loggedIn;
     const context = useContext(AppContext);
-    loggedIn = (context.token !== 'no token');
+    loggedIn = (context.token !== 'no token' && context.token !== '');
     var routeString;
     if (loggedIn){
         routeString = "/home2"
