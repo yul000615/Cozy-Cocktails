@@ -68,7 +68,7 @@ const getUsername = () => {
 const DetailedRecipe = ({ closeDetailed, recipe }) => {
 var loggedIn;
 const context = useContext(AppContext);
-loggedIn = (context.token !== 'no token');
+loggedIn = (context.token !== 'no token'  && context.token !== '');
 console.log(context.token);
 const [issue, setIssue] = useState("");
 const [feedback, setFeedback] = useState("");
