@@ -11,7 +11,7 @@ import RecipeList from './pages/recipeList';
 import ViewRecipe from './pages/detailedRecipe';
 import UpdateAccount from './pages/updateAccount';
 import ResetPassword from './pages/resetPassword';
-import RecipeList from './pages/recipeList'
+// import RecipeList from './pages/recipeList'
 import { BrowserRouter as Router, Routes, Route }
     from 'react-router-dom';
 

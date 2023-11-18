@@ -158,7 +158,7 @@ function favoriteClick(){
             method: "POST",
             headers: {
             "Content-Type": "application/json",
-            "Authorization": f`Bearer ${context.accessToken}`
+            "Authorization": `Bearer ${context.accessToken}`
             },
             body: JSON.stringify({
                 recipeID: recipe.recipeId
