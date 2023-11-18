@@ -63,6 +63,7 @@ namespace cc_api_test
             _refreshValidateMock = new Mock<RefreshTokenValidator>(_configMock.Object);
             _authenticateMock = new Mock<Authenticator>(_uowMock.Object, _accessTokenMock.Object, _refreshTokenMock.Object);
 
+            _tokenReaderMock = new Mock<TokenReader>();
 
             _controller = new AuthenticationController(_uowMock.Object, _hashMock.Object, _authenticateMock.Object, _refreshValidateMock.Object, _tokenReaderMock.Object);
         }

@@ -2,6 +2,8 @@
 using cc_api.Models;
 using cc_api.Models.Requests;
 using cc_api.Models.Responses;
+using cc_api.Services.Tokens;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -15,13 +17,21 @@ namespace cc_api.Controllers
     public class RecipeController : ControllerBase
     {
         private readonly UnitOfWork _unitOfWork;
+        private readonly Dictionary<string, string> _filterDict =
+            new Dictionary<string, string>
+            {
+                { "highestRated", "" },
+                { "lowestRated", "" },
+                { "favorited", "" },
+                { "", "" }
+            };
 
         public RecipeController(UnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
-        private async Task<double> CalcABVAsync(long recipeID)
+        private async Task<double> _CalcABVAsync(long recipeID)
         {
             IRecipeIngredientRepository recipeIngredient = _unitOfWork.RecipeIngredientRepository;
             IIngredientRepository ingredient = _unitOfWork.IngredientRepository;
@@ -47,6 +57,7 @@ namespace cc_api.Controllers
             return alcohol_vol / total_vol * 100;
         }
 
+        // Delete this method later
         [HttpGet]
         public IActionResult GetRecipes()
         {
@@ -58,31 +69,135 @@ namespace cc_api.Controllers
             return Ok(_unitOfWork.RecipeRepository.GetAll());
         }
 
-        [HttpPost("display")]
-        public async Task<IActionResult> Display([FromBody] DisplayRequest request) /* GetMethod */
+        [HttpPost("getRecipes")]
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> GetRecipes([FromBody] DisplayRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            Recipe recipe = _unitOfWork.RecipeRepository.GetByPrimaryKey(request.ID);
-            if (recipe == null)
+            TokenUserInfo? tokenUserInfo = null;
+            IEnumerable<Recipe> foundRecipes = new List<Recipe> ();
+
+            if (request.favorited)
             {
-                return NotFound();
+                tokenUserInfo = new TokenReader().ReadToken(Request.Headers["Authorization"]);
+                IEnumerable<UserFavoriteRecipe> UFRs = await _unitOfWork.UserFavoriteRecipeRepository.GetByUserID(tokenUserInfo.Id);
+                foreach (UserFavoriteRecipe UFR in UFRs)
+                {
+                    foundRecipes.Append(_unitOfWork.RecipeRepository.GetByPrimaryKey(UFR.RecipeId));
+                }
             }
 
-            double abv = await CalcABVAsync(request.ID);
-
-            return Ok(new DisplayRecipeResponse()
+            if (!string.IsNullOrEmpty(request.searchQuery))
             {
-                displayRecipe = recipe,
-                displayABV = abv
-            });
+                if (request.favorited)
+                {
+                    if (!foundRecipes.Any())
+                    {
+                        return NoContent();
+                    }
+
+                    List<Recipe> temp = new List<Recipe>();
+                    foreach (Recipe recipe in foundRecipes)
+                    {
+                        if (recipe.Name.Contains(request.searchQuery))
+                        {
+                            temp.Add(recipe);
+                        }
+                    }
+                    foundRecipes = temp;
+                }
+                else
+                {
+                    foundRecipes = await _unitOfWork.RecipeRepository.GetByName(request.searchQuery);
+                }
+            }else
+            {
+                if (!request.favorited)
+                {
+                    foundRecipes = _unitOfWork.RecipeRepository.GetAll();
+                }
+            }
+
+            /*
+            if (request.filters.Any())
+            {
+                if (request.searchQuery)
+                {
+                    if (!foundRecipes.Any())
+                    {
+                        return NoContent();
+                    }
+                    // run filter logic on foundRecipes
+                }else
+                {
+                    foundRecipes = _unitOfWork.RecipeRepository.GetByFilters(request.filters);
+                }
+            }else
+            {
+                if (!request.searchQuery)
+                {
+                    foundRecipes = _unitOfWork.RecipeRepository.GetAll();
+                }
+            }
+            */
+
+            if (request.useBarIngredints)
+            {
+                if (!foundRecipes.Any())
+                {
+                    return NoContent();
+                }
+
+                HashSet<Ingredient> barIngredients = new HashSet<Ingredient>();
+
+                if (request.loggedIn)
+                {
+                    if (tokenUserInfo == null)
+                    {
+                        tokenUserInfo = new TokenReader().ReadToken(Request.Headers["Authorization"]);
+                    }
+
+                    IEnumerable<UserBarIngredient> UBIs = await _unitOfWork.UserBarIngredientRepository.GetByUserID(tokenUserInfo.Id);
+                    foreach (UserBarIngredient UBI in UBIs)
+                    {
+                        barIngredients.Add(_unitOfWork.IngredientRepository.GetByPrimaryKey(UBI.IngredientName));
+                    }
+
+                }else
+                {
+                    foreach (string ingredient in request.barIngredients)
+                    {
+                        barIngredients.Add(_unitOfWork.IngredientRepository.GetByPrimaryKey(ingredient));
+                    }
+                }
+
+                List<Recipe> temp = new List<Recipe>();
+                foreach (Recipe recipe in foundRecipes)
+                {
+                    bool includeRecipe = true;
+                    IEnumerable<RecipeIngredient> RIs = await _unitOfWork.RecipeIngredientRepository.GetByRecipeID(recipe.RecipeId);
+                    foreach (RecipeIngredient RI in RIs)
+                    {
+                        if (!barIngredients.Contains(_unitOfWork.IngredientRepository.GetByPrimaryKey(RI.IngredientName)))
+                        {
+                            includeRecipe = false; break;
+                        }
+                    }
+                    if (includeRecipe) { temp.Add(recipe); }
+                }
+                foundRecipes = temp;
+            }
+
+            // Add ABV to recipe model
+            return foundRecipes.Any() != true ? NoContent() : Ok(foundRecipes);
         }
 
-        [HttpPost("create")]
-        public IActionResult Create([FromBody] RecipeRequest request) /* PostMethod */
+        [HttpPost("createRecipe")]
+        public IActionResult CreateRecipe([FromBody] RecipeRequest request) /* PostMethod */
         {
             if (!ModelState.IsValid)
             {
@@ -117,11 +232,11 @@ namespace cc_api.Controllers
             _unitOfWork.RecipeRepository.Insert(recipe);
             _unitOfWork.Save();
 
-            return Ok("Recipe Created!");
+            return Ok("Recipe Created");
         }
 
-        [HttpPut("update")] /* Placeholder Method */
-        public IActionResult Update(Recipe recipe) /* PutMethod */
+        [HttpPut("updateRecipe")] /* Placeholder Method */
+        public IActionResult UpdateRecipe(Recipe recipe) /* PutMethod */
         {
             if (!ModelState.IsValid)
             {
@@ -131,11 +246,11 @@ namespace cc_api.Controllers
             _unitOfWork.RecipeRepository.Update(recipe);
             _unitOfWork.Save();
 
-            return Ok();
+            return Ok("Recipe Updated");
         }
 
-        [HttpDelete("delete")]
-        public async Task<IActionResult> Delete(long recipeID) /* DeleteMethod */
+        [HttpDelete("deleteRecipe")]
+        public async Task<IActionResult> DeleteRecipe(long recipeID)
         {
             if (!ModelState.IsValid)
             {

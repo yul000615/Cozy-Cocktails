@@ -11,6 +11,10 @@ public partial class Recipe
 
     public string? Description { get; set; }
 
+    public double ABV { get; set; }
+
+    public double AverageRating { get; set; }
+
     public long UserAuthor { get; set; }
 
     public virtual ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
