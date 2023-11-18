@@ -57,6 +57,7 @@ namespace cc_api_test
             _configMock = new Mock<AuthenticationConfiguration>();
             _accessTokenMock = new Mock<AccessTokenGenerator>(_configMock.Object, _tokenMock.Object);
             _refreshTokenMock = new Mock<RefreshTokenGenerator>(_configMock.Object, _tokenMock.Object);
+            _tokenReaderMock = new Mock<TokenReader>();
 
 
             _refreshValidateMock = new Mock<RefreshTokenValidator>(_configMock.Object);

@@ -84,17 +84,20 @@ export const UpdateAccount = (props) => {
           <ErrorMessages error={error || apiError} />
           
           <div className="UpdateFields">
-            <label htmlFor="email" className="entryField"></label>
+            <label htmlFor="email" className="entryField">
               Current Email: <input name="email" onChange={(e) => setEmail(e.target.value)} 
               type="email" id="email" />
+            </label>
             <br />
-            <label htmlFor="newEmail" className="entryField"></label>
+            <label htmlFor="newEmail" className="entryField">
               New Email: <input name="newEmail" onChange={(e) => setNewEmail(e.target.value)} 
               type="email" id="newEmail" />
+            </label>
             <br />
-            <label htmlFor="newPassword" className="entryField"></label>
+            <label htmlFor="newPassword" className="entryField">
               New Password: <input name="newPassword" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} 
               type="password" id="newPassword" />
+            </label>
             <br />
             <button className='registerBtn' onClick={registerClick}>Update</button>
             <Modal isOpen={modalOpen} onRequestClose={closeModal} className="Modal">

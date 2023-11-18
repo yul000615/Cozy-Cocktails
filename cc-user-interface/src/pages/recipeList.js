@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Autosuggest from 'react-autosuggest';
 import './recipeList.css';
 import { Link } from 'react-router-dom';
-import DetailedRecipe from './detailedRecipe'
+import AppContext from '../AppContext';
+import { useContext } from 'react';
 
 function ErrorMessages({ error }) {
   if (!error) {
@@ -16,12 +17,15 @@ export default function RecipeList() {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [apiError, setApiError] = useState(null);
+  const [isFavoritedChecked, setFavoritedIsChecked] = useState(false);
+  const handleFavoritedOnChange = () => {
+    setFavoritedIsChecked(!isFavoritedChecked);
+  };
+  const [isIngredientsChecked, setIngredientsIsChecked] = useState(false);
+  const handleIngredientsOnChange = () => {
+    setIngredientsIsChecked(!isIngredientsChecked);
+  };
   const [apiSuccess, setApiSuccess] = useState(false);
-  //Start of ported code
-  const [recipes, setRecipes] = useState([]);
-  const [openDetailed, setOpenDetailed] = useState(false);
-  const [recipe, setRecipe] = useState();
-  //End of ported code
   const [recipeNames, setRecipeNames] = useState([
     'Long Island Iced Tea',
     'Margarita',
@@ -29,21 +33,45 @@ export default function RecipeList() {
     'Mojito',
     'Bloody Mary',
   ]);
-
-  //Start of ported code
-  const fetchRecipes = () => {
-    fetch("https://localhost:7268/api/Recipe")
-    .then((response) => response.json())
-    .then(data => setRecipes(data))
-    .catch((error) => {
-        console.log(error)
-    })
+  var loggedIn;
+  const context = useContext(AppContext);
+  loggedIn = (context.token !== 'no token' && context.token !== '');
+  console.log(context.token);
+  var routeString;
+  if (loggedIn){
+      routeString = "/home2"
+  }else {
+      routeString = "/"
   }
 
-  useEffect(() => {
-    fetchRecipes()
-  }, [])
-  //End of ported code
+  function LoggedInItems (){
+    console.log(loggedIn)
+    if (!loggedIn){
+        return null;
+    } else{
+        return (
+          <><div className="FavoritedButton">
+            <input
+              type="checkbox"
+              id="favorite"
+              name="favorite"
+              value="Favorited"
+              checked={isFavoritedChecked}
+              onChange={handleFavoritedOnChange} />
+            From Favorites
+          </div><div className="IngredientsButton">
+              <input
+                type="checkbox"
+                id="ingredients"
+                name="ingredients"
+                value="ingredients"
+                checked={isIngredientsChecked}
+                onChange={handleIngredientsOnChange} />
+              Uses Your Ingredients
+            </div></>
+        );
+    }
+}
 
   const [selectedRecipe, setSelectedRecipe] = useState('');
 
@@ -105,41 +133,21 @@ export default function RecipeList() {
             theme={theme}
           />
         </label>
+        <LoggedInItems/>
         <br />
-
-        //Start of ported code P.S. IDK if this being in the form will break it or not
-        {recipes?.length > 0
-          ? (
-            <div className = "container">
-              {recipes.map((recipe) => (
-                <button 
-                  onClick={() => {setOpenDetailed(true); setRecipe(recipe)}
-                }>{recipe.name}</button>
-              ))}
-            </div>
-          ) : (
-            <div className = "empty">
-              <h2>No Recipies Found</h2>
+        <div className="searchButtons">
+          {selectedRecipe && (
+            <div class="navigationButton">
+              <Link to={`/detailedRecipe?name=${selectedRecipe}`}>
+                <button className="button">Search</button>
+              </Link>
             </div>
           )}
-
-        {openDetailed && <DetailedRecipe
-          closeDetailed={setOpenDetailed}
-          recipe={recipe}
-        />}
-        //End of ported code
-
-        {selectedRecipe && (
-          <div class="navigationButton">
-            <Link to={`/detailedRecipe?name=${selectedRecipe}`}>
-              <button className="button">Search</button>
+          <div className="navigationButton">
+            <Link to={routeString}>
+              <button className="button">Back</button>
             </Link>
           </div>
-        )}
-        <div className="navigationButton">
-          <Link to="/">
-            <button className="button">Back</button>
-          </Link>
         </div>
       </form>
 

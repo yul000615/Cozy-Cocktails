@@ -4,6 +4,8 @@ import Select from "react-select"
 import Modal from 'react-modal'
 import {Link} from 'react-router-dom'
 import { useRef, createRef } from 'react';
+import AppContext from '../AppContext';
+import { useContext } from 'react';
 
 export default function CreateRecipe() {
 
@@ -19,6 +21,16 @@ export default function CreateRecipe() {
     const [description, setDescription] = useState("");
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [modalOpen, setModalOpen] = useState(false);
+    var loggedIn;
+    const context = useContext(AppContext);
+    loggedIn = (context.token !== 'no token' && context.token !== '');
+    var routeString;
+    if (loggedIn){
+        routeString = "/home2"
+    }else {
+        routeString = "/"
+    }
+    console.log(context.token);
 
     function submitClick(e){
         setModalOpen(true);
@@ -49,7 +61,7 @@ export default function CreateRecipe() {
                 <label className = "entryFieldLong">
                 Recipe Description: <textArea className="descriptionField" name="description" value={description} onChange={(e) => setDescription(e.target.value)}/>
                 </label>
-                <div className="dropdown-container">
+                <div className="ingredient-container">
                     <Select
                         options={optionList}
                         value={selectedOptions}
@@ -74,7 +86,7 @@ export default function CreateRecipe() {
             <Modal isOpen={modalOpen} onRequestClose={closeModal} className="Modal">
               <h2>Recipe Successfully Created!</h2>
               <br/>
-              <Link to="/"><button onClick={closeModal}>Head to home page</button></Link>
+              <Link to={routeString}><button onClick={closeModal}>Head to home page</button></Link>
             </Modal>
         </div>
 
