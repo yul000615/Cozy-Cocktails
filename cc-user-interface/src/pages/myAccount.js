@@ -4,64 +4,46 @@ import './myAccount.css';
 import DeleteAccount from './deleteAccount';
 
 function MyAccount() {
-  // Replace with real one later
   const profileImageUrl = 'https://example.com/user-profile-image.jpg';
 
-  const [newUsername, setNewUsername] = useState(''); 
-  const handleNewUsernameChange = (event) => {
-    setNewUsername(event.target.value);
-  };
-
   return (
-    <div className="MyAccountPage">
+    <div className="MyAccountPage"> 
+
       <div className="CenterContent">
+        <div className="MyAccountPageWelcome">
+          <h1>My Account Page</h1>
+        </div>
+
+
         <div className="ProfileContainer">
-          <div className="ProfileImage">
-            <img
-              src={profileImageUrl}
-              alt="Profile Image"
-              style={{ width: '200px', height: '200px', borderRadius: '50%', display: 'block' }}
-            />
-          </div>
-          <div className="WelcomeContainer">
-            <div className="MyAccountPageWelcome">
-              <h1>Welcome, [User's Name]</h1>
-            </div>
-            <div className="myAccountButtonContainer">
-              <input
-                type="text"
-                placeholder="New Username"
-                value={newUsername}
-                onChange={handleNewUsernameChange}
+          <div className="ProfileUpdate">
+            <div className="ProfileImage">
+              <img
+                src={profileImageUrl}
+                alt="Profile Image"
               />
-              <button className="myAccountButton">Update Username</button>
             </div>
+            <button className="profileButton">Change Profile Picture</button>
           </div>
         </div>
 
-        <div className="MyAccountButtons">
-          <div className="myAccountButtonContainer">
-            <button className="myAccountButton">Edit Profile Picture</button>
+        <div className="handlerButton">
+          <div className="updateAccount">
+            <Link to='/updateAccount'><button className="updateAccountButton">Update Account Information</button></Link>
           </div>
-          <div className="myAccountButtonContainer">
+          <div className="deleteAccount">
             <DeleteAccount></DeleteAccount>
           </div>
-          <div className="myAccountButtonContainer">
-            <Link to='/updateAccount'><button className="myAccountButton">Update Account Information</button></Link>
+          <div className="downloadData">
+            <button className="downloadDataButton">Download My Data</button>
           </div>
-          <div className="myAccountButtonContainer">
-            <button className="myAccountButton">Download My Data</button>
-          </div>
-        </div>
-        <div className="LogoutButton">
-          <Link to="/">Logout</Link>
-        </div>
+         </div>
         <div className="homeButton">
-          <Link to="/home2">Home</Link>
+          <Link to="/home2"><button className="homeButton">Go Back to Homepage</button></Link>
         </div>
       </div>
-    </div>
+      </div>
   );
-}
+  }
 
 export default MyAccount;

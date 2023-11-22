@@ -68,7 +68,7 @@ export default function DeleteAccount() {
 
     return (
         <div>
-            <button className="myAccountButton" onClick={openModal}>Delete My Account</button>
+            <button className="deleteAccountButton" onClick={openModal}>Delete My Account</button>
             <Modal className="modal" isOpen={modalOpen}>
                 {isAccountDeleted ? (<DeleteSuccess/>) : 
                 (<div>
