@@ -34,12 +34,11 @@ body {
     line-height: 100px;
     width: 100%;
     z-index: 100;
-    backdrop-filter: blur(2px);
 }
 
 .logo p {
     font-size: 2em;
-    color: #36332d;
+    color: #4f483f;
     user-select: none;
     font-weight: 600;
     padding: 5px;
@@ -66,7 +65,8 @@ body {
     border-bottom: 2px solid #4f483f;
 }
 
-.signupButton, .loginButton {
+.signupButton,
+.loginButton {
     width: 130px;
     height: 40px;
     background: transparent;
@@ -79,7 +79,8 @@ body {
     color: #4f483f;
     padding: 5px;
 }
-.navigationButton {
+
+.userButton {
     display: flex;
     gap: 3px;
 }
