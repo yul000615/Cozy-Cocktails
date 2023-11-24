@@ -4,6 +4,8 @@ import './recipeList.css';
 import { Link } from 'react-router-dom';
 import AppContext from '../AppContext';
 import { useContext } from 'react';
+import Select from "react-select";
+import DetailedRecipe from "./detailedRecipe"; 
 
 function ErrorMessages({ error }) {
   if (!error) {
@@ -13,7 +15,119 @@ function ErrorMessages({ error }) {
   }
 }
 
-export default function RecipeList() {
+function FilterSearch() {
+  const [name, setName] = useState('');
+  const [error, setError] = useState('');
+  const [apiError, setApiError] = useState(null);
+  const [apiSuccess, setApiSuccess] = useState(false);
+  const [ingredientNames, setingredientNames] = useState();
+  const [selectedIngredient, setSelectedIngredient] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [value, setValue] = useState('');
+
+  const getSuggestions = (value) => {
+    const inputValue = value.trim().toLowerCase();
+    const inputLength = inputValue.length;
+
+    return inputLength === 0
+      ? []
+      : ingredientNames.filter((name) => name.toLowerCase().slice(0, inputLength) === inputValue);
+  };
+
+  const onChange = (event, { newValue }) => {
+    setValue(newValue);
+    const selected = getSuggestions(newValue)[0];
+    if (selected) {
+      setSelectedIngredient(selected);
+    } else {
+      setSelectedIngredient('');
+    }
+  };
+  const renderSuggestion = (suggestion) => <div>{suggestion}</div>;
+  const inputStyle = {
+    fontStyle: 'italic',
+  };
+
+  return (
+    <div className="entryField">
+      <h2>By keyword</h2>
+      <input
+        className="filterKeyword"
+        placeholder="enter a keyword"
+        label="cocktail name"
+        style={inputStyle}
+      />
+    </div>
+  );
+}
+
+function FilterList() {
+  const [selectedOption, setSelectedOption] = useState('');
+  const [ingredients, setIngredients] = useState([]);
+  const ingredientList = ['Vodka', 'Rum', 'Gin', 'Tequila', 'Vermouth'];
+  const optionList = [];
+
+  for (var i in ingredientList) {
+    if (!ingredients.includes(ingredientList[i])) {
+      optionList.push({ value: ingredientList[i].toLowerCase(), label: ingredientList[i] });
+    }
+  }
+
+  function handleSelect(data) {
+    setSelectedOption(data);
+  }
+
+  const deleteByValue = value => {
+    setIngredients(oldValues => {
+      return oldValues.filter(ingredient => ingredient !== value)
+    })
+  }
+
+  const addValue = value => {
+    var ingredientList = ingredients.slice()
+    ingredientList.push(value);
+    setIngredients(ingredientList);
+    setSelectedOption(ingredientList[0])
+  }
+  return (
+  <div class='entryField'>
+    <h2>By ingredients</h2>
+    <Select
+      clasName='ingredientSelect'
+      options={optionList}
+      value={selectedOption}
+      onChange={handleSelect}
+      isSearchable={true}
+      menuPlacement='auto'
+      menuPosition='auto'
+      autosize={false}
+      styles={{ width: '50%',}} />
+    <button className="listButton" id="addButton" onClick={() => addValue(selectedOption['label'])}>Add</button>
+  <ul className='list'>
+    {ingredients.map(ingredient => {
+      return (
+        <li key={ingredient} className='ingredient'>
+          <span>{ingredient}</span>
+          <button className="listButton" id="deleteButton" onClick={() => deleteByValue(ingredient)}>Delete</button>
+        </li>
+      );
+    })}
+  </ul>
+</div>
+)}
+
+function CocktailList({ recipes }) {
+  return (
+    <ul>
+      {recipes.map((recipe, index) => (
+        <li key={index}>{recipe}</li>
+      ))}
+    </ul>
+  );
+}
+
+function RecipeList() {
+  const [showModal, setShowModal] = useState(false);
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [apiError, setApiError] = useState(null);
@@ -73,84 +187,115 @@ export default function RecipeList() {
     }
 }
 
-  const [selectedRecipe, setSelectedRecipe] = useState('');
+const [selectedRecipe, setSelectedRecipe] = useState('');
+const [suggestions, setSuggestions] = useState([]);
+const [value, setValue] = useState('');
+const getSuggestions = (value) => {
+const inputValue = value.trim().toLowerCase();
 
-  const [suggestions, setSuggestions] = useState([]);
-  const [value, setValue] = useState('');
+const inputLength = inputValue.length;
+  return inputLength === 0
+  ? []
+  : recipeNames.filter((name) => name.toLowerCase().slice(0, inputLength) === inputValue);
+};
+const onChange = (event, { newValue }) => {
+  setValue(newValue);
+  const selected = getSuggestions(newValue)[0];
+  if (selected) {
+    setSelectedRecipe(selected);
+  } else {
+    setSelectedRecipe('');
+  }
+};
 
-  const getSuggestions = (value) => {
-    const inputValue = value.trim().toLowerCase();
-    const inputLength = inputValue.length;
+const renderSuggestion = (suggestion) => <div>{suggestion}</div>;
 
-    return inputLength === 0
-      ? []
-      : recipeNames.filter((name) => name.toLowerCase().slice(0, inputLength) === inputValue);
-  };
+const inputProps = {
+  placeholder: 'cocktail name',
+  value,
+  onChange: onChange,
+  style: { fontStyle: 'italic' },
+};
 
-  const onChange = (event, { newValue }) => {
-    setValue(newValue);
-    const selected = getSuggestions(newValue)[0];
-    if (selected) {
-      setSelectedRecipe(selected);
-    } else {
-      setSelectedRecipe('');
-    }
-  };
+const theme = {
+  suggestion: {
+    backgroundColor: 'white',
+  },
+  suggestionsList: {
+    listStyleType: 'none',
+    padding: 0,
+  },
+ };
 
-  const renderSuggestion = (suggestion) => <div>{suggestion}</div>;
+const openModal = () => {
+  setShowModal(true);
+};
 
-  const inputProps = {
-    placeholder: 'cocktail name',
-    value,
-    onChange: onChange,
-    style: { fontStyle: 'italic' },
-  };
+const closeModal = () => {
+  setShowModal(false);
+};
 
-  const theme = {
-    suggestion: {
-      backgroundColor: 'white',
-    },
-    suggestionsList: {
-      listStyleType: 'none',
-      padding: 0,
-    },
-  };
+const handleRecipeSelection = (selectedRecipeName) => {
+  setSelectedRecipe(selectedRecipeName); // Update the selected recipe name
+  setShowModal(true); // Open the modal to display the detailed recipe
+};
 
-  return (
-    <div className="ViewRecipeFields">
-      <h1>Recipe search</h1>
-      <ErrorMessages error={error || apiError} />
-      <form className="recipeForm">
-        <label className="entryField">
-          {' '}
-          <Autosuggest
-            suggestions={suggestions}
-            onSuggestionsFetchRequested={({ value }) => setSuggestions(getSuggestions(value))}
-            onSuggestionsClearRequested={() => setSuggestions([])}
-            getSuggestionValue={(suggestion) => suggestion}
-            renderSuggestion={renderSuggestion}
-            inputProps={inputProps}
-            theme={theme}
-          />
-        </label>
-        <LoggedInItems/>
-        <br />
-        <div className="searchButtons">
-          {selectedRecipe && (
-            <div class="navigationButton">
-              <Link to={`/detailedRecipe?name=${selectedRecipe}`}>
-                <button className="button">Search</button>
-              </Link>
+ return (
+ <div className="headerButtons">
+    <div className="logo">
+       <p>Cozy Cocktails</p>
             </div>
-          )}
-          <div className="navigationButton">
-            <Link to={routeString}>
-              <button className="button">Back</button>
-            </Link>
+            <div className="navigationMenu">
+              <ul>
+                <li><a href="#" className="link active">Home</a></li>
+                <li><a href="#" className="link">Services</a></li>
+                <li><a href="#" className="link">FAQ</a></li>
+              </ul>
+            </div>
+        <Link to="/home2">
+          <button className="headerButton">Home</button>
+        </Link>    
+        <div className="container">
+          
+          <div className="searchRecipePage">
+            <div class="buttons">
+              {/* <a class="backButton" href="#"><Link to={routeString}>Go Back to Homepage</Link></a> */}
+              </div>
+              <h1>Recipe search</h1>
+              <ErrorMessages error={error || apiError} />
+              <div className="searchContainer">
+                <div className="byName">
+                  <h2>By name</h2>
+                  {' '}
+                  <Autosuggest
+                  suggestions={suggestions}
+                  onSuggestionsFetchRequested={({ value }) => setSuggestions(getSuggestions(value))}
+                  onSuggestionsClearRequested={() => setSuggestions([])}
+                  getSuggestionValue={(suggestion) => suggestion}
+                  renderSuggestion={renderSuggestion}
+                  inputProps={inputProps}
+                  theme={theme}
+                />
+                </div>
+              <div className="byKeyword"><FilterSearch/></div>
+              <div className="byIngredient"><FilterList/></div>
+              <div className="loggedInItems"><LoggedInItems/></div>
+              <br />
+              </div>
+              <div className="additionalButtons">
+                <div className="FavoritedButton"></div>
+                <div className="IngredientsButton"></div>
+                <button className="searchButton" onClick={openModal}>Search</button>
+              </div>
+            </div>
+            {showModal && (
+            <DetailedRecipe
+            closeDetailed={() => setShowModal(false)}
+            recipe={selectedRecipe}
+            />
+            )}
+            </div>
           </div>
-        </div>
-      </form>
-
-    </div>
-  );
+          );
 }
+export default RecipeList;
