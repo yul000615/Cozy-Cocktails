@@ -4,6 +4,7 @@ using cc_api.Models.Requests;
 using cc_api.Services.Tokens;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace cc_api.Controllers
 {
@@ -12,10 +13,27 @@ namespace cc_api.Controllers
     public class ReviewController : ControllerBase
     {
         private readonly UnitOfWork _unitOfWork;
+        private readonly TokenReader _tokenReader;
 
-        public ReviewController(UnitOfWork unitOfWork)
+        public ReviewController(UnitOfWork unitOfWork, TokenReader tokenReader)
         {
             _unitOfWork = unitOfWork;
+            _tokenReader = tokenReader;
+        }
+
+        private async Task<double> _CalcAverageRating(long recipeID)
+        {
+            Recipe recipe = _unitOfWork.RecipeRepository.GetByPrimaryKey(recipeID);
+            IEnumerable<Review> recipeReviews = await _unitOfWork.ReviewRepository.GetByRecipeID(recipeID);
+            
+            double totalRating = 0.0;
+
+            foreach (Review review in recipeReviews)
+            {
+                totalRating += review.Rating;
+            }
+
+            return totalRating / recipeReviews.Count();
         }
 
         [HttpGet("getRecipeReviews")]
@@ -31,42 +49,62 @@ namespace cc_api.Controllers
 
         [HttpGet("getUserReviews")]
         [Authorize(Roles = "User")]
-        public async Task<IActionResult> GetUserReviews()
+        public async Task<IActionResult> GetUserReviews([FromHeader] string authorization)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            TokenUserInfo tokenUserInfo = new TokenReader().ReadToken(Request.Headers["Authorization"]);
+            bool tokenExtracted = _tokenReader.GetTokenFromHeader(authorization, out var token);
+            if (!tokenExtracted)
+            {
+                return Unauthorized();
+            }
+
+            var tokenUserInfo = _tokenReader.ReadToken(token);
+
             return Ok(await _unitOfWork.ReviewRepository.GetByUserID(tokenUserInfo.Id));
         }
 
 
         [HttpGet("getReviewed")]
         [Authorize(Roles = "User")]
-        public async Task<IActionResult> GetReviewed(long recipeID)
+        public async Task<IActionResult> GetReviewed(long recipeID, [FromHeader] string authorization)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            TokenUserInfo tokenUserInfo = new TokenReader().ReadToken(Request.Headers["Authorization"]);
+            bool tokenExtracted = _tokenReader.GetTokenFromHeader(authorization, out var token);
+            if (!tokenExtracted)
+            {
+                return Unauthorized();
+            }
+
+            var tokenUserInfo = _tokenReader.ReadToken(token);
+
             Review review = await _unitOfWork.ReviewRepository.GetByContent(tokenUserInfo.Id, recipeID);
             return review == null ? NoContent() : Ok(review);
         }
 
         [HttpPost("createReview")]
         [Authorize(Roles = "User")]
-        public IActionResult CreateReview([FromBody] ReviewRequest request)
+        public async Task<IActionResult> CreateReview([FromBody] ReviewRequest request, [FromHeader] string authorization)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            TokenUserInfo tokenUserInfo = new TokenReader().ReadToken(Request.Headers["Authorization"]);
+            bool tokenExtracted = _tokenReader.GetTokenFromHeader(authorization, out var token);
+            if (!tokenExtracted)
+            {
+                return Unauthorized();
+            }
+
+            var tokenUserInfo = _tokenReader.ReadToken(token);
 
             Review review = new Review()
             {
@@ -80,11 +118,16 @@ namespace cc_api.Controllers
             _unitOfWork.ReviewRepository.Insert(review);
             _unitOfWork.Save();
 
+            Recipe recipe = _unitOfWork.RecipeRepository.GetByPrimaryKey(request.RecipeId);
+            recipe.AverageRating = await _CalcAverageRating(recipe.RecipeId);
+            _unitOfWork.RecipeRepository.Update(recipe);
+            _unitOfWork.Save();
+
             return Ok("Review created");
         }
 
         [HttpPut("updateReview")]
-        public IActionResult UpdateReview([FromBody] ReviewRequest request)
+        public async Task<IActionResult> UpdateReview([FromBody] ReviewRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -102,6 +145,11 @@ namespace cc_api.Controllers
             review.DateTime = DateTime.Now.ToString();
 
             _unitOfWork.ReviewRepository.Update(review);
+            _unitOfWork.Save();
+
+            Recipe recipe = _unitOfWork.RecipeRepository.GetByPrimaryKey(request.RecipeId);
+            recipe.AverageRating = await _CalcAverageRating(recipe.RecipeId);
+            _unitOfWork.RecipeRepository.Update(recipe);
             _unitOfWork.Save();
 
             return Ok("Recipe updated");

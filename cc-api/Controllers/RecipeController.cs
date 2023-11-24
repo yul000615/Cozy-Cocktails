@@ -19,14 +19,6 @@ namespace cc_api.Controllers
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly TokenReader _tokenReader;
-        private readonly Dictionary<string, string> _filterDict =
-            new Dictionary<string, string>
-            {
-                { "highestRated", "" },
-                { "lowestRated", "" },
-                { "favorited", "" },
-                { "", "" }
-            };
 
         public RecipeController(UnitOfWork unitOfWork, TokenReader tokenReader)
         {
@@ -131,29 +123,6 @@ namespace cc_api.Controllers
                 }
             }
 
-            /*
-            if (request.filters.Any())
-            {
-                if (request.searchQuery)
-                {
-                    if (!foundRecipes.Any())
-                    {
-                        return NoContent();
-                    }
-                    // run filter logic on foundRecipes
-                }else
-                {
-                    foundRecipes = _unitOfWork.RecipeRepository.GetByFilters(request.filters);
-                }
-            }else
-            {
-                if (!request.searchQuery)
-                {
-                    foundRecipes = _unitOfWork.RecipeRepository.GetAll();
-                }
-            }
-            */
-
             if (request.useBarIngredints)
             {
                 if (!foundRecipes.Any())
@@ -167,7 +136,13 @@ namespace cc_api.Controllers
                 {
                     if (tokenUserInfo == null)
                     {
-                        tokenUserInfo = new TokenReader().ReadToken(Request.Headers["Authorization"]);
+                        bool tokenExtracted = _tokenReader.GetTokenFromHeader(authorization, out var token);
+                        if (!tokenExtracted)
+                        {
+                            return Unauthorized();
+                        }
+
+                        tokenUserInfo = _tokenReader.ReadToken(token);
                     }
 
                     IEnumerable<UserBarIngredient> UBIs = await _unitOfWork.UserBarIngredientRepository.GetByUserID(tokenUserInfo.Id);
@@ -207,7 +182,7 @@ namespace cc_api.Controllers
 
         [HttpPost("createRecipe")]
         [Authorize(Roles = "User")]
-        public IActionResult CreateRecipe([FromBody] RecipeRequest request, [FromHeader] string authorization) /* PostMethod */
+        public async Task<IActionResult> CreateRecipe([FromBody] RecipeRequest request, [FromHeader] string authorization) /* PostMethod */
         {
             if (!ModelState.IsValid)
             {
@@ -229,24 +204,26 @@ namespace cc_api.Controllers
                 UserAuthor = tokenUserInfo.Id,
             };
 
-
             _unitOfWork.RecipeRepository.Insert(recipe);
             _unitOfWork.Save();
 
             for (int i = 0; i < request.ingredientNames.Count(); i++)
             {
-                string _ingredientName = request.ingredientNames.ElementAt(i);
                 RecipeIngredient ri = new RecipeIngredient()
                 {
                     Quantity = request.quantities.ElementAt(i),
                     QuantityDescription = request.quantityDescriptions.ElementAt(i),
-                    IngredientName = _ingredientName,
+                    IngredientName = request.ingredientNames.ElementAt(i),
                     RecipeId = recipe.RecipeId
                 };
 
                 _unitOfWork.RecipeIngredientRepository.Insert(ri);
                 _unitOfWork.Save();
             }
+
+            recipe.AlcoholByVolume = await _CalcABVAsync(recipe.RecipeId);
+            _unitOfWork.RecipeRepository.Update(recipe);
+            _unitOfWork.Save();
 
             return Ok("Recipe Created");
         }
