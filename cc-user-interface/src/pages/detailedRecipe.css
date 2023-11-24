@@ -1,15 +1,15 @@
 .detailedRecipeBackground {
-    position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%)scale(0.85);
     margin: 0;
-    /* width: 80%;
-    height: 80%; */
+    width: 1000px;
+    height: 930px;
     background-color: rgba(255, 255, 255);
     padding: px;
     font-size: 18px;
     border-radius: 30px;
+    position: fixed;
 }
 
 .detailedRecipeContainer {
