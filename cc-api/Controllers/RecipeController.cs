@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace cc_api.Controllers
@@ -17,6 +18,7 @@ namespace cc_api.Controllers
     public class RecipeController : ControllerBase
     {
         private readonly UnitOfWork _unitOfWork;
+        private readonly TokenReader _tokenReader;
         private readonly Dictionary<string, string> _filterDict =
             new Dictionary<string, string>
             {
@@ -26,9 +28,10 @@ namespace cc_api.Controllers
                 { "", "" }
             };
 
-        public RecipeController(UnitOfWork unitOfWork)
+        public RecipeController(UnitOfWork unitOfWork, TokenReader tokenReader)
         {
             _unitOfWork = unitOfWork;
+            _tokenReader = tokenReader;
         }
 
         private async Task<double> _CalcABVAsync(long recipeID)
@@ -71,7 +74,7 @@ namespace cc_api.Controllers
 
         [HttpPost("getRecipes")]
         [Authorize(Roles = "User")]
-        public async Task<IActionResult> GetRecipes([FromBody] DisplayRequest request)
+        public async Task<IActionResult> GetRecipes([FromBody] DisplayRequest request, [FromHeader] string authorization)
         {
             if (!ModelState.IsValid)
             {
@@ -83,7 +86,13 @@ namespace cc_api.Controllers
 
             if (request.favorited)
             {
-                tokenUserInfo = new TokenReader().ReadToken(Request.Headers["Authorization"]);
+                bool tokenExtracted = _tokenReader.GetTokenFromHeader(authorization, out var token);
+                if (!tokenExtracted)
+                {
+                    return Unauthorized();
+                }
+
+                tokenUserInfo = _tokenReader.ReadToken(token);
                 IEnumerable<UserFavoriteRecipe> UFRs = await _unitOfWork.UserFavoriteRecipeRepository.GetByUserID(tokenUserInfo.Id);
                 foreach (UserFavoriteRecipe UFR in UFRs)
                 {
@@ -197,40 +206,47 @@ namespace cc_api.Controllers
         }
 
         [HttpPost("createRecipe")]
-        public IActionResult CreateRecipe([FromBody] RecipeRequest request) /* PostMethod */
+        [Authorize(Roles = "User")]
+        public IActionResult CreateRecipe([FromBody] RecipeRequest request, [FromHeader] string authorization) /* PostMethod */
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
+            bool tokenExtracted = _tokenReader.GetTokenFromHeader(authorization, out var token);
+            if (!tokenExtracted)
+            {
+                return Unauthorized();
+            }
+
+            var tokenUserInfo = _tokenReader.ReadToken(token);
+
             Recipe recipe = new Recipe()
             {
                 Name = request.name,
                 Description = request.description,
-                UserAuthor = request.authorID,
-                UserAuthorNavigation = _unitOfWork.UserRepository.GetByPrimaryKey(request.authorID)
+                UserAuthor = tokenUserInfo.Id,
             };
 
-            for (int i = 0; i < request.ingredientNames.Count(); i++ )
+
+            _unitOfWork.RecipeRepository.Insert(recipe);
+            _unitOfWork.Save();
+
+            for (int i = 0; i < request.ingredientNames.Count(); i++)
             {
                 string _ingredientName = request.ingredientNames.ElementAt(i);
                 RecipeIngredient ri = new RecipeIngredient()
                 {
-                    Quantity = request.quantites.ElementAt(i),
+                    Quantity = request.quantities.ElementAt(i),
                     QuantityDescription = request.quantityDescriptions.ElementAt(i),
-                    RecipeId = recipe.RecipeId,
                     IngredientName = _ingredientName,
-                    IngredientNameNavigation = _unitOfWork.IngredientRepository.GetByPrimaryKey(_ingredientName),
-                    Recipe = recipe
+                    RecipeId = recipe.RecipeId
                 };
 
                 _unitOfWork.RecipeIngredientRepository.Insert(ri);
-                recipe.RecipeIngredients.Add(ri);
+                _unitOfWork.Save();
             }
-
-            _unitOfWork.RecipeRepository.Insert(recipe);
-            _unitOfWork.Save();
 
             return Ok("Recipe Created");
         }

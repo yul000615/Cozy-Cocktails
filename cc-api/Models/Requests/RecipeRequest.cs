@@ -13,15 +13,10 @@ namespace cc_api.Models.Requests
         public string? description { get; set; }
 
         [Required]
-        public long authorID { get; set; }
-
-        [Required]
         public ICollection<string> ingredientNames { get; set; }
 
         [Required]
-        [Range(0, 25)]
-        [Precision(4, 2)]
-        public ICollection<double> quantites { get; set; }
+        public ICollection<double> quantities { get; set; }
 
         [Required]
         public ICollection<string> quantityDescriptions { get; set; }
