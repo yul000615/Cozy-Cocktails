@@ -1,7 +1,8 @@
 import './home.css';
 import { Link } from 'react-router-dom';
 import Select from "react-select";
-import { useState } from 'react';
+import { useState } from "react";
+import RecipeList from './recipeList';
 
 function Home() {
 
@@ -15,7 +16,6 @@ function Home() {
             <div className="navigationMenu">
               <ul>
                 <li><a href="#" className="link active">Home</a></li>
-                <li><Link to="/recipeList" className="link">Recipe Search</Link></li>
                 <li><a href="#" className="link">Services</a></li>
                 <li><a href="#" className="link">FAQ</a></li>
               </ul>
@@ -30,7 +30,7 @@ function Home() {
               </Link>
             </div>
           </nav>
-
+          <RecipeList />
 
         </div>
     </header>
