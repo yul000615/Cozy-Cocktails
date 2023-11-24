@@ -4,6 +4,7 @@ using cc_api.Models.Requests;
 using cc_api.Services.Tokens;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace cc_api.Controllers
 {
@@ -12,22 +13,30 @@ namespace cc_api.Controllers
     public class UserFavoriteRecipeController : ControllerBase
     {
         private readonly UnitOfWork _unitOfWork;
+        private readonly TokenReader _tokenReader;
 
-        public UserFavoriteRecipeController(UnitOfWork unitOfWork)
+        public UserFavoriteRecipeController(UnitOfWork unitOfWork, TokenReader tokenReader)
         {
             _unitOfWork = unitOfWork;
+            _tokenReader = tokenReader;
         }
 
         [HttpGet("getFavorites")]
         [Authorize(Roles = "User")]
-        public async Task<IActionResult> GetUserFavorites()
+        public async Task<IActionResult> GetUserFavorites([FromHeader] string authorization)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            TokenUserInfo tokenUserInfo = new TokenReader().ReadToken(Request.Headers["Authorization"]);
+            bool tokenExtracted = _tokenReader.GetTokenFromHeader(authorization, out var token);
+            if (!tokenExtracted)
+            {
+                return Unauthorized();
+            }
+
+            var tokenUserInfo = _tokenReader.ReadToken(token);
 
             IEnumerable<UserFavoriteRecipe> UFRs = await _unitOfWork.UserFavoriteRecipeRepository.GetByUserID(tokenUserInfo.Id);
 
@@ -36,14 +45,20 @@ namespace cc_api.Controllers
 
         [HttpPost("getFavorited")]
         [Authorize(Roles = "User")]
-        public async Task<IActionResult> getFavorited([FromBody] FavoriteRequest request)
+        public async Task<IActionResult> getFavorited([FromBody] FavoriteRequest request, [FromHeader] string authorization)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            TokenUserInfo tokenUserInfo = new TokenReader().ReadToken(Request.Headers["Authorization"]);
+            bool tokenExtracted = _tokenReader.GetTokenFromHeader(authorization, out var token);
+            if (!tokenExtracted)
+            {
+                return Unauthorized();
+            }
+
+            var tokenUserInfo = _tokenReader.ReadToken(token);
 
             UserFavoriteRecipe UFR = await _unitOfWork.UserFavoriteRecipeRepository.GetByContent(tokenUserInfo.Id, request.recipeID);
 
@@ -52,14 +67,20 @@ namespace cc_api.Controllers
 
         [HttpPost("favorite")]
         [Authorize(Roles = "User")]
-        public IActionResult FavoriteRecipe([FromBody] FavoriteRequest request)
+        public IActionResult FavoriteRecipe([FromBody] FavoriteRequest request, [FromHeader] string authorization)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            TokenUserInfo tokenUserInfo = new TokenReader().ReadToken(Request.Headers["Authorization"]);
+            bool tokenExtracted = _tokenReader.GetTokenFromHeader(authorization, out var token);
+            if (!tokenExtracted)
+            {
+                return Unauthorized();
+            }
+
+            var tokenUserInfo = _tokenReader.ReadToken(token);
 
             UserFavoriteRecipe UFR = new UserFavoriteRecipe()
             {
