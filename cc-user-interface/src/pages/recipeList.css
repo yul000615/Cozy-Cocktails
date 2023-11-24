@@ -3,7 +3,45 @@
 * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+}
+
+body {
+    min-height: 100vh;
+    background: url('background.jpg') no-repeat;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    overflow: hidden;
+}
+
+.homePage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 110vh;
+}
+
+.navigation {
+    position: fixed;
+    top: 0;
+    display: flex;
+    justify-content: space-around;
+    text-decoration: none;
+    height: 80px;
+    line-height: 100px;
+    width: 100%;
+    z-index: 100;
+}
+
+.logo p {
+    font-size: 2em;
+    color: #4f483f;
+    user-select: none;
+    font-weight: 600;
+    padding: 5px;
 }
 
 .container {

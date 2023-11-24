@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import AppContext from '../AppContext';
 import { useContext } from 'react';
 import Select from "react-select";
+import DetailedRecipe from "./detailedRecipe"; 
 
 function ErrorMessages({ error }) {
   if (!error) {
@@ -126,6 +127,7 @@ function CocktailList({ recipes }) {
 }
 
 function RecipeList() {
+  const [showModal, setShowModal] = useState(false);
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [apiError, setApiError] = useState(null);
@@ -225,39 +227,75 @@ const theme = {
   },
  };
 
+const openModal = () => {
+  setShowModal(true);
+};
+
+const closeModal = () => {
+  setShowModal(false);
+};
+
+const handleRecipeSelection = (selectedRecipeName) => {
+  setSelectedRecipe(selectedRecipeName); // Update the selected recipe name
+  setShowModal(true); // Open the modal to display the detailed recipe
+};
+
  return (
-  <div className="searchRecipePage">
-    <div class="buttons">
-     <a class="backButton" href="#"><Link to={routeString}>Go Back to Homepage</Link></a></div>
-      <h1>Recipe search</h1>
-      <ErrorMessages error={error || apiError} />
-        <div className="searchContainer">
-          <div className="byName">
-            <h2>By name</h2>
-            {' '}
-            <Autosuggest
-            suggestions={suggestions}
-            onSuggestionsFetchRequested={({ value }) => setSuggestions(getSuggestions(value))}
-            onSuggestionsClearRequested={() => setSuggestions([])}
-            getSuggestionValue={(suggestion) => suggestion}
-            renderSuggestion={renderSuggestion}
-            inputProps={inputProps}
-            theme={theme}
-          />
-      </div>
-      <div className="byKeyword"><FilterSearch/></div>
-      <div className="byIngredient"><FilterList/></div>
-      <div className="loggedInItems"><LoggedInItems/></div>
-      <br />
-      </div>
-        <div className="additionalButtons">
-          <div className="FavoritedButton"></div>
-          <div className="IngredientsButton"></div>
-          <a className="searchButton" href="#">
-          <Link to={`/detailedRecipe?name=${selectedRecipe || ''}`}>Search</Link>
-          </a>
-        </div>
-      </div>
-    );
+ <div className="headerButtons">
+    <div className="logo">
+       <p>Cozy Cocktails</p>
+            </div>
+            <div className="navigationMenu">
+              <ul>
+                <li><a href="#" className="link active">Home</a></li>
+                <li><a href="#" className="link">Services</a></li>
+                <li><a href="#" className="link">FAQ</a></li>
+              </ul>
+            </div>
+        <Link to="/home2">
+          <button className="headerButton">Home</button>
+        </Link>    
+        <div className="container">
+          
+          <div className="searchRecipePage">
+            <div class="buttons">
+              {/* <a class="backButton" href="#"><Link to={routeString}>Go Back to Homepage</Link></a> */}
+              </div>
+              <h1>Recipe search</h1>
+              <ErrorMessages error={error || apiError} />
+              <div className="searchContainer">
+                <div className="byName">
+                  <h2>By name</h2>
+                  {' '}
+                  <Autosuggest
+                  suggestions={suggestions}
+                  onSuggestionsFetchRequested={({ value }) => setSuggestions(getSuggestions(value))}
+                  onSuggestionsClearRequested={() => setSuggestions([])}
+                  getSuggestionValue={(suggestion) => suggestion}
+                  renderSuggestion={renderSuggestion}
+                  inputProps={inputProps}
+                  theme={theme}
+                />
+                </div>
+              <div className="byKeyword"><FilterSearch/></div>
+              <div className="byIngredient"><FilterList/></div>
+              <div className="loggedInItems"><LoggedInItems/></div>
+              <br />
+              </div>
+              <div className="additionalButtons">
+                <div className="FavoritedButton"></div>
+                <div className="IngredientsButton"></div>
+                <button className="searchButton" onClick={openModal}>Search</button>
+              </div>
+            </div>
+            {showModal && (
+            <DetailedRecipe
+            closeDetailed={() => setShowModal(false)}
+            recipe={selectedRecipe}
+            />
+            )}
+            </div>
+          </div>
+          );
 }
 export default RecipeList;
