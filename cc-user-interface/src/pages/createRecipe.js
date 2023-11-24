@@ -30,14 +30,40 @@ export default function CreateRecipe() {
     }else {
         routeString = "/"
     }
-    console.log(context.token);
 
-    function submitClick(e){
-        setModalOpen(true);
+    async function submitClick(e){
         e.preventDefault();
         const form = e.target;
         const formData = new FormData(form);
-        console.log(...formData)
+        var data = {"ingredientNames": [], "quantities": [], "quantityDescriptions": []};
+        formData.forEach((value, key) => {
+            if (key.includes("Amount"))
+                data["quantities"].push(value);
+            else if (key.includes("Quantity"))
+                data["quantityDescriptions"].push(value);
+            else
+                data[key] = value;
+        });
+        selectedOptions.forEach((option) => data["ingredientNames"].push(option.value))
+
+        console.log(data)
+        console.log(JSON.stringify(data))
+        try {
+            const response = await fetch("https://localhost:7268/api/Recipe/createRecipe", {
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json",
+                    "Authorization": `Bearer ${context.token}`
+                },
+                body: JSON.stringify(data)
+            });
+            if (response.ok) {
+                setModalOpen(true);
+            }
+        }
+        catch (error) {
+
+        }
     }
 
     function closeModal() {
