@@ -11,7 +11,6 @@ import RecipeList from './pages/recipeList';
 import ViewRecipe from './pages/detailedRecipe';
 import UpdateAccount from './pages/updateAccount';
 import ResetPassword from './pages/resetPassword';
-// import RecipeList from './pages/recipeList'
 import { BrowserRouter as Router, Routes, Route }
     from 'react-router-dom';
 
@@ -78,7 +77,6 @@ import { BrowserRouter as Router, Routes, Route }
                 <Route exact path='/detailedRecipe' element={<ViewRecipe />} />
                 <Route exact path='/updateAccount' element={<UpdateAccount />} /> 
                 <Route exact path='/resetPassword' element={<ResetPassword />} /> 
-                <Route exact path='/recipeList' element={<RecipeList />} /> 
             </Routes>
         </Router>
         </AppContext.Provider>
