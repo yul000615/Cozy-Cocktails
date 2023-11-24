@@ -1,44 +1,194 @@
-.ViewRecipeFields {
-    position: fixed;
-    top: 50%;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+.container {
+    width: 600px;
+    height: 80vh;
+    border: 2px solid #4f483f;
+    padding: 20px;
+    border-radius: 20px;
+    background: #f7f3ec;
+    position: absolute;
+    top: 55%;
     left: 50%;
     transform: translate(-50%, -50%);
-    text-align: center;
-    width: 100%;
-    height: 200px;
   }
 
-.dropdown-container {
-    margin: 25px;
-    width: 100px;
-    align-self: center;
-    justify-self: center;
-}
-
-.searchButtons {
-    margin-left: 20%;
+  .searchRecipePage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     text-align: center;
+    margin: 0px;
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%)scale(0.9);
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+  }
+  
+
+.listButton#addButton {
+    margin-right: 10px;
+    font-size: 0.8em;
+    padding: 3px;
 }
 
-.searchButton .button {
-    width: 130px;
-    height: 40px;
-    background: transparent;
-    border: 1px solid black;
+.searchRecipePage h1 {
+    padding: 1px;
+    font-size: 1.8em;
+    border-bottom: 2px solid #4f483f;
+}
+
+.dropdown-container {
+    width: 60px;
+    position: absolute;
+}
+
+.searchContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.byName h2,
+.byKeyword h2,
+.byIngredient h2{
+    font-size: 1.2em;
+}
+
+.byName {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    position: relative;
+    z-index: 1;
+  }
+
+.byName ul {
+    position: fixed;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    z-index: 1000;
+    width: 23.8%;
+}
+
+.byKeyword {
+    position: fixed;
+    margin-top: 9em;
+    margin-bottom: -10px;
+    color: #4f483f;
+  }
+
+.byIngredient {
+    position: fixed;
+    margin-top: 25em;
+    color: #4f483f;
+}
+
+.byIngredient ul.list {
+    text-align: left;
+    padding: 5px;
+    position: fixed;
+    font-size: 0.95em;
+    color: #4f483f;
+}
+
+.loggedInItems {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.backButton a,
+.searchButton a {
+  text-decoration: none;
+  color: inherit;
+  font-size: 1em;
+}
+
+.backButton {
+    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.35);
+    border-radius: 10px;
     outline: none;
-    border-radius: 6px;
+    right: 180%;
+    border: none;
     cursor: pointer;
     font-size: 1em;
     font-weight: 500;
-    color: black;
+    color: #4f483f;
     padding: 5px;
+    position: fixed;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    white-space: nowrap;
 }
 
-.recipeForm {
-    justify-content: center;
-    display:grid;
-    align-items: center;
-    text-align: center;
+.additionalButtons {
+    display: flex;
+    position: fixed;
+    bottom: -5em;
+    font-size: 1em;
+  }
+
+.searchButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 40px;
+  background: transparent;
+  border: 2px solid #4f483f;
+  outline: none;
+  border-radius: 10px;
+  cursor: pointer;
+  color: #4f483f;
+  text-decoration: none;
+  right: 50%;
+  bottom: -11em;
+  position: fixed;
+  font-size: 1.3em;
+  font-weight: 500;
+  transform: translateX(50%);
+}
+
+.searchButton:hover {
+  background-color: #4f483f;
+  color: white;
+}
+
+.FavoritedButton {
+    position: fixed;
+    margin-top: 29.6em;
+    width: 100%;
+    bottom: -9em;
+    position: fixed;
+    left: 0.04em;
+    position: fixed;
+    color: #4f483f;
+    font-size: 1.1em;
+}
+
+.IngredientsButton {
+    position: fixed;
+    margin-top: 31em;
+    width: 100%;
+    bottom: -7.5em;
+    left: 0.04em;
+    position: fixed;
+    color: #4f483f;
+    font-size: 1.1em;
 }
 
 .entryField {
