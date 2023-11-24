@@ -106,13 +106,47 @@ function reportSubmit(){
         setReportMessage('Thank you! We will review your report shortly.')
     }
 }
+
 function favoriteClick(){
     if (favorited) {
-        setFavorited(false);
+        //make backend call to remove the favorite and set the heart to grey if successful
+        fetch("https://localhost:7268/api/UserFavoriteRecipe/unfavorite", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                favID: favorited.listId
+            }),
+        })
+        .then(
+            response => response.json(),
+            error => console.log("Error: ", error)
+        )
+        .then(
+            data => console.log(data),
+            setFavorited(null)
+        )
     } else {
-        setFavorited(true);
+        //make backend call to add to favorites and set the heart to red if successful
+        fetch("https://localhost:7268/api/UserFavoriteRecipe/favorite", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${context.accessToken}`
+            },
+                body: JSON.stringify({
+                recipeID: recipe.recipeId
+            }),
+        })
+        .then(
+            response => response.json(),
+            error => console.log("Error: ", error)
+        )
+        .then(
+            data => setFavorited(data)
+        )}
     }
-}
 
     function openReport() {
         setReportOpen(true);
