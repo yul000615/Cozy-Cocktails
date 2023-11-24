@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import AppContext from '../AppContext';
 import { Link, useLocation } from 'react-router-dom';
 import Modal from 'react-modal';
+import "./login.css"
 
 function ErrorMessages({ error }) {
   if (!error) {
