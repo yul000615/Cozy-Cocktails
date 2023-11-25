@@ -127,14 +127,23 @@ namespace cc_api.Controllers
         }
 
         [HttpPut("updateReview")]
-        public async Task<IActionResult> UpdateReview([FromBody] ReviewRequest request)
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> UpdateReview([FromBody] ReviewRequest request, [FromHeader] string authorization)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            Review review = _unitOfWork.ReviewRepository.GetByPrimaryKey(request.ReviewId);
+            bool tokenExtracted = _tokenReader.GetTokenFromHeader(authorization, out var token);
+            if (!tokenExtracted)
+            {
+                return Unauthorized();
+            }
+
+            var tokenUserInfo = _tokenReader.ReadToken(token);
+
+            Review review = await _unitOfWork.ReviewRepository.GetByContent(tokenUserInfo.Id, request.RecipeId);
             if (review == null)
             {
                 return NotFound("Could not find that review");
