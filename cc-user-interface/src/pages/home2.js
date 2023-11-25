@@ -98,13 +98,10 @@ function Home2() {
               </ul>
             </div>
 
-            <div className="navigationButton">
-              <Link to="/signup">
-                <button className="signupButton" id="loginBtn">Sign Up</button>
-              </Link>
-              <Link to="/login">
-                <button className="loginButton" id="signupBtn">Log In</button>
-              </Link>
+            <div class="navigationButton">
+            <Link to="/createRecipe"><button className="button" id="createRecipeBtn">Create Recipe</button></Link>
+            <Link to="/myAccount"><button className="button" id="myAccountBtn">My Account</button></Link>
+            <Logout/>
             </div>
           </nav>
           <UserIngredients />
