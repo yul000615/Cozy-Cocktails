@@ -82,7 +82,9 @@ const [issue, setIssue] = useState("");
 const [reportOpen, setReportOpen] = useState(false);
 const [reportMessage, setReportMessage] = useState("");
 
-const [favorited, setFavorited] = useState(false);
+const [favorite, setFavorite] = useState(false);
+const [review, setReview] = useState(false);
+
 function LoggedInItems (){
     if (!loggedIn){
         return null;
@@ -108,7 +110,7 @@ function reportSubmit(){
 }
 
 function favoriteClick(){
-    if (favorited) {
+    if (favorite) {
         //make backend call to remove the favorite and set the heart to grey if successful
         fetch("https://localhost:7268/api/UserFavoriteRecipe/unfavorite", {
             method: "POST",
@@ -116,7 +118,7 @@ function favoriteClick(){
             "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                favID: favorited.listId
+                favID: favorite.listId
             }),
         })
         .then(
@@ -125,7 +127,7 @@ function favoriteClick(){
         )
         .then(
             data => console.log(data),
-            setFavorited(null)
+            setFavorite(false)
         )
     } else {
         //make backend call to add to favorites and set the heart to red if successful
@@ -136,31 +138,48 @@ function favoriteClick(){
             "Authorization": `Bearer ${context.accessToken}`
             },
                 body: JSON.stringify({
-                recipeID: recipe.recipeId
-            }),
-        })
-        .then(
-            response => response.json(),
-            error => console.log("Error: ", error)
-        )
-        .then(
-            data => setFavorited(data)
-        )}
+                    recipeID: recipe.recipeId
+                }),
+            })
+            .then(
+                response => response.json(),
+                error => console.log("Error: ", error)
+            )
+            .then(
+                data => setFavorite(data)
+            )
+        }
     }
 
-    function openReport() {
-        setReportOpen(true);
-    }
-
-    function closeReport() {
-        setReportOpen(false);
-    }
-
-    function reportSubmit() {
-        if (issue.length === 0) {
-            setReportMessage('Must enter an issue before submitting');
+    function reviewSubmit(){ //Currently only handles creating a review
+        console.log(rating)
+        if (rating==0) {
+            setRateMessage('Must give a rating');
+        } else if (feedback.length ===0){
+            setRateMessage('Must leave a feedback message');
         } else {
-            setReportMessage('Thank you! We will review your report shortly.')
+            //insert backend logic for rating here and run the below if successful
+            fetch("https://localhost:7268/api/Review/createReview", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${context.accessToken}`
+            },
+                body: JSON.stringify({
+                    Rating: rating,
+                    Feedback: feedback,
+                    recipeID: recipe.recipeId
+                }),
+            })
+            .then(
+                response => response.json(),
+                error => console.log("Error: ", error)
+            )
+            .then(
+                data => setReview(data)
+            )
+            setRateMessage('')
+            setRateOpen(false);
         }
     }
 

@@ -4,8 +4,6 @@ namespace cc_api.Models.Requests
 {
     public class ReviewRequest
     {
-        public long ReviewId { get; set; }
-
         [Required]
         public double Rating { get; set; }
 
