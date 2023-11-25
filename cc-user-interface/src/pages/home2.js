@@ -1,9 +1,10 @@
-import './home2.css';
-import { Link } from 'react-router-dom';
+import "./home2.css";
+import { Link } from "react-router-dom";
 import Select from "react-select";
-import {useState, useContext} from 'react';
-import AppContext from '../AppContext';
-import Logout from './logout';
+import {useState, useContext} from "react";
+import AppContext from "../AppContext";
+import Logout from "./logout";
+import RecipeList from "./recipeList";
 
 function UserIngredients() {
 
@@ -12,7 +13,7 @@ function UserIngredients() {
   //this default value should be replaced with whatever is in the user's ingredient list
   const [ingredients, setIngredients] = useState(['Vodka', 'Rum']);
 
-  //this is an example; replace with list of all ingredients from database
+  //this is an example; replace with list of all ingredients from databsase
   const ingredientList = ['Vodka', 'Rum', 'Gin', 'Tequila', 'Vermouth'];
 
   const optionList = [];
@@ -83,25 +84,35 @@ function Home2() {
   const context = useContext(AppContext);
 
   return (
-    <header>
-      <div className="homePage"> 
-        <nav className="navigation">
-          <div class="navigationMenu">
-            <ul>
-              <li><Link to="/recipeList" className="link">Recipe Search</Link></li>
-            </ul>
-          </div>
+      <header>
+        <div className="homePage">
+          <nav className="navigation">
+            <div className="logo">
+              <p>Cozy Cocktails</p>
+            </div>
+            <div className="navigationMenu">
+              <ul>
+                <li><a href="#" className="link active">Home</a></li>
+                <li><a href="#" className="link">Services</a></li>
+                <li><a href="#" className="link">FAQ</a></li>
+              </ul>
+            </div>
 
-          <div class="navigationButton">
-            <Link to="/createRecipe"><button className="button" id="createRecipeBtn">Create Recipe</button></Link>
-            <Link to="/myAccount"><button className="button" id="myAccountBtn">My Account</button></Link>
-            <Logout/>
+            <div className="navigationButton">
+              <Link to="/signup">
+                <button className="signupButton" id="loginBtn">Sign Up</button>
+              </Link>
+              <Link to="/login">
+                <button className="loginButton" id="signupBtn">Log In</button>
+              </Link>
+            </div>
+          </nav>
+          <UserIngredients />
+          <div className="search">
+          <RecipeList />
           </div>
-        </nav>
-        <UserIngredients/>
-      </div>
+        </div>
     </header>
   );
 }
-
 export default Home2;
