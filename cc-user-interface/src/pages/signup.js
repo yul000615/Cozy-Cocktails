@@ -47,7 +47,7 @@ export const SignUp = (props) => {
       setError('');
 
       try {
-        const response = await fetch("http://localhost:5164/api/Account/register", {
+        const response = await fetch("https://localhost:7268/api/Account/register", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -88,27 +88,30 @@ export const SignUp = (props) => {
   return (
     <div className="SignUpPage">
       <div className="SignUpWelcome">
-        <h1>Welcome To</h1>
-        <h1>Cozy Cocktails!</h1>
+        <h1>Welcome To Cozy Cocktails!</h1>
       </div>
       <ErrorMessages error={error || apiError} />
       <div className="SignUpFields">
-        <label htmlFor="name" className="entryField"></label>
-          First Name: <input name="first" value={first} onChange={(e) => setFirst(e.target.value)} 
-          type="first" id="first" />
-        <br />
-        <label htmlFor="name" className="entryField"></label>
-          Last Name: <input name="last" value={last} onChange={(e) => setLast(e.target.value)} 
-          type="last" id="last" />
-        <br />
-        <label htmlFor="email" className="entryField"></label>
-          Email: <input name="email" onChange={(e) => setEmail(e.target.value)} 
+        <div className="inputField">
+          <label htmlFor="name">First Name: </label>
+            <input name="first" value={first} onChange={(e) => setFirst(e.target.value)} 
+            type="first" id="first" />
+        </div>
+        <div className="inputField">
+          <label htmlFor="name">Last Name:</label>
+            <input name="last" value={last} onChange={(e) => setLast(e.target.value)} 
+            type="last" id="last" />
+        </div>
+        <div className="inputField">
+        <label htmlFor="email">Email: </label>
+          <input name="email" onChange={(e) => setEmail(e.target.value)} 
           type="email" id="email" />
-        <br />
-        <label htmlFor="password" className="entryField"></label>
-          Password: <input name="password" value={password} onChange={(e) => setPassword(e.target.value)} 
-          type="password" id="password" />
-        <br />
+        </div>
+        <div className="inputField">
+          <label htmlFor="password">Password: </label>
+            <input name="password" value={password} onChange={(e) => setPassword(e.target.value)} 
+            type="password" id="password" />
+        </div>
         <button className='registerBtn' onClick={registerClick}>Register</button>
         <Modal isOpen={modalOpen} onRequestClose={closeModal} className="Modal">
           {apiSuccess ? (

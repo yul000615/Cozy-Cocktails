@@ -1,10 +1,10 @@
-import './home2.css';
-import { Link } from 'react-router-dom';
+import "./home2.css";
+import { Link } from "react-router-dom";
 import Select from "react-select";
-import {useState, useContext} from 'react';
-import AppContext from '../AppContext';
-import Logout from './logout';
-import RecipeList from './recipeList';
+import {useState, useContext} from "react";
+import AppContext from "../AppContext";
+import Logout from "./logout";
+import RecipeList from "./recipeList";
 
 function UserIngredients() {
 
@@ -81,6 +81,7 @@ function UserIngredients() {
 }
 
 function Home2() {
+  const context = useContext(AppContext);
 
   return (
       <header>

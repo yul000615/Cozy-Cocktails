@@ -7,17 +7,21 @@ import SignUp from './pages/signup';
 import Login from './pages/login';
 import MyAccount from './pages/myAccount';
 import CreateRecipe from './pages/createRecipe';
+import RecipeList from './pages/recipeList';
+import ViewRecipe from './pages/detailedRecipe';
 import UpdateAccount from './pages/updateAccount';
+import ResetPassword from './pages/resetPassword';
 import { BrowserRouter as Router, Routes, Route }
     from 'react-router-dom';
 
     function App() {
-      const [accessToken, setAccessToken] = useState('no token.')
+      const [accessToken, setAccessToken] = useState('no token')
     
       const tokenHandler = {
         token: accessToken,
         setAccessToken,
-        refresh
+        refresh,
+        logout
       }
 
       async function refresh() {
@@ -40,6 +44,24 @@ import { BrowserRouter as Router, Routes, Route }
         } catch (error) {
         }
       }
+
+      async function logout() {
+        try {
+          const response = await fetch("https://localhost:7268/api/Authentication/logout", {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json",
+              "Authorization": `Bearer ${tokenHandler.token}`
+            },
+            credentials: "include",
+          });
+    
+          tokenHandler.setAccessToken('');
+          return true;
+        } catch (error) {
+          return false;
+        }
+    }
     
       return (
         <AppContext.Provider value={tokenHandler}>
@@ -51,7 +73,10 @@ import { BrowserRouter as Router, Routes, Route }
                 <Route exact path='/signup' element={<SignUp />} />
                 <Route exact path='/myAccount' element={<MyAccount />} />
                 <Route exact path='/createRecipe' element={<CreateRecipe />} /> 
+                <Route exact path='/recipeList' element={<RecipeList />} /> 
+                <Route exact path='/detailedRecipe' element={<ViewRecipe />} />
                 <Route exact path='/updateAccount' element={<UpdateAccount />} /> 
+                <Route exact path='/resetPassword' element={<ResetPassword />} /> 
             </Routes>
         </Router>
         </AppContext.Provider>

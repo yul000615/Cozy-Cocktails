@@ -1,0 +1,21 @@
+.modal {
+    position: absolute;
+    height: 200px;
+    width: 275px;
+    background-color: white;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 5px;
+}
+
+.modalBtn {
+    padding: 5px 10px;
+}
