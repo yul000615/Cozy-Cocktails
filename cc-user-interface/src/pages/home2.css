@@ -21,7 +21,6 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 110vh;
-    flex-flow: column;
 }
 
 .navigation {
@@ -65,22 +64,30 @@ body {
     border-bottom: 2px solid #4f483f;
 }
 
+.navigationButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 100px;
+}
+
 .navigationButton .button{
-    width: 130px;
+    width: 120px;
     height: 40px;
     background: transparent;
     border: 2px solid #4f483f;
     outline: none;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 1em;
+    font-size: 0.9em;
     font-weight: 500;
     color: #4f483f;
+    margin-left: 5px;
 }
 
 .button:hover {
-    background: #e2d3c4;
-    color: #4f483f;
+    background: #4f483f;
+    color: #f4efe8;
 }
 
 .nav-menu-btn{
@@ -88,14 +95,34 @@ body {
 }
 
 .ingredientList{
-    background-color: white;
     display: flex;
+    width: 320px;
+    height: 600px;
     flex-direction: column;
-    min-height: 75%;
-    flex: 1;
-    position: absolute;
-    left: 0;
     align-items: center;
+    justify-content: space-between;
+    background: rgb(255, 255, 255);
+    border-radius: 20px;
+    border: #415046 solid 2px;
+    position: fixed;
+    top: 50%;
+    left: 25%;
+    transform: translate(-50%, -50%);
+    padding: 10px;
+}
+
+.search {
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    background: #f4efe8;
+    border-radius: 20px;
+    border: #415046 solid 2px;
+    position: fixed;
+    top: 50%;
+    left: 65%;
+    transform: translate(-50%, -50%);
+    padding: 10px;
 }
 
 .ingredientSelect{
