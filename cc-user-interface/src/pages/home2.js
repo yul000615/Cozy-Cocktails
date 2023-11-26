@@ -33,13 +33,11 @@ function UserIngredients() {
   }
 
   function addIngredient(ingredientName) {
-    console.log('Access Token:', context.accessToken);
-
     fetch("https://localhost:7268/api/UserBarIngredient/add", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${context.accessToken}`
+        "Authorization": `Bearer ${context.token}`
       },
       body: JSON.stringify({
         ingredientName: ingredientName
@@ -61,10 +59,10 @@ function UserIngredients() {
 
   function deleteIngredient(listID) {
     fetch("https://localhost:7268/api/UserBarIngredient/delete", {
-      method: "POST",
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${context.accessToken}`
+        "Authorization": `Bearer ${context.token}`
       },
     })
     .then(response => {

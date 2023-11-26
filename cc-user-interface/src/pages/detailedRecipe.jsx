@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { FaStar, FaStarHalfAlt } from "react-icons/fa";
 import "./detailedRecipe.css";
 import Modal from "react-modal";
 import Heart from "react-animated-heart";
+import AppContext from "../AppContext";
 
 const recipeDetails = {
     'Long Island Iced Tea': {
@@ -76,12 +77,12 @@ const getUsername = () => {
 };
 
 const DetailedRecipe = ({ closeDetailed, recipe }) => {
-    const selectedRecipe = recipeDetails[recipe];
+const context = useContext(AppContext);
+const selectedRecipe = recipeDetails[recipe];
 const [loggedIn, setLoggedIn] = useState(true);
 const [issue, setIssue] = useState("");
 const [reportOpen, setReportOpen] = useState(false);
 const [reportMessage, setReportMessage] = useState("");
-
 const [favorite, setFavorite] = useState(false);
 const [review, setReview] = useState(false);
 
@@ -135,7 +136,7 @@ function favoriteClick(){
             method: "POST",
             headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${context.accessToken}`
+            "Authorization": `Bearer ${context.token}`
             },
                 body: JSON.stringify({
                     recipeID: recipe.recipeId
@@ -163,7 +164,7 @@ function favoriteClick(){
             method: "POST",
             headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${context.accessToken}`
+            "Authorization": `Bearer ${context.token}`
             },
                 body: JSON.stringify({
                     Rating: rating,
