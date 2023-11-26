@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import AppContext from './AppContext';
 import './App.css';
 import Home from './pages/home';
+import Contact from './pages/contact';
 import Home2 from './pages/home2';
 import SignUp from './pages/signup';
 import Login from './pages/login';
@@ -68,6 +69,7 @@ import { BrowserRouter as Router, Routes, Route }
           <Router>
             <Routes>
                 <Route exact path='/' element={<Home />} />
+                <Route exact path='/contact' element={<Contact />} />
                 <Route exact path='/home2' element={<Home2 />} />
                 <Route exact path='/login' element={<Login />} />
                 <Route exact path='/signup' element={<SignUp />} />
@@ -82,5 +84,4 @@ import { BrowserRouter as Router, Routes, Route }
         </AppContext.Provider>
       );
     }
-    
     export default App;

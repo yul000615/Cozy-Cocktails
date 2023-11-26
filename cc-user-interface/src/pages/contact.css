@@ -8,6 +8,28 @@
     font-weight: 400;
 }
 
+.inputField{
+  margin-bottom: 20px;
+}
+
+.inputField textarea {
+  padding: 8px;
+  width: 100%;
+  height: 100px;
+}
+
+.contactTitle {
+  font-size: 2.5em;
+}
+
+.email {
+  font-size: 1em;
+}
+
+.contactEmail {
+  font-size: 0.8em;
+}
+
 body {
     min-height: 100vh;
     background: url('background.jpg') no-repeat;
