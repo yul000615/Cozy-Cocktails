@@ -1,0 +1,271 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+}
+
+.inputField{
+  margin-bottom: 20px;
+}
+
+.inputField textarea {
+  padding: 8px;
+  width: 100%;
+  height: 100px;
+}
+
+.contactTitle {
+  font-size: 2.5em;
+}
+
+.email {
+  font-size: 1em;
+}
+
+.contactEmail {
+  font-size: 0.8em;
+}
+
+body {
+    min-height: 100vh;
+    background: url('background.jpg') no-repeat;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    overflow: hidden;
+}
+
+.homePage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 110vh;
+}
+
+.navigation {
+    position: fixed;
+    top: 0;
+    display: flex;
+    justify-content: space-around;
+    text-decoration: none;
+    height: 80px;
+    line-height: 100px;
+    width: 100%;
+    z-index: 100;
+}
+
+.logo p {
+    font-size: 2em;
+    color: #4f483f;
+    user-select: none;
+    font-weight: 600;
+    padding: 5px;
+}
+
+.navigationMenu ul {
+    display: flex;
+    padding: 5px;
+}
+
+.navigationMenu ul li {
+    list-style-type: none;
+}
+
+.navigationMenu ul li .link {
+    text-decoration: none;
+    font-weight: 500;
+    color: #4f483f;
+    padding-bottom: 7px;
+    margin: 0 25px;
+}
+
+.link:hover, .active {
+    border-bottom: 2px solid #4f483f;
+}
+
+.signupButton,
+.loginButton {
+    width: 130px;
+    height: 40px;
+    background: transparent;
+    border: 2px solid #4f483f;
+    outline: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 500;
+    color: #4f483f;
+    padding: 5px;
+    margin-left: 5px;
+    font-size: 0.9em;
+}
+
+.userButton {
+    display: flex;
+    gap: 3px;
+}
+
+.signupButton:hover,
+.loginButton:hover  {
+    background: #4f483f;
+    color: #f4efe8;
+}
+
+.nav-menu-btn {
+    display: none;
+}
+
+.filterContainer {
+    display: flex;
+    width: 500px;
+    height: 600px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    background: #f4efe8;
+    border-radius: 20px;
+    border: #415046 solid 2px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 10px;
+}
+
+.recipeContainer {
+    display: flex;
+    width: 800px;
+    height: 600px;
+    background: #fff;
+    border-radius: 20px;
+    border: #415046 solid 2px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 10px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    font-size: 1em;
+}
+
+.cocktailList {
+    display: flex;
+    flex-direction: column;
+    font-size: 1em;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-top: 10%;
+    margin-bottom: 10%;
+    line-height: 40px;
+    font-weight: 500px;
+    font-size: 1.2em;
+    color: #3f3423;
+}
+
+.cocktailImage {
+    width: 50px;
+    height: 50px; 
+    margin-right: 10px;
+  }
+
+h1 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    color: #3f3423;
+    font-weight: 500;
+}
+
+h2 {
+    font-size: 1.5em;
+    color: #3f3423;
+    font-weight: 500;
+}
+
+h3 {
+    font-size: 1.5em;
+    color: #3f3423;
+    font-weight: 500;
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
+.filterSections {
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+.ingredientSelect {
+    flex-direction: row;
+    font-size: 1em;
+    padding: 10px;
+}
+
+.searchButton {
+    width: 65px;
+    height: 30px;
+    position: absolute;
+    font-size: 10px;
+    bottom: 5%;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-size: 1.1em;
+    color: #3f3423;
+    background: transparent;
+    font-weight: 500;
+    border-bottom: none;
+}
+
+.searchButton:hover {
+    color: #6d5b40;
+    border-bottom: 2px solid #6d5b40;
+}
+
+.closeBtn {
+    position: absolute;
+    top: 5%;
+    right: 5%;
+    width: 50px;
+    height: 30px;
+    background: #2a342d;
+    border: none;
+    outline: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    color: #fff;
+    font-weight: 500;
+}
+.listButton {
+    width: 40px;
+    height: 30px;
+    cursor: pointer;
+    background: #2a342d;
+    border: none;
+    font-size: 0.95em;
+    color: #fff;
+    font-weight: 600;
+    margin-right: 10px;
+}
+
+#addButton {
+    background: #2a342d;
+    border-radius: 10px;
+}
+
+#deleteButton {
+    color: #a23c2c;
+    background: transparent;
+}
+
+#deleteButton:hover{
+    border-bottom: 2px solid #a23c2c; 
+}

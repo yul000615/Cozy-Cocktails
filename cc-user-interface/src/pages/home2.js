@@ -7,9 +7,17 @@ import Logout from "./logout";
 import RecipeList from "./recipeList";
 
 function UserIngredients() {
+  var loggedIn;
   const [add, setAdd] = useState(null);
   const [selectedOption, setSelectedOption] = useState('');
   const context = useContext(AppContext);
+  loggedIn = (context.token !== 'no token' && context.token !== '');
+  var routeString;
+  if (loggedIn){
+      routeString = "/home2"
+  }else {
+      routeString = "/"
+  }
   const [ingredients, setIngredients] = useState(['Vodka', 'Rum']); // Change this to hold the user's ingredients
   const ingredientList = ['Vodka', 'Rum', 'Gin', 'Tequila', 'Vermouth'];
   const optionList = [];
@@ -25,6 +33,8 @@ function UserIngredients() {
   }
 
   function addIngredient(ingredientName) {
+    console.log('Access Token:', context.accessToken);
+
     fetch("https://localhost:7268/api/UserBarIngredient/add", {
       method: "POST",
       headers: {
@@ -43,13 +53,12 @@ function UserIngredients() {
     })
     .then(data => {
       console.log("Added:", data);
-      setIngredients([...ingredients, ingredientName]); // Update state with the new ingredient
-      setSelectedOption(''); // Clear the selected option after adding
+      setIngredients([...ingredients, ingredientName]);
+      setSelectedOption('');
     })
-    .catch(error => console.log("Error adding ingredient: ", error)); // Log the error response for debugging
+    .catch(error => console.log("Error adding ingredient: ", error));
   }
-  
-  
+
   function deleteIngredient(listID) {
     fetch("https://localhost:7268/api/UserBarIngredient/delete", {
       method: "POST",
@@ -126,9 +135,8 @@ function Home2() {
             </div>
             <div className="navigationMenu">
               <ul>
-                <li><a href="#" className="link active">Home</a></li>
-                <li><a href="#" className="link">Services</a></li>
-                <li><a href="#" className="link">FAQ</a></li>
+                <li><Link to="/" className="link">Home</Link></li>
+                <li><Link to="/contact" className="link">Contact</Link></li>
               </ul>
             </div>
 
