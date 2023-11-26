@@ -9,9 +9,19 @@ namespace cc_api.DAL
         {
         }
 
+        public async Task<IEnumerable<UserBarIngredient>> GetByIngredientName(string ingredientName)
+        {
+            return await context.UserBarIngredients.Where(x => x.IngredientName == ingredientName).ToListAsync();
+        }
+
         public async Task<IEnumerable<UserBarIngredient>> GetByUserID(long userID)
         {
             return await context.UserBarIngredients.Where(x => x.UserId == userID).ToListAsync();
+        }
+
+        public async Task<UserBarIngredient> GetByContent(long userID, string ingredientName)
+        {
+            return await context.UserBarIngredients.Where(x => x.UserId == userID && x.IngredientName == ingredientName).FirstOrDefaultAsync();
         }
     }
 }
