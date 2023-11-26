@@ -10,6 +10,7 @@
     font-size: 18px;
     border-radius: 30px;
     position: fixed;
+    height: 100%;
 }
 
 .detailedRecipeContainer {
@@ -17,7 +18,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
+    height: 75%;
     padding: 70px 0;
 }
 
