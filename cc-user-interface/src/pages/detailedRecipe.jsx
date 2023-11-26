@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { FaStar, FaStarHalfAlt } from "react-icons/fa";
 import "./detailedRecipe.css";
 import Modal from "react-modal";
 import Heart from "react-animated-heart";
+import ReactStars from "react-rating-stars-component";
+import AppContext from '../AppContext';
 
 const recipeDetails = {
     'Long Island Iced Tea': {
@@ -76,20 +78,36 @@ const getUsername = () => {
 };
 
 const DetailedRecipe = ({ closeDetailed, recipe }) => {
-    const selectedRecipe = recipeDetails[recipe];
-const [loggedIn, setLoggedIn] = useState(true);
+const selectedRecipe = recipeDetails[recipe];
+var loggedIn;
+const context = useContext(AppContext);
+loggedIn = (context.token !== 'no token');
+console.log(context.token);
 const [issue, setIssue] = useState("");
 const [reportOpen, setReportOpen] = useState(false);
 const [reportMessage, setReportMessage] = useState("");
+const [rateOpen, setRateOpen] = useState(false);
+const [rateMessage, setRateMessage] = useState("");
+const [rating, setRating] = useState(0);
 
 const [favorite, setFavorite] = useState(false);
 const [review, setReview] = useState(false);
+const [feedback, setFeedback] = useState("");
+
+const handleRating = (rate) => {
+    setRating(rate)
+
+    // other logic
+  }
 
 function LoggedInItems (){
     if (!loggedIn){
         return null;
     } else{
-        return <Heart hidden={!loggedIn} isClick={favorited} onClick={favoriteClick} />;
+        return (
+        <><Heart hidden={!loggedIn} isClick={favorite} onClick={favoriteClick} />
+        <button className="actionBtn" onClick={openRate}>Rate</button></>
+        );
     }
 }
 
@@ -149,9 +167,9 @@ function favoriteClick(){
                 data => setFavorite(data)
             )
         }
-    }
+    }   
 
-    function reviewSubmit(){ //Currently only handles creating a review
+    function rateSubmit(){ //Currently only handles creating a review
         console.log(rating)
         if (rating==0) {
             setRateMessage('Must give a rating');
@@ -159,28 +177,38 @@ function favoriteClick(){
             setRateMessage('Must leave a feedback message');
         } else {
             //insert backend logic for rating here and run the below if successful
-            fetch("https://localhost:7268/api/Review/createReview", {
-            method: "POST",
-            headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${context.accessToken}`
-            },
-                body: JSON.stringify({
-                    Rating: rating,
-                    Feedback: feedback,
-                    recipeID: recipe.recipeId
-                }),
-            })
-            .then(
-                response => response.json(),
-                error => console.log("Error: ", error)
-            )
-            .then(
-                data => setReview(data)
-            )
+            // fetch("https://localhost:7268/api/Review/createReview", {
+            // method: "POST",
+            // headers: {
+            // "Content-Type": "application/json",
+            // "Authorization": `Bearer ${context.accessToken}`
+            // },
+            //     body: JSON.stringify({
+            //         Rating: rating,
+            //         Feedback: feedback,
+            //         recipeID: recipe.recipeId
+            //     }),
+            // })
+            // .then(
+            //     response => response.json(),
+            //     error => console.log("Error: ", error)
+            // )
+            // .then(
+            //     data => setReview(data)
+            // )
             setRateMessage('')
             setRateOpen(false);
         }
+    }
+
+    function openRate(){
+        setRateOpen(true);
+        setRating(0);
+    }
+    
+    function closeRate(){
+        setRateOpen(false);
+        setRateMessage('');
     }
 
     const location = useLocation();
@@ -224,6 +252,7 @@ function favoriteClick(){
                 <div className='titleBar'>
                     <button className='closeBtn' onClick={handleClose}>Close</button>
                     <button className='reportBtn' onClick={openReport}>Report</button>
+                    <LoggedInItems/>
                 </div>
 
                 <div className='body'>
@@ -238,6 +267,23 @@ function favoriteClick(){
                         <p>{reportMessage}</p>
                     </div>
                 </Modal>
+                <Modal size="md" isOpen={rateOpen} onRequestClose={closeRate} className="Modal" backdrop="static" maskClosable={false} shouldCloseOnOverlayClick={false}>
+                    <div className='ActionModal'> 
+                        <ReactStars
+                            count={5}
+                            onChange={handleRating}
+                            size={55}
+                            activeColor="#ffd700"
+                            className="ratingStars"
+                        />
+                        <h1>Give your feedback!</h1>
+                        <input type="feedback" name="feedback" value={feedback} onChange={(e) => setFeedback(e.target.value)} />
+                        <button onClick={rateSubmit}>Submit</button>
+                        <br/>
+                        <button onClick={closeRate}>Close</button>
+                        <p>{rateMessage}</p>
+                    </div>
+                </Modal>
                 <div className="recipeHeader">
                     <h2>
                         {selectedRecipe && selectedRecipe.name} Recipe
@@ -245,18 +291,18 @@ function favoriteClick(){
                     </h2>
                     <div className="recipeRate">
                         <p>
-                        {selectedRecipe.reviewCount} Reviews | Rate: {selectedRecipe.rate} {renderStars()}
+                        Rate: {selectedRecipe.rate} {renderStars()}
                         </p>
                     </div>
                     <div className="additionalInfo">
-                        <p>Prep Time: {selectedRecipe.prepTime}</p>
+                        {/* <p>Prep Time: {selectedRecipe.prepTime}</p> */}
                         <p>ABV: {selectedRecipe.ABV}</p>
                     </div>
                 </div>
                 <div className="recipeContent">
-                    <div className="imageSection">
+                    {/* <div className="imageSection">
                         <img src={`/${selectedRecipe.image}`} alt={selectedRecipe.name}/>
-                    </div>
+                    </div> */}
                     <div className="ingredientSection">
                         <h3>Ingredients:</h3>
                         <ul>
@@ -266,12 +312,13 @@ function favoriteClick(){
                         </ul>
                     </div>
                     <div className="directionSection">
-                        <h3>Directions:</h3>
-                        <ol>
+                        <h3>Description:</h3>
+                        {/* <ol>
                             {selectedRecipe.instructions.map((direction, index) => (
                                 <li key={index}>{direction}</li>
                             ))}
-                        </ol>
+                        </ol> */}
+                        <p>{selectedRecipe.description}</p>
                     </div>
                 </div>
             </div>
