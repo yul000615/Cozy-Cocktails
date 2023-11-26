@@ -33,14 +33,13 @@ function UserIngredients() {
   }
 
   function addIngredient(ingredientName) {
-    console.log('Access Token:', context.token);
-
+    console.log('Access Token:', context.accessToken);
 
     fetch("https://localhost:7268/api/UserBarIngredient/add", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${context.token}`
+        "Authorization": `Bearer ${context.accessToken}`
       },
       body: JSON.stringify({
         ingredientName: ingredientName
@@ -65,7 +64,7 @@ function UserIngredients() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${context.token}`
+        "Authorization": `Bearer ${context.accessToken}`
       },
     })
     .then(response => {
