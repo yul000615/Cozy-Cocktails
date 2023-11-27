@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { FaStar, FaStarHalfAlt } from "react-icons/fa";
 import "./detailedRecipe.css";
@@ -7,6 +7,7 @@ import Heart from "react-animated-heart";
 import ReactStars from "react-rating-stars-component";
 import AppContext from '../AppContext';
 
+/*
 const recipeDetails = {
     'Long Island Iced Tea': {
         name: 'Long Island Iced Tea',
@@ -72,13 +73,14 @@ const recipeDetails = {
         image: 'bloody_marry.jpg',
     },
 };
+*/
 
 const getUsername = () => {
     return 'User123';
 };
 
 const DetailedRecipe = ({ closeDetailed, recipe }) => {
-const selectedRecipe = recipeDetails[recipe];
+//const selectedRecipe = recipeDetails[recipe];
 var loggedIn;
 const context = useContext(AppContext);
 loggedIn = (context.token !== 'no token');
@@ -93,6 +95,30 @@ const [rating, setRating] = useState(0);
 const [favorite, setFavorite] = useState(false);
 const [review, setReview] = useState(false);
 const [feedback, setFeedback] = useState("");
+const [recipeIngredients, setRecipeIngredients] = useState([]);
+
+const getRecipeIngredients = () => {
+    fetch("https://localhost:7268/api/Recipe/getRecipeIngredients", {
+        method: "POST",
+        headers: {
+        "Content-Type": "application/json",
+        },
+            body: JSON.stringify({
+                recipeID: recipe.recipeID
+            }),
+        })
+        .then(
+        (response) => response.json())
+        .then(
+        data => setRecipeIngredients(data))
+        .catch(
+        (error) => {console.log(error)
+        })
+}
+
+useEffect(() => {
+    getRecipeIngredients()
+}, [])
 
 const handleRating = (rate) => {
     setRating(rate)
@@ -215,12 +241,12 @@ function favoriteClick(){
     const searchParams = new URLSearchParams(location.search);
     const selectedRecipeName = searchParams.get('name');
 
-    if (!selectedRecipe) {
+    if (!recipe) {
         return <div className="ViewRecipe">No recipe found</div>;
       }
 
     const renderStars = () => {
-        const rate = selectedRecipe.rate;
+        const rate = recipe.averagerating;
         const stars = [];
         const totalStars = 5;
         const integerPart = Math.floor(rate);
@@ -256,7 +282,7 @@ function favoriteClick(){
                 </div>
 
                 <div className='body'>
-                    <p>{selectedRecipe.description}</p>
+                    <p>{recipe.description}</p>
                 </div>
                 <Modal size="md" isOpen={reportOpen} onRequestClose={closeReport} className="Modal" backdrop="static" maskClosable={false} shouldCloseOnOverlayClick={false}>
                     <div className='ReportModal'>
@@ -286,17 +312,17 @@ function favoriteClick(){
                 </Modal>
                 <div className="recipeHeader">
                     <h2>
-                        {selectedRecipe && selectedRecipe.name} Recipe
+                        {recipe && recipe.name} Recipe
                         <span className="usernameText"> by {username}</span>
                     </h2>
                     <div className="recipeRate">
                         <p>
-                        Rate: {selectedRecipe.rate} {renderStars()}
+                        Rate: {recipe.averagerating} {renderStars()}
                         </p>
                     </div>
                     <div className="additionalInfo">
                         {/* <p>Prep Time: {selectedRecipe.prepTime}</p> */}
-                        <p>ABV: {selectedRecipe.ABV}</p>
+                        <p>ABV: {recipe.alcoholbyvolume}</p>
                     </div>
                 </div>
                 <div className="recipeContent">
@@ -306,9 +332,11 @@ function favoriteClick(){
                     <div className="ingredientSection">
                         <h3>Ingredients:</h3>
                         <ul>
-                            {selectedRecipe.ingredients.map((ingredient, index) => (
-                                <li key={index}>{ingredient}</li>
+                            {/*
+                            {recipeIngredients.map((ingredient, index) => (
+                                <li key={index}>{ingredient.ingredientName}</li>
                             ))}
+                            */}
                         </ul>
                     </div>
                     <div className="directionSection">
@@ -318,7 +346,7 @@ function favoriteClick(){
                                 <li key={index}>{direction}</li>
                             ))}
                         </ol> */}
-                        <p>{selectedRecipe.description}</p>
+                        <p>{recipe.description}</p>
                     </div>
                 </div>
             </div>

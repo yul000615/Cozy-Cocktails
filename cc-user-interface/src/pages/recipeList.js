@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Autosuggest from 'react-autosuggest';
 import './recipeList.css';
 import { Link } from 'react-router-dom';
@@ -15,6 +15,7 @@ function ErrorMessages({ error }) {
   }
 }
 
+/*
 function FilterSearch() {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
@@ -60,7 +61,9 @@ function FilterSearch() {
     </div>
   );
 }
+*/
 
+/*
 function FilterList() {
   const [selectedOption, setSelectedOption] = useState('');
   const [ingredients, setIngredients] = useState([]);
@@ -115,16 +118,30 @@ function FilterList() {
   </ul>
 </div>
 )}
+*/
 
+/*
 function CocktailList({ recipes }) {
   return (
     <ul>
-      {recipes.map((recipe, index) => (
-        <li key={index}>{recipe}</li>
-      ))}
+      {recipes?.length > 0
+        ? (
+          <div className="container">
+            {recipes.map((recipe) => (
+                <button onClick={() => {setShowModal(true); setSelectedRecipe(recipe)}
+              }>{recipe.name}</button>
+            ))}
+          </div>
+        ) : (
+          <div className="empty">
+            <h2>No Recipes Found</h2>
+          </div>
+        )
+      }
     </ul>
   );
 }
+*/
 
 function RecipeList() {
   const [showModal, setShowModal] = useState(false);
@@ -187,7 +204,8 @@ function RecipeList() {
     }
 }
 
-const [selectedRecipe, setSelectedRecipe] = useState('');
+const [selectedRecipe, setSelectedRecipe] = useState();
+const [recipes, setRecipes] = useState([])
 const [suggestions, setSuggestions] = useState([]);
 const [value, setValue] = useState('');
 const getSuggestions = (value) => {
@@ -200,12 +218,14 @@ const inputLength = inputValue.length;
 };
 const onChange = (event, { newValue }) => {
   setValue(newValue);
+  /*
   const selected = getSuggestions(newValue)[0];
   if (selected) {
     setSelectedRecipe(selected);
   } else {
     setSelectedRecipe('');
   }
+  */
 };
 
 const renderSuggestion = (suggestion) => <div>{suggestion}</div>;
@@ -226,6 +246,33 @@ const theme = {
     padding: 0,
   },
  };
+
+const searchRecipes = ({ useFav, useBarIgd, term }) => {
+  fetch("https://localhost:7268/api/Recipe/getRecipes", {
+    method: "POST",
+    headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${context.token}`
+    },
+        body: JSON.stringify({
+            loggedIn: loggedIn,
+            favorited: useFav,
+            useBarIngredients: useBarIgd,
+            searchQuery: term
+        }),
+    })
+    .then(
+      (response) => response.json())
+    .then(
+      data => setRecipes(data))
+    .catch(
+      (error) => {console.log(error)
+    })
+}
+
+useEffect(() => {
+  searchRecipes(false, false, "")
+}, [])
 
 const openModal = () => {
   setShowModal(true);
@@ -266,7 +313,15 @@ const handleRecipeSelection = (selectedRecipeName) => {
               <div className="searchContainer">
                 <div className="byName">
                   <h2>By name</h2>
+                  {/*
                   {' '}
+                  */}
+                  <input
+                    placeholder = "Cocktail name"
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                  />
+                  {/*
                   <Autosuggest
                   suggestions={suggestions}
                   onSuggestionsFetchRequested={({ value }) => setSuggestions(getSuggestions(value))}
@@ -276,26 +331,44 @@ const handleRecipeSelection = (selectedRecipeName) => {
                   inputProps={inputProps}
                   theme={theme}
                 />
-                </div>
+                */}
+              </div>
+              {/*
               <div className="byKeyword"><FilterSearch/></div>
               <div className="byIngredient"><FilterList/></div>
+              */}
+              <div className="displayRecipeList">
+                  {recipes?.length > 0
+                  ? (
+                      <div>
+                        {recipes.map((recipe) => (
+                          <button onClick={() => {openModal(); setSelectedRecipe(recipe)}
+                          }>{recipe.name}</button>
+                        ))}
+                      </div>
+                  ) : (
+                    <div>
+                      <h2>No Recipes Found</h2>
+                    </div>
+                  )}
+              </div>
+              
               <div className="loggedInItems"><LoggedInItems/></div>
               <br />
               </div>
               <div className="additionalButtons">
                 <div className="FavoritedButton"></div>
                 <div className="IngredientsButton"></div>
-                <button className="searchButton" onClick={openModal}>Search</button>
+                <button className="searchButton" onClick={searchRecipes(isFavoritedChecked, isIngredientsChecked, value)}>Search</button>
               </div>
             </div>
-            {showModal && (
-            <DetailedRecipe
-            closeDetailed={() => setShowModal(false)}
+
+            {showModal && <DetailedRecipe
+            closeDetailed={closeModal}
             recipe={selectedRecipe}
-            />
-            )}
+            />}
             </div>
           </div>
-          );
+        );
 }
 export default RecipeList;

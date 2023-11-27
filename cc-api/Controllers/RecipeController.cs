@@ -64,6 +64,17 @@ namespace cc_api.Controllers
             return Ok(_unitOfWork.RecipeRepository.GetAll());
         }
 
+        [HttpPost("getRecipeIngredients")]
+        public IActionResult GetRecipeIngredients([FromBody] long recipeID)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            return Ok(_unitOfWork.RecipeIngredientRepository.GetByRecipeID(recipeID));
+        }
+
         [HttpPost("getRecipes")]
         [Authorize(Roles = "User")]
         public async Task<IActionResult> GetRecipes([FromBody] DisplayRequest request, [FromHeader] string authorization)
@@ -177,7 +188,8 @@ namespace cc_api.Controllers
             }
 
             // Add ABV to recipe model
-            return foundRecipes.Any() != true ? NoContent() : Ok(foundRecipes);
+            return Ok(foundRecipes);
+            //return foundRecipes.Any() != true ? NoContent() : Ok(foundRecipes);
         }
 
         [HttpPost("createRecipe")]
