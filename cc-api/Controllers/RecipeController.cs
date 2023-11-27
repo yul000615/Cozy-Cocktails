@@ -221,9 +221,9 @@ namespace cc_api.Controllers
                 _unitOfWork.Save();
             }
 
-            recipe.AlcoholByVolume = await _CalcABVAsync(recipe.RecipeId);
-            _unitOfWork.RecipeRepository.Update(recipe);
-            _unitOfWork.Save();
+            //.AlcoholByVolume = await _CalcABVAsync(recipe.RecipeId);
+            //_unitOfWork.RecipeRepository.Update(recipe);
+            //_unitOfWork.Save();
 
             return Ok("Recipe Created");
         }
