@@ -317,12 +317,12 @@ function favoriteClick(){
                     </h2>
                     <div className="recipeRate">
                         <p>
-                        Rate: {recipe.averagerating} {renderStars()}
+                        Rate: {recipe.average_rating} {renderStars()}
                         </p>
                     </div>
                     <div className="additionalInfo">
                         {/* <p>Prep Time: {selectedRecipe.prepTime}</p> */}
-                        <p>ABV: {recipe.alcoholbyvolume}</p>
+                        <p>ABV: {recipe.alcohol_by_volume}</p>
                     </div>
                 </div>
                 <div className="recipeContent">

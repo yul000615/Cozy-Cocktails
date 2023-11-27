@@ -49,7 +49,7 @@ namespace cc_api.Controllers
                 }
             }
 
-            return alcohol_vol / total_vol * 100;
+            return alcohol_vol / total_vol;
         }
 
         // Delete this method later
@@ -65,14 +65,16 @@ namespace cc_api.Controllers
         }
 
         [HttpPost("getRecipeIngredients")]
-        public IActionResult GetRecipeIngredients([FromBody] long recipeID)
+        public async Task<IActionResult> GetRecipeIngredients([FromBody] long recipeID)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            return Ok(_unitOfWork.RecipeIngredientRepository.GetByRecipeID(recipeID));
+            IEnumerable<RecipeIngredient> RIs = await _unitOfWork.RecipeIngredientRepository.GetByRecipeID(recipeID);
+
+            return Ok(RIs);
         }
 
         [HttpPost("getRecipes")]
@@ -187,7 +189,6 @@ namespace cc_api.Controllers
                 foundRecipes = temp;
             }
 
-            // Add ABV to recipe model
             return Ok(foundRecipes);
             //return foundRecipes.Any() != true ? NoContent() : Ok(foundRecipes);
         }

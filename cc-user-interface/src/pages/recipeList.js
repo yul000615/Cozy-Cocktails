@@ -208,6 +208,7 @@ const [selectedRecipe, setSelectedRecipe] = useState();
 const [recipes, setRecipes] = useState([])
 const [suggestions, setSuggestions] = useState([]);
 const [value, setValue] = useState('');
+/*
 const getSuggestions = (value) => {
 const inputValue = value.trim().toLowerCase();
 
@@ -218,24 +219,27 @@ const inputLength = inputValue.length;
 };
 const onChange = (event, { newValue }) => {
   setValue(newValue);
-  /*
+  
   const selected = getSuggestions(newValue)[0];
   if (selected) {
     setSelectedRecipe(selected);
   } else {
     setSelectedRecipe('');
   }
-  */
+
 };
+*/
 
 const renderSuggestion = (suggestion) => <div>{suggestion}</div>;
 
+/*
 const inputProps = {
   placeholder: 'cocktail name',
   value,
   onChange: onChange,
   style: { fontStyle: 'italic' },
 };
+*/
 
 const theme = {
   suggestion: {
@@ -359,7 +363,7 @@ const handleRecipeSelection = (selectedRecipeName) => {
               <div className="additionalButtons">
                 <div className="FavoritedButton"></div>
                 <div className="IngredientsButton"></div>
-                <button className="searchButton" onClick={searchRecipes(isFavoritedChecked, isIngredientsChecked, value)}>Search</button>
+                <button className="searchButton" onClick={() => {searchRecipes(isFavoritedChecked, isIngredientsChecked, value)}}>Search</button>
               </div>
             </div>
 
