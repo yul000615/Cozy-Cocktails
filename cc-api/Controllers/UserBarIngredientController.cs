@@ -10,20 +10,20 @@ namespace cc_api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UserFavoriteRecipeController : ControllerBase
+    public class UserBarIngredientController : ControllerBase
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly TokenReader _tokenReader;
 
-        public UserFavoriteRecipeController(UnitOfWork unitOfWork, TokenReader tokenReader)
+        public UserBarIngredientController(UnitOfWork unitOfWork, TokenReader tokenReader)
         {
             _unitOfWork = unitOfWork;
             _tokenReader = tokenReader;
         }
 
-        [HttpGet("getFavorites")]
+        [HttpGet("getUserBarIngredients")]
         [Authorize(Roles = "User")]
-        public async Task<IActionResult> GetUserFavorites([FromHeader] string authorization)
+        public async Task<IActionResult> GetUserBarIngredients([FromHeader] string authorization)
         {
             if (!ModelState.IsValid)
             {
@@ -38,14 +38,14 @@ namespace cc_api.Controllers
 
             var tokenUserInfo = _tokenReader.ReadToken(token);
 
-            IEnumerable<UserFavoriteRecipe> UFRs = await _unitOfWork.UserFavoriteRecipeRepository.GetByUserID(tokenUserInfo.Id);
+            IEnumerable<UserBarIngredient> UBIs = await _unitOfWork.UserBarIngredientRepository.GetByUserID(tokenUserInfo.Id);
 
-            return UFRs == null ? NoContent() : Ok(UFRs);
+            return UBIs == null ? NoContent() : Ok(UBIs);
         }
 
-        [HttpPost("getFavorited")]
+        [HttpPost("getUserBarIngredientsUpdated")]
         [Authorize(Roles = "User")]
-        public async Task<IActionResult> getFavorited([FromBody] FavoriteRequest request, [FromHeader] string authorization)
+        public async Task<IActionResult> getUserBarIngredientsAdded([FromBody] BarIngredientRequest request, [FromHeader] string authorization)
         {
             if (!ModelState.IsValid)
             {
@@ -60,14 +60,14 @@ namespace cc_api.Controllers
 
             var tokenUserInfo = _tokenReader.ReadToken(token);
 
-            UserFavoriteRecipe UFR = await _unitOfWork.UserFavoriteRecipeRepository.GetByContent(tokenUserInfo.Id, request.recipeID);
+            UserBarIngredient UBI = await _unitOfWork.UserBarIngredientRepository.GetByContent(tokenUserInfo.Id, request.ingredientName);
 
-            return UFR == null ? NoContent() : Ok(UFR);
+            return UBI == null ? NoContent() : Ok(UBI);
         }
 
-        [HttpPost("favorite")]
+        [HttpPost("add")]
         [Authorize(Roles = "User")]
-        public IActionResult FavoriteRecipe([FromBody] FavoriteRequest request, [FromHeader] string authorization)
+        public IActionResult BarIngredient([FromBody] BarIngredientRequest request, [FromHeader] string authorization)
         {
             if (!ModelState.IsValid)
             {
@@ -82,36 +82,36 @@ namespace cc_api.Controllers
 
             var tokenUserInfo = _tokenReader.ReadToken(token);
 
-            UserFavoriteRecipe UFR = new UserFavoriteRecipe()
+            UserBarIngredient UBI = new UserBarIngredient()
             {
                 UserId = tokenUserInfo.Id,
-                RecipeId = request.recipeID
+                IngredientName = request.ingredientName
             };
 
-            _unitOfWork.UserFavoriteRecipeRepository.Insert(UFR);
+            _unitOfWork.UserBarIngredientRepository.Insert(UBI);
             _unitOfWork.Save();
 
-            return Ok("Recipe favorited");
+            return Ok("Ingredient added to your bar.");
         }
 
-        [HttpDelete("unfavorite")]
-        public IActionResult UnfavoriteRecipe(long favID)
-        {
+        [HttpDelete("delete")]
+        public IActionResult DeleteIngredient(long listID)
+                {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            UserFavoriteRecipe UFR = _unitOfWork.UserFavoriteRecipeRepository.GetByPrimaryKey(favID);
-            if (UFR == null)
+            UserBarIngredient UBI = _unitOfWork.UserBarIngredientRepository.GetByPrimaryKey(favID);
+            if (UBI == null)
             {
                 return NotFound();
             }
 
-            _unitOfWork.UserFavoriteRecipeRepository.Delete(UFR);
+            _unitOfWork.UserBarIngredientRepository.Delete(UBI);
             _unitOfWork.Save();
 
-            return Ok("Favorite removed");
+            return Ok("Ingredient removed from your bar.");
         }
     }
 }

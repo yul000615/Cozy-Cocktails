@@ -1,25 +1,30 @@
-import './home2.css';
-import { Link } from 'react-router-dom';
+import "./home2.css";
+import { Link } from "react-router-dom";
 import Select from "react-select";
-import {useState, useContext} from 'react';
-import AppContext from '../AppContext';
-import Logout from './logout';
+import {useState, useContext} from "react";
+import AppContext from "../AppContext";
+import Logout from "./logout";
+import RecipeList from "./recipeList";
 
 function UserIngredients() {
-
+  var loggedIn;
+  const [add, setAdd] = useState(null);
   const [selectedOption, setSelectedOption] = useState('');
-
-  //this default value should be replaced with whatever is in the user's ingredient list
-  const [ingredients, setIngredients] = useState(['Vodka', 'Rum']);
-
-  //this is an example; replace with list of all ingredients from database
+  const context = useContext(AppContext);
+  loggedIn = (context.token !== 'no token' && context.token !== '');
+  var routeString;
+  if (loggedIn){
+      routeString = "/home2"
+  }else {
+      routeString = "/"
+  }
+  const [ingredients, setIngredients] = useState(['Vodka', 'Rum']); // Change this to hold the user's ingredients
   const ingredientList = ['Vodka', 'Rum', 'Gin', 'Tequila', 'Vermouth'];
-
   const optionList = [];
 
-  for (var i in ingredientList){
-    if (!ingredients.includes(ingredientList[i])){
-      optionList.push({value: ingredientList[i].toLowerCase(), label: ingredientList[i]});
+  for (var i in ingredientList) {
+    if (!ingredients.includes(ingredientList[i])) {
+      optionList.push({ value: ingredientList[i].toLowerCase(), label: ingredientList[i] });
     }
   }
 
@@ -27,34 +32,74 @@ function UserIngredients() {
     setSelectedOption(data);
   }
 
-  const deleteByValue = value => {
-    //delete value from user's list in database
-    //below should run only if thed database removal is successful
-    setIngredients(oldValues => {
-      return oldValues.filter(ingredient => ingredient !== value)
+  function addIngredient(ingredientName) {
+    console.log('Access Token:', context.accessToken);
+
+    fetch("https://localhost:7268/api/UserBarIngredient/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${context.accessToken}`
+      },
+      body: JSON.stringify({
+        ingredientName: ingredientName
+      }),
     })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Request failed with status: ' + response.status);
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log("Added:", data);
+      setIngredients([...ingredients, ingredientName]);
+      setSelectedOption('');
+    })
+    .catch(error => console.log("Error adding ingredient: ", error));
   }
 
-  const addValue = value => {
-    //add value to user's list in database
-    //below should run only if thed database addition is successful
-    var ingredientList = ingredients.slice()
-    ingredientList.push(value);
-    setIngredients(ingredientList);
-    setSelectedOption(ingredientList[0])
+  function deleteIngredient(listID) {
+    fetch("https://localhost:7268/api/UserBarIngredient/delete", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${context.accessToken}`
+      },
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Request failed with status: ' + response.status);
+      }
+      console.log("Deleted ingredient successfully");
+      // Handle success response
+    })
+    .catch(error => {
+      console.error("Error deleting ingredient:", error);
+      // Handle error cases
+    });
   }
 
+  function addClick() {
+    if (selectedOption) {
+      addIngredient(selectedOption.label);
+    }
+  }
+
+  function deleteClick(ingredient) {
+    deleteIngredient(ingredient);
+  }
   return (
-    <div class='ingredientList'>
+    <div className='ingredientList'>
       <h1>Your Ingredients</h1>
       <br/>
       <ul className = 'list'>
         {ingredients.map(ingredient => {
           return (
             <li key={ingredient} className='ingredient'>
-              <span>{ingredient}</span>
-              <button className='deleteButton'  onClick={() => deleteByValue(ingredient)}>Delete</button>
-            </li>
+            <span>{ingredient}</span>
+            <button className='deleteButton' onClick={() => deleteClick(ingredient)}>Delete</button>
+          </li>
           )
         })}
       </ul>
@@ -62,7 +107,7 @@ function UserIngredients() {
       <h1>Add Ingredient</h1>
       <br/>
       <Select
-        clasName='ingredientSelect'
+        className='ingredientSelect'
         options={optionList}
         value={selectedOption}
         onChange={handleSelect}
@@ -71,37 +116,42 @@ function UserIngredients() {
         menuPlacement='auto'
         menuPosition="fixed"
         autosize={false}
-        styles={{width: '82%'}}  
+        styles={{width: '82%'}}
       />
       <br/>
-      <button className="ingredientSubmit" onClick={() => addValue(selectedOption['label'])}>Submit</button>
+      <button className="ingredientSubmit" onClick={addClick}>Submit</button>
     </div>
   )
 }
 
 function Home2() {
   const context = useContext(AppContext);
-
   return (
-    <header>
-      <div className="homePage"> 
-        <nav className="navigation">
-          <div class="navigationMenu">
-            <ul>
-              <li><Link to="/recipeList" className="link">Recipe Search</Link></li>
-            </ul>
-          </div>
+      <header>
+        <div className="homePage">
+          <nav className="navigation">
+            <div className="logo">
+              <p>Cozy Cocktails</p>
+            </div>
+            <div className="navigationMenu">
+              <ul>
+                <li><Link to="/" className="link">Home</Link></li>
+                <li><Link to="/contact" className="link">Contact</Link></li>
+              </ul>
+            </div>
 
-          <div class="navigationButton">
+            <div class="navigationButton">
             <Link to="/createRecipe"><button className="button" id="createRecipeBtn">Create Recipe</button></Link>
             <Link to="/myAccount"><button className="button" id="myAccountBtn">My Account</button></Link>
             <Logout/>
+            </div>
+          </nav>
+          <UserIngredients />
+          <div className="search">
+          <RecipeList />
           </div>
-        </nav>
-        <UserIngredients/>
-      </div>
+        </div>
     </header>
   );
 }
-
 export default Home2;

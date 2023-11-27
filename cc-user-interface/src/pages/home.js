@@ -15,9 +15,8 @@ function Home() {
             </div>
             <div className="navigationMenu">
               <ul>
-                <li><a href="#" className="link active">Home</a></li>
-                <li><a href="#" className="link">Services</a></li>
-                <li><a href="#" className="link">FAQ</a></li>
+                <li><Link to="/" className="link">Home</Link></li>
+                <li><Link to="/contact" className="link">Contact</Link></li>
               </ul>
             </div>
 

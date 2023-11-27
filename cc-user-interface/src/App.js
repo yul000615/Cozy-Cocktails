@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import AppContext from './AppContext';
 import './App.css';
 import Home from './pages/home';
+import Contact from './pages/contact';
 import Home2 from './pages/home2';
 import SignUp from './pages/signup';
 import Login from './pages/login';
@@ -11,7 +12,6 @@ import RecipeList from './pages/recipeList';
 import ViewRecipe from './pages/detailedRecipe';
 import UpdateAccount from './pages/updateAccount';
 import ResetPassword from './pages/resetPassword';
-// import RecipeList from './pages/recipeList'
 import { BrowserRouter as Router, Routes, Route }
     from 'react-router-dom';
 
@@ -69,6 +69,7 @@ import { BrowserRouter as Router, Routes, Route }
           <Router>
             <Routes>
                 <Route exact path='/' element={<Home />} />
+                <Route exact path='/contact' element={<Contact />} />
                 <Route exact path='/home2' element={<Home2 />} />
                 <Route exact path='/login' element={<Login />} />
                 <Route exact path='/signup' element={<SignUp />} />
@@ -78,11 +79,9 @@ import { BrowserRouter as Router, Routes, Route }
                 <Route exact path='/detailedRecipe' element={<ViewRecipe />} />
                 <Route exact path='/updateAccount' element={<UpdateAccount />} /> 
                 <Route exact path='/resetPassword' element={<ResetPassword />} /> 
-                <Route exact path='/recipeList' element={<RecipeList />} /> 
             </Routes>
         </Router>
         </AppContext.Provider>
       );
     }
-    
     export default App;
