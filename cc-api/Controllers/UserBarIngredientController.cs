@@ -102,7 +102,7 @@ namespace cc_api.Controllers
                 return BadRequest();
             }
 
-            UserBarIngredient UBI = _unitOfWork.UserBarIngredientRepository.GetByPrimaryKey(favID);
+            UserBarIngredient UBI = _unitOfWork.UserBarIngredientRepository.GetByPrimaryKey(listID);
             if (UBI == null)
             {
                 return NotFound();
