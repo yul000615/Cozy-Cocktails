@@ -28,9 +28,7 @@ namespace cc_api.Controllers
 
         private async Task<double> _CalcABVAsync(long recipeID)
         {
-            IRecipeIngredientRepository recipeIngredient = _unitOfWork.RecipeIngredientRepository;
-            IIngredientRepository ingredient = _unitOfWork.IngredientRepository;
-            IEnumerable<RecipeIngredient> recipeIngredients = await recipeIngredient.GetByRecipeID(recipeID);
+            IEnumerable<RecipeIngredient> recipeIngredients = await _unitOfWork.RecipeIngredientRepository.GetByRecipeID(recipeID);
 
             double total_vol = 0.0;
             double alcohol_vol = 0.0;
@@ -41,7 +39,8 @@ namespace cc_api.Controllers
                 switch (ri.QuantityDescription)
                 {
                     case "oz":
-                        alcohol_vol += ri.Quantity * ingredient.GetByPrimaryKey(ri.IngredientName).AlcoholByVolume;
+                        Ingredient ingredient = _unitOfWork.IngredientRepository.GetByPrimaryKey(ri.IngredientName);
+                        alcohol_vol += ri.Quantity * ingredient.AlcoholByVolume;
                         total_vol += ri.Quantity;
                         break;
                     default:
@@ -49,7 +48,12 @@ namespace cc_api.Controllers
                 }
             }
 
-            return alcohol_vol / total_vol * 100;
+            if (total_vol == 0.0)
+            {
+                return 0.0;
+            }
+
+            return alcohol_vol / total_vol;
         }
 
         // Delete this method later
@@ -62,6 +66,19 @@ namespace cc_api.Controllers
             }
 
             return Ok(_unitOfWork.RecipeRepository.GetAll());
+        }
+
+        [HttpPost("getRecipeIngredients")]
+        public async Task<IActionResult> GetRecipeIngredients([FromBody] long recipeID)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            IEnumerable<RecipeIngredient> RIs = await _unitOfWork.RecipeIngredientRepository.GetByRecipeID(recipeID);
+
+            return Ok(RIs);
         }
 
         [HttpPost("getRecipes")]
@@ -176,8 +193,8 @@ namespace cc_api.Controllers
                 foundRecipes = temp;
             }
 
-            // Add ABV to recipe model
-            return foundRecipes.Any() != true ? NoContent() : Ok(foundRecipes);
+            return Ok(foundRecipes);
+            //return foundRecipes.Any() != true ? NoContent() : Ok(foundRecipes);
         }
 
         [HttpPost("createRecipe")]
