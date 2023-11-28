@@ -148,10 +148,27 @@ body {
     color: #3f3423;
 }
 
-.cocktailImage {
-    width: 50px;
-    height: 50px; 
-    margin-right: 10px;
+.decoration {
+    margin-right: 37%;
+    margin-top: -10%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.decoration p {
+    font-style: italic;
+    font-weight: 500px;
+    font-size: 1.5em;
+  }
+
+
+  .cocktailImage img {
+    max-width: 100%;
+    height: auto;
+    width: 80px;
+    height: 60px;
+
   }
 
 h1 {

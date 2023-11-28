@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import Select from "react-select";
 import { useState } from "react";
 import RecipeList from './recipeList';
+import cocktailImage from './cocktail.jpeg';
 
 function Home() {
-
   return (
       <header>
         <div className="homePage">
@@ -15,9 +15,8 @@ function Home() {
             </div>
             <div className="navigationMenu">
               <ul>
-                <li><a href="#" className="link active">Home</a></li>
-                <li><a href="#" className="link">Services</a></li>
-                <li><a href="#" className="link">FAQ</a></li>
+                <li><Link to="/" className="link">Home</Link></li>
+                <li><Link to="/contact" className="link">Contact</Link></li>
               </ul>
             </div>
 
@@ -30,6 +29,10 @@ function Home() {
               </Link>
             </div>
           </nav>
+          <div className="decoration">
+            <p>Welcome to Cozy Cocktails-!</p>
+            <img src="cocktail.jpeg" alt="Cocktail" style={{ width: '400px', height: 'auto' }} />
+          </div>
           <RecipeList />
 
         </div>
