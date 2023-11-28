@@ -1,45 +1,64 @@
 import "./home2.css";
 import { Link } from "react-router-dom";
 import Select from "react-select";
-import {useState, useContext} from "react";
+import React, { useState, useEffect, useContext } from "react";
 import AppContext from "../AppContext";
 import Logout from "./logout";
 import RecipeList from "./recipeList";
 
 function UserIngredients() {
-  var loggedIn;
-  const [add, setAdd] = useState(null);
+  const [ingredients, setIngredients] = useState([]);
+  const [optionList, setOptionList] = useState([]);
   const [selectedOption, setSelectedOption] = useState('');
   const context = useContext(AppContext);
-  loggedIn = (context.token !== 'no token' && context.token !== '');
-  var routeString;
-  if (loggedIn){
-      routeString = "/home2"
-  }else {
-      routeString = "/"
-  }
-  const [ingredients, setIngredients] = useState(['Vodka', 'Rum']); // Change this to hold the user's ingredients
-  const ingredientList = ['Vodka', 'Rum', 'Gin', 'Tequila', 'Vermouth'];
-  const optionList = [];
+  const loggedIn = context.token !== 'no token' && context.token !== '';
 
-  for (var i in ingredientList) {
-    if (!ingredients.includes(ingredientList[i])) {
-      optionList.push({ value: ingredientList[i].toLowerCase(), label: ingredientList[i] });
+  useEffect(() => {
+    if (loggedIn) {
+      fetchUserIngredients();
+      updateOptionList();
     }
-  }
+  }, [loggedIn]);
 
-  function handleSelect(data) {
-    setSelectedOption(data);
-  }
+  const fetchUserIngredients = () => {
+    fetch("https://localhost:7268/api/UserBarIngredient/getUserBarIngredients", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${context.token}`
+      },
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Request failed with status: ' + response.status);
+      }
+      return response.json();
+    })
+    .then(fetchedIngredients => {
+      if (Array.isArray(fetchedIngredients)) {
+        setIngredients(fetchedIngredients);
+      } else {
+        console.error('Data is not an array:', fetchedIngredients);
+      }
+    })
+    .catch(error => console.log("Error fetching ingredients: ", error));
+  };
 
-  function addIngredient(ingredientName) {
-    console.log('Access Token:', context.accessToken);
+  const updateOptionList = () => {
+    const optionList = ['vodka', 'rum', 'gin', 'tequila', 'vermouth'];
+    const newOptionList = optionList
+      .filter(availableIngredient => !ingredients.some(userIngredient => userIngredient.ingredientName === availableIngredient))
+      .map(ingredient => ({ value: ingredient.toLowerCase(), label: ingredient }));
 
-    fetch("https://localhost:7268/api/UserBarIngredient/add", {
+    setOptionList(newOptionList);
+  };
+
+  const addIngredient = (ingredientName) => {
+    fetch("https://localhost:7268/api/UserBarIngredient/addUserBarIngredient", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${context.accessToken}`
+        "Authorization": `Bearer ${context.token}`
       },
       body: JSON.stringify({
         ingredientName: ingredientName
@@ -51,77 +70,99 @@ function UserIngredients() {
       }
       return response.json();
     })
-    .then(data => {
-      console.log("Added:", data);
-      setIngredients([...ingredients, ingredientName]);
-      setSelectedOption('');
+    .then(ingredient => {
+      if (ingredient && ingredient.ingredientName) {
+        setIngredients(prevIngredients => [...prevIngredients, ingredient]);
+        deleteToOptions(ingredientName);
+      } else {
+        console.log("Invalid ingredient data:", ingredient);
+      }
     })
     .catch(error => console.log("Error adding ingredient: ", error));
-  }
+  };
 
-  function deleteIngredient(listID) {
-    fetch("https://localhost:7268/api/UserBarIngredient/delete", {
-      method: "POST",
+  const deleteIngredient = (ingredient) => {
+    const ingredientName = ingredient.ingredientName;
+    fetch("https://localhost:7268/api/UserBarIngredient/deleteUserBarIngredient", {
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${context.accessToken}`
+        "Authorization": `Bearer ${context.token}`
       },
+      body: JSON.stringify({
+        ingredientName: ingredientName
+      }),
     })
     .then(response => {
       if (!response.ok) {
-        throw new Error('Request failed with status: ' + response.status);
+        throw new Error("Request failed with status: " + response.status);
+      } else {
+        const updatedIngredients = ingredients.filter(
+          ing => ing.ingredientName !== ingredientName
+        );
+        setIngredients(updatedIngredients);
+        addToOptions(ingredientName);
       }
-      console.log("Deleted ingredient successfully");
-      // Handle success response
     })
     .catch(error => {
       console.error("Error deleting ingredient:", error);
-      // Handle error cases
     });
-  }
+  };
 
-  function addClick() {
+  const addToOptions = (ingredientName) => {
+    const newOption = { value: ingredientName.toLowerCase(), label: ingredientName };
+    setOptionList(prevOptions => [...prevOptions, newOption]);
+  };
+  const deleteToOptions = (ingredientName) => {
+    const updatedOptions = optionList.filter(option => option.label !== ingredientName);
+    setOptionList(updatedOptions);
+  };
+
+  const addClick = () => {
     if (selectedOption) {
       addIngredient(selectedOption.label);
     }
-  }
+  };
 
-  function deleteClick(ingredient) {
+  const deleteClick = (ingredient) => {
     deleteIngredient(ingredient);
-  }
+  };
+
+  const handleSelect = (value) => {
+    setSelectedOption(value);
+  };
+
+  const displayIngredients = () => {
+    return (
+      <div className="userIngredientContainer">
+        <h1>User Ingredients</h1>
+        <ul>
+          {ingredients.map((ingredient, index) => (
+            <li key={index}>
+              {ingredient && ingredient.ingredientName ? ingredient.ingredientName : ''}
+              <button onClick={() => deleteClick(ingredient)}>Delete</button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  };
+
   return (
-    <div className='ingredientList'>
-      <h1>Your Ingredients</h1>
-      <br/>
-      <ul className = 'list'>
-        {ingredients.map(ingredient => {
-          return (
-            <li key={ingredient} className='ingredient'>
-            <span>{ingredient}</span>
-            <button className='deleteButton' onClick={() => deleteClick(ingredient)}>Delete</button>
-          </li>
-          )
-        })}
-      </ul>
-      <br/>
-      <h1>Add Ingredient</h1>
-      <br/>
-      <Select
-        className='ingredientSelect'
-        options={optionList}
-        value={selectedOption}
-        onChange={handleSelect}
-        isSearchable={true}
-        placeholder="Add ingredient"
-        menuPlacement='auto'
-        menuPosition="fixed"
-        autosize={false}
-        styles={{width: '82%'}}
-      />
-      <br/>
-      <button className="ingredientSubmit" onClick={addClick}>Submit</button>
+    <div>
+      <div className="userIngredientList">
+        <h1>Add Ingredient</h1>
+        <Select
+          options={optionList}
+          value={selectedOption}
+          onChange={handleSelect}
+          placeholder="Select ingredient"
+        />
+        <button onClick={addClick}>Add</button>
+      </div>
+      {displayIngredients()}
     </div>
-  )
+  );
 }
 
 function Home2() {
@@ -129,7 +170,7 @@ function Home2() {
   return (
       <header>
         <div className="homePage">
-          <nav className="navigation">
+          <div className="navigation">
             <div className="logo">
               <p>Cozy Cocktails</p>
             </div>
@@ -145,11 +186,9 @@ function Home2() {
             <Link to="/myAccount"><button className="button" id="myAccountBtn">My Account</button></Link>
             <Logout/>
             </div>
-          </nav>
-          <UserIngredients />
-          <div className="search">
-          <RecipeList />
           </div>
+            <div className="ubi"><UserIngredients /></div>
+            <div className="recipeListr"><RecipeList /></div>
         </div>
     </header>
   );
