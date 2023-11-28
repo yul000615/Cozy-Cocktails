@@ -28,9 +28,7 @@ namespace cc_api.Controllers
 
         private async Task<double> _CalcABVAsync(long recipeID)
         {
-            IRecipeIngredientRepository recipeIngredient = _unitOfWork.RecipeIngredientRepository;
-            IIngredientRepository ingredient = _unitOfWork.IngredientRepository;
-            IEnumerable<RecipeIngredient> recipeIngredients = await recipeIngredient.GetByRecipeID(recipeID);
+            IEnumerable<RecipeIngredient> recipeIngredients = await _unitOfWork.RecipeIngredientRepository.GetByRecipeID(recipeID);
 
             double total_vol = 0.0;
             double alcohol_vol = 0.0;
@@ -41,12 +39,18 @@ namespace cc_api.Controllers
                 switch (ri.QuantityDescription)
                 {
                     case "oz":
-                        alcohol_vol += ri.Quantity * ingredient.GetByPrimaryKey(ri.IngredientName).AlcoholByVolume;
+                        Ingredient ingredient = _unitOfWork.IngredientRepository.GetByPrimaryKey(ri.IngredientName);
+                        alcohol_vol += ri.Quantity * ingredient.AlcoholByVolume;
                         total_vol += ri.Quantity;
                         break;
                     default:
                         break;
                 }
+            }
+
+            if (total_vol == 0.0)
+            {
+                return 0.0;
             }
 
             return alcohol_vol / total_vol;
