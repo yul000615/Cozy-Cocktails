@@ -189,7 +189,7 @@ function Home2() {
             </div>
             <div className="navigationMenu">
               <ul>
-                <li><Link to="/" className="link">Home</Link></li>
+                <li><Link to="/home2" className="link">Home</Link></li>
                 <li><Link to="/contact" className="link">Contact</Link></li>
               </ul>
             </div>
