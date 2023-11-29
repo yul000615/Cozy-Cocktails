@@ -230,7 +230,7 @@ const onChange = (event, { newValue }) => {
 };
 */
 
-const renderSuggestion = (suggestion) => <div>{suggestion}</div>;
+/*const renderSuggestion = (suggestion) => <div>{suggestion}</div>;*/
 
 /*
 const inputProps = {
