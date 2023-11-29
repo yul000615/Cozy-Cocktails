@@ -21,6 +21,18 @@ namespace cc_api.Controllers
             _tokenReader = tokenReader;
         }
 
+        [HttpGet]
+        public IActionResult GetUserBarIngredients()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            return Ok(_unitOfWork.UserBarIngredientRepository.GetAll());
+        }
+
+
         [HttpGet("getUserBarIngredients")]
         [Authorize(Roles = "User")]
         public async Task<IActionResult> GetUserBarIngredients([FromHeader] string authorization)
@@ -65,9 +77,9 @@ namespace cc_api.Controllers
             return UBI == null ? NoContent() : Ok(UBI);
         }
 
-        [HttpPost("add")]
+        [HttpPost("addUserBarIngredient")]
         [Authorize(Roles = "User")]
-        public IActionResult BarIngredient([FromBody] BarIngredientRequest request, [FromHeader] string authorization)
+        public IActionResult AddBarIngredient([FromBody] BarIngredientRequest request, [FromHeader] string authorization)
         {
             if (!ModelState.IsValid)
             {
@@ -94,24 +106,35 @@ namespace cc_api.Controllers
             return Ok("Ingredient added to your bar.");
         }
 
-        [HttpDelete("delete")]
-        public IActionResult DeleteIngredient(long listID)
+        [HttpDelete("deleteUserBarIngredient")]
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> DeleteUserBarIngredient([FromBody] BarIngredientRequest request, [FromHeader] string authorization)
+        {
+            try
+            {
+                bool tokenExtracted = _tokenReader.GetTokenFromHeader(authorization, out var token);
+                if (!tokenExtracted)
                 {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
+                    return Unauthorized();
+                }
+
+                var tokenUserInfo = _tokenReader.ReadToken(token);
+                UserBarIngredient UBI = await _unitOfWork.UserBarIngredientRepository.GetByContent(tokenUserInfo.Id, request.ingredientName);
+
+                if (UBI == null)
+                {
+                    return NotFound("Ingredient not found for the user");
+                }
+
+                _unitOfWork.UserBarIngredientRepository.Delete(UBI);
+                _unitOfWork.Save();
+
+                return Ok();
             }
-
-            UserBarIngredient UBI = _unitOfWork.UserBarIngredientRepository.GetByPrimaryKey(favID);
-            if (UBI == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                return StatusCode(500, "An error occurred while processing the request");
             }
-
-            _unitOfWork.UserBarIngredientRepository.Delete(UBI);
-            _unitOfWork.Save();
-
-            return Ok("Ingredient removed from your bar.");
         }
     }
 }

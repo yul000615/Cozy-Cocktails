@@ -8,16 +8,6 @@
     font-weight: 400;
 }
 
-.inputField{
-  margin-bottom: 20px;
-}
-
-.inputField textarea {
-  padding: 8px;
-  width: 100%;
-  height: 100px;
-}
-
 .contactTitle {
   font-size: 2.5em;
 }
@@ -43,7 +33,6 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 110vh;
 }
 
 .navigation {
@@ -269,3 +258,4 @@ h3 {
 #deleteButton:hover{
     border-bottom: 2px solid #a23c2c; 
 }
+
