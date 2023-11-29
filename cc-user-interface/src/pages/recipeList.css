@@ -55,6 +55,7 @@ body {
     top: 55%;
     left: 50%;
     transform: translate(-50%, -50%);
+    padding-top: 30px;
   }
 
   .searchRecipePage {
@@ -70,6 +71,7 @@ body {
     flex-direction: column;
     height: 100%;
     width: 100%;
+    padding-top: 30px;
   }
   
 

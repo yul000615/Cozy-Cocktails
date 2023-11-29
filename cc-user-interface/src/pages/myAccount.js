@@ -4,7 +4,7 @@ import './myAccount.css';
 import DeleteAccount from './deleteAccount';
 
 function MyAccount() {
-  const profileImageUrl = 'https://example.com/user-profile-image.jpg';
+  const profileImageUrl = 'user-profile-default.svg';
 
   return (
     <div className="MyAccountPage"> 
@@ -33,9 +33,6 @@ function MyAccount() {
           </div>
           <div className="deleteAccount">
             <DeleteAccount></DeleteAccount>
-          </div>
-          <div className="downloadData">
-            <button className="downloadDataButton">Download My Data</button>
           </div>
          </div>
         <div className="homeButton">

@@ -289,6 +289,7 @@ function favoriteClick(){
                         <h1>Describe your issue with this recipe:</h1>
                         <input type="issue" name="issue" value={issue} onChange={(e) => setIssue(e.target.value)} />
                         <button onClick={reportSubmit}>Submit</button>
+                        <button onClick={closeReport}>Close</button>
                         <br/>
                         <p>{reportMessage}</p>
                     </div>

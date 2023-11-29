@@ -8,7 +8,13 @@ import RecipeList from "./recipeList";
 
 function UserIngredients() {
   const [ingredients, setIngredients] = useState([]);
-  const [optionList, setOptionList] = useState([]);
+  const [optionList, setOptionList] = useState([
+    { value: 'vodka', label: 'vodka' },
+    { value: 'rum', label: 'rum' },
+    { value: 'gin', label: 'gin' },
+    { value: 'tequila', label: 'tequila' },
+    { value: 'vermouth', label: 'vermouth' }]);
+  const [errorMessage, setErrorMessage] = useState('');
   const [selectedOption, setSelectedOption] = useState('');
   const context = useContext(AppContext);
   const loggedIn = context.token !== 'no token' && context.token !== '';
@@ -16,7 +22,9 @@ function UserIngredients() {
   useEffect(() => {
     if (loggedIn) {
       fetchUserIngredients();
-      updateOptionList();
+      const intervalId = setInterval(fetchUserIngredients, 1000);
+
+      return () => clearInterval(intervalId);
     }
   }, [loggedIn]);
 
@@ -43,16 +51,7 @@ function UserIngredients() {
     })
     .catch(error => console.log("Error fetching ingredients: ", error));
   };
-
-  const updateOptionList = () => {
-    const optionList = ['vodka', 'rum', 'gin', 'tequila', 'vermouth'];
-    const newOptionList = optionList
-      .filter(availableIngredient => !ingredients.some(userIngredient => userIngredient.ingredientName === availableIngredient))
-      .map(ingredient => ({ value: ingredient.toLowerCase(), label: ingredient }));
-
-    setOptionList(newOptionList);
-  };
-
+  
   const addIngredient = (ingredientName) => {
     fetch("https://localhost:7268/api/UserBarIngredient/addUserBarIngredient", {
       method: "POST",
@@ -73,7 +72,6 @@ function UserIngredients() {
     .then(ingredient => {
       if (ingredient && ingredient.ingredientName) {
         setIngredients(prevIngredients => [...prevIngredients, ingredient]);
-        deleteToOptions(ingredientName);
       } else {
         console.log("Invalid ingredient data:", ingredient);
       }
@@ -101,7 +99,6 @@ function UserIngredients() {
           ing => ing.ingredientName !== ingredientName
         );
         setIngredients(updatedIngredients);
-        addToOptions(ingredientName);
       }
     })
     .catch(error => {
@@ -120,7 +117,17 @@ function UserIngredients() {
 
   const addClick = () => {
     if (selectedOption) {
-      addIngredient(selectedOption.label);
+      const ingredientName = selectedOption.label;
+      const existsInList = ingredients.some(
+        (ingredient) => ingredient.ingredientName === ingredientName
+      );
+
+      if (existsInList) {
+        setErrorMessage(`Ingredient '${ingredientName}' already exists in your list.`);
+        return;
+      }
+
+      addIngredient(ingredientName);
     }
   };
 
@@ -133,8 +140,14 @@ function UserIngredients() {
   };
 
   const displayIngredients = () => {
+    const errorDisplay = errorMessage && (
+      <div className="errorMessage">
+        {errorMessage}
+      </div>
+    );
     return (
       <div className="userIngredientContainer">
+        {errorDisplay}
         <h1>User Ingredients</h1>
         <ul>
           {ingredients.map((ingredient, index) => (
@@ -176,7 +189,7 @@ function Home2() {
             </div>
             <div className="navigationMenu">
               <ul>
-                <li><Link to="/" className="link">Home</Link></li>
+                <li><Link to="/home2" className="link">Home</Link></li>
                 <li><Link to="/contact" className="link">Contact</Link></li>
               </ul>
             </div>

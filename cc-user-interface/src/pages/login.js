@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react';
 import AppContext from '../AppContext';
 import { Link, useLocation } from 'react-router-dom';
-import Modal from 'react-modal';
 import "./login.css"
 
 function ErrorMessages({ error }) {
@@ -20,9 +19,6 @@ function Login() {
   const [isSuccessfulLogin, setIsSuccessfulLogin] = useState(false);
   const context = useContext(AppContext);
   const location = useLocation(); // Get the current location
-  const [modalOpen, setModalOpen] = useState(false);
-  const [resetEmail, setResetEmail] = useState('');
-  const [resetMessage, setResetMessage] = useState('');
 
   async function loginClick() {
     // Validate user input
@@ -61,26 +57,6 @@ function Login() {
     return (isEmailEmpty || isPasswordEmpty) ? false : true;
   }
 
-  function closeModal() {
-    setModalOpen(false);
-    setResetEmail('');
-    setResetMessage('');
-  }
-
-  function openModal(e) {
-    e.preventDefault();
-    e.nativeEvent.stopImmediatePropagation();
-    setModalOpen(true);
-  }
-
-  function resetSubmit(){
-    if (!emailValidation.test(resetEmail)) {
-      setResetMessage('Please enter a valid email address');
-    } else{
-      setResetMessage('Email sent! Check your email for further instruction.')
-    }
-  }
-
   return (
     <div className="LoginPage">
       {isSuccessfulLogin ? (
@@ -106,21 +82,7 @@ function Login() {
             Password: <input type="password" name="userPassword" value={password} onChange={(e) => setPassword(e.target.value)} />
           </label>
           <br />
-          <div className="remember-forgot">
-            <a href='#' onClick={openModal}>Forgot Password?</a>
-          </div>
           <button className='registerBtn' onClick={loginClick}>Submit</button>
-          <Modal size="md" isOpen={modalOpen} onRequestClose={closeModal} className="Modal" backdrop="static" maskClosable={false} shouldCloseOnOverlayClick={false}>
-            {
-              <div className='ResetModal'>
-                <h1>Enter your email below:</h1>
-                <input type="resetEmail" name="resetEmail" value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} />
-                <button onClick={resetSubmit}>Submit</button>
-                <button onClick={closeModal}>Close</button>
-                <p>{resetMessage}</p>
-              </div>
-            }
-          </Modal>
         </div>
       )}
     </div>
