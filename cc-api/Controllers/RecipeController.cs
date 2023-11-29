@@ -69,14 +69,14 @@ namespace cc_api.Controllers
         }
 
         [HttpPost("getRecipeIngredients")]
-        public async Task<IActionResult> GetRecipeIngredients([FromBody] long recipeID)
+        public async Task<IActionResult> GetRecipeIngredients([FromBody] RecipeIngredientRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            IEnumerable<RecipeIngredient> RIs = await _unitOfWork.RecipeIngredientRepository.GetByRecipeID(recipeID);
+            IEnumerable<RecipeIngredient> RIs = await _unitOfWork.RecipeIngredientRepository.GetByRecipeID(request.recipeID);
 
             return Ok(RIs);
         }

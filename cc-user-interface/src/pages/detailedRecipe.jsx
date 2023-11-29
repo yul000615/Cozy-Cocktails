@@ -101,18 +101,18 @@ const getRecipeIngredients = () => {
     fetch("https://localhost:7268/api/Recipe/getRecipeIngredients", {
         method: "POST",
         headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
         },
             body: JSON.stringify({
-                recipeID: recipe.recipeID
+                recipeID: recipe.recipeId
             }),
         })
         .then(
-        (response) => response.json())
+            (response) => response.json())
         .then(
-        data => setRecipeIngredients(data))
+            data => setRecipeIngredients(data))
         .catch(
-        (error) => {console.log(error)
+            (error) => {console.log(error)
         })
 }
 
@@ -246,7 +246,7 @@ function favoriteClick(){
       }
 
     const renderStars = () => {
-        const rate = recipe.averagerating;
+        const rate = recipe.averageRating;
         const stars = [];
         const totalStars = 5;
         const integerPart = Math.floor(rate);
@@ -318,12 +318,12 @@ function favoriteClick(){
                     </h2>
                     <div className="recipeRate">
                         <p>
-                        Rate: {recipe.average_rating} {renderStars()}
+                        Rate: {recipe.averageRating} {renderStars()}
                         </p>
                     </div>
                     <div className="additionalInfo">
                         {/* <p>Prep Time: {selectedRecipe.prepTime}</p> */}
-                        <p>ABV: {recipe.alcohol_by_volume}</p>
+                        <p>ABV: {recipe.alcoholByVolume}</p>
                     </div>
                 </div>
                 <div className="recipeContent">
@@ -332,13 +332,18 @@ function favoriteClick(){
                     </div> */}
                     <div className="ingredientSection">
                         <h3>Ingredients:</h3>
-                        <ul>
-                            {/*
-                            {recipeIngredients.map((ingredient, index) => (
-                                <li key={index}>{ingredient.ingredientName}</li>
-                            ))}
-                            */}
-                        </ul>
+                        {recipeIngredients?.length > 0
+                        ? (
+                            <ul>
+                                {recipeIngredients.map((ingredient, index) => (
+                                    <li key={index}>{ingredient.ingredientName}: {ingredient.quantity} {ingredient.quantityDescription}</li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <ul>
+                                <li>No Ingredients</li>
+                            </ul>
+                        )} 
                     </div>
                     <div className="directionSection">
                         <h3>Description:</h3>
