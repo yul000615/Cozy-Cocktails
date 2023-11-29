@@ -293,9 +293,9 @@ const handleRecipeSelection = (selectedRecipeName) => {
 
  return (
  <div className="headerButtons">
-    <div className="logo">
+    {/* <div className="logo">
        <p>Cozy Cocktails</p>
-            </div>
+    </div>
             <div className="navigationMenu">
               <ul>
                 <li><a href="#" className="link active">Home</a></li>
@@ -305,7 +305,7 @@ const handleRecipeSelection = (selectedRecipeName) => {
             </div>
         <Link to="/home2">
           <button className="headerButton">Home</button>
-        </Link>    
+        </Link>     */}
         <div className="container">
           
           <div className="searchRecipePage">

@@ -31,7 +31,7 @@ function Home() {
           </nav>
           <div className="decoration">
             <p>Welcome to Cozy Cocktails-!</p>
-            <img src="cocktail.jpeg" alt="Cocktail" style={{ width: '400px', height: 'auto' }} />
+            <img src="cocktail.jpeg" alt="Cocktail" style={{ width: '300px', height: 'auto' }} />
           </div>
           <RecipeList />
 

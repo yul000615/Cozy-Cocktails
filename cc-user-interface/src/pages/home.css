@@ -30,7 +30,7 @@ body {
     display: flex;
     justify-content: space-around;
     text-decoration: none;
-    height: 80px;
+    height: 50%;
     line-height: 100px;
     width: 100%;
     z-index: 100;
