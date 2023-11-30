@@ -91,7 +91,7 @@ namespace cc_api.Controllers
             _unitOfWork.UserFavoriteRecipeRepository.Insert(UFR);
             _unitOfWork.Save();
 
-            return Ok("Recipe favorited");
+            return Ok(UFR);
         }
 
         [HttpDelete("unfavorite")]
@@ -111,7 +111,7 @@ namespace cc_api.Controllers
             _unitOfWork.UserFavoriteRecipeRepository.Delete(UFR);
             _unitOfWork.Save();
 
-            return Ok("Favorite removed");
+            return Ok(UFR);
         }
     }
 }
