@@ -63,18 +63,6 @@ namespace cc_api.Controllers
             return alcohol_vol / total_vol;
         }
 
-        // Delete this method later
-        [HttpGet]
-        public IActionResult GetRecipes()
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-            return Ok(_unitOfWork.RecipeRepository.GetAll());
-        }
-
         [HttpPost("getRecipeIngredients")]
         public async Task<IActionResult> GetRecipeIngredients([FromBody] RecipeIngredientRequest request)
         {
@@ -156,6 +144,23 @@ namespace cc_api.Controllers
 
                 HashSet<Ingredient> barIngredients = new HashSet<Ingredient>();
 
+                if (tokenUserInfo == null)
+                {
+                    bool tokenExtracted = _tokenReader.GetTokenFromHeader(authorization, out var token);
+                    if (!tokenExtracted)
+                    {
+                        return Unauthorized();
+                    }
+
+                    tokenUserInfo = _tokenReader.ReadToken(token);
+                }
+
+                IEnumerable<UserBarIngredient> UBIs = await _unitOfWork.UserBarIngredientRepository.GetByUserID(tokenUserInfo.Id);
+                foreach (UserBarIngredient UBI in UBIs)
+                {
+                    barIngredients.Add(_unitOfWork.IngredientRepository.GetByPrimaryKey(UBI.IngredientName));
+                }
+                /*
                 if (request.loggedIn)
                 {
                     if (tokenUserInfo == null)
@@ -182,6 +187,7 @@ namespace cc_api.Controllers
                         barIngredients.Add(_unitOfWork.IngredientRepository.GetByPrimaryKey(ingredient));
                     }
                 }
+                */
 
                 List<Recipe> temp = new List<Recipe>();
                 foreach (Recipe recipe in foundRecipes)

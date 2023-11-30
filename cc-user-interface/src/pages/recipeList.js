@@ -251,7 +251,7 @@ const theme = {
   },
  };
 
-const searchRecipes = ({ useFav, useBarIgd, term }) => {
+const searchRecipes = (useFav, useBarIgd, term) => {
   fetch("https://localhost:7268/api/Recipe/getRecipes", {
     method: "POST",
     headers: {
@@ -259,7 +259,6 @@ const searchRecipes = ({ useFav, useBarIgd, term }) => {
     "Authorization": `Bearer ${context.token}`
     },
         body: JSON.stringify({
-            loggedIn: loggedIn,
             favorited: useFav,
             useBarIngredients: useBarIgd,
             searchQuery: term

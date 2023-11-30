@@ -13,7 +13,7 @@ namespace cc_api.DAL
 
         public async Task<IEnumerable<Recipe>> GetByName(string name)
         {
-            return await context.Recipes.Where(x => x.Name.Contains(name)).ToListAsync();
+            return await context.Recipes.Where(x => x.Name.ToLower().Contains(name.ToLower()) == true).ToListAsync();
         }
     }
 }
