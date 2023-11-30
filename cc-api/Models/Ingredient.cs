@@ -9,7 +9,7 @@ public partial class Ingredient
 
     public double AlcoholByVolume { get; set; }
 
-    public virtual ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
+    //public virtual ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
 
-    public virtual ICollection<UserBarIngredient> UserBarIngredients { get; set; } = new List<UserBarIngredient>();
+    //public virtual ICollection<UserBarIngredient> UserBarIngredients { get; set; } = new List<UserBarIngredient>();
 }
