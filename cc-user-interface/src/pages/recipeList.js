@@ -252,7 +252,8 @@ const theme = {
  };
 
 const searchRecipes = (useFav, useBarIgd, term) => {
-  fetch("https://localhost:7268/api/Recipe/getRecipes", {
+  if (loggedIn) {
+    fetch("https://localhost:7268/api/Recipe/getRecipes", {
     method: "POST",
     headers: {
     "Content-Type": "application/json",
@@ -271,6 +272,26 @@ const searchRecipes = (useFav, useBarIgd, term) => {
     .catch(
       (error) => {console.log(error)
     })
+  } else {
+    fetch("https://localhost:7268/api/Recipe/getRecipesBasic", {
+    method: "POST",
+    headers: {
+    "Content-Type": "application/json",
+    },
+        body: JSON.stringify({
+            favorited: false,
+            useBarIngredients: false,
+            searchQuery: term
+        }),
+    })
+    .then(
+      (response) => response.json())
+    .then(
+      data => setRecipes(data))
+    .catch(
+      (error) => {console.log(error)
+    })
+  }
 }
 
 useEffect(() => {

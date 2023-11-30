@@ -62,7 +62,7 @@ namespace cc_api.Controllers
 
             UserFavoriteRecipe UFR = await _unitOfWork.UserFavoriteRecipeRepository.GetByContent(tokenUserInfo.Id, request.recipeID);
 
-            return UFR == null ? NoContent() : Ok(UFR);
+            return Ok(UFR);
         }
 
         [HttpPost("favorite")]

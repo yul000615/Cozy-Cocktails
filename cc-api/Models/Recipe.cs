@@ -25,5 +25,5 @@ public partial class Recipe
 
     public virtual User UserAuthorNavigation { get; set; } = null!;
 
-    public virtual ICollection<UserFavoriteRecipe> UserFavoriteRecipes { get; set; } = new List<UserFavoriteRecipe>();
+    //public virtual ICollection<UserFavoriteRecipe> UserFavoriteRecipes { get; set; } = new List<UserFavoriteRecipe>();
 }

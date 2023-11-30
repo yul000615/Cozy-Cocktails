@@ -101,11 +101,30 @@ const [recipeIngredients, setRecipeIngredients] = useState([]);
 function setFavoriteInfo(){
     //insert logic to check if favorited and set favorite to true or false depending on response
     //set favoriteObject to the favorite object returned
+    fetch("https://localhost:7268/api/UserFavoriteRecipe/getFavorited", {
+        method: "POST",
+        headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${context.token}`
+        },
+            body: JSON.stringify({
+                recipeID: recipe.recipeId
+            }),
+        })
+        .then(
+            (response) => response.json())
+        .then(
+            data => setFavoriteObject(data))
+        .catch(
+            (error) => {console.log(error)
+        })
+    
+    if (favoriteObject) {
+        setFavorite(true)
+    }
 }
 
-setFavoriteInfo();
-
-const getRecipeIngredients = () => {
+function getRecipeIngredients(){
     fetch("https://localhost:7268/api/Recipe/getRecipeIngredients", {
         method: "POST",
         headers: {
@@ -125,7 +144,7 @@ const getRecipeIngredients = () => {
 }
 
 useEffect(() => {
-    getRecipeIngredients()
+    getRecipeIngredients(); setFavoriteInfo()
 }, [])
 
 const handleRating = (rate) => {
@@ -154,7 +173,7 @@ function closeReport(){
 }
 
 function reportSubmit(){
-    if (issue.length==0) {
+    if (issue.length===0) {
         setReportMessage('Must enter an issue before submitting');
     } else{
         setReportMessage('Thank you! We will review your report shortly.')
@@ -204,13 +223,13 @@ function favoriteClick(){
             )
         }
     console.log()
-    }   
+    }
 
     function rateSubmit(){ //Currently only handles creating a review
         console.log(rating)
-        if (rating==0) {
+        if (rating===0) {
             setRateMessage('Must give a rating');
-        } else if (feedback.length ===0){
+        } else if (feedback.length===0){
             setRateMessage('Must leave a feedback message');
         } else {
             //insert backend logic for rating here and run the below if successful
@@ -254,7 +273,7 @@ function favoriteClick(){
 
     if (!recipe) {
         return <div className="ViewRecipe">No recipe found</div>;
-      }
+    }
 
     const renderStars = () => {
         const rate = recipe.averageRating;
@@ -290,10 +309,6 @@ function favoriteClick(){
                     <button className='closeBtn' onClick={handleClose}>Close</button>
                     <button className='reportBtn' onClick={openReport}>Report</button>
                     <LoggedInItems/>
-                </div>
-
-                <div className='body'>
-                    <p>{recipe.description}</p>
                 </div>
                 <Modal size="md" isOpen={reportOpen} onRequestClose={closeReport} className="Modal" backdrop="static" maskClosable={false} shouldCloseOnOverlayClick={false}>
                     <div className='ReportModal'>
