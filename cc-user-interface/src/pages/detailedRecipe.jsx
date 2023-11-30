@@ -323,7 +323,7 @@ function favoriteClick(){
                     </div>
                     <div className="additionalInfo">
                         {/* <p>Prep Time: {selectedRecipe.prepTime}</p> */}
-                        <p>ABV: {recipe.alcoholByVolume}</p>
+                        <p>ABV: {recipe.alcoholByVolume.toFixed(4) * 100}%</p>
                     </div>
                 </div>
                 <div className="recipeContent">

@@ -17,6 +17,12 @@ export default function CreateRecipe() {
         { value: "vodka", label: "Vodka" }
     ];
 
+    const quantityDescriptionList = [
+        { value: "oz", label: "oz"},
+        { value: "dash", label: "dash"},
+        { value: " ", label: "n/a"}
+    ];
+
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [selectedOptions, setSelectedOptions] = useState([]);
@@ -103,7 +109,11 @@ export default function CreateRecipe() {
                             {ingredient['label']} Amount: <input name={ingredient['value'] + 'Amount'}/>
                         </label>
                         <label className='quantityLabel'>
-                            Quantity (tbs, ml, etc): <input name={ingredient['value'] + 'Quantity'}/>
+                            Quantity: <Select name={ingredient['value'] + 'Quantity'}
+                                        placeholder="Select descriptor"
+                                        options={quantityDescriptionList}
+                                        isSearchable={true}
+                                    />
                         </label>
                     </div>
                 )}
