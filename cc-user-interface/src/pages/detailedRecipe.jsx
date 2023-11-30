@@ -93,9 +93,17 @@ const [rateMessage, setRateMessage] = useState("");
 const [rating, setRating] = useState(0);
 
 const [favorite, setFavorite] = useState(false);
+const [favoriteObject, setFavoriteObject] = useState(null);
 const [review, setReview] = useState(false);
 const [feedback, setFeedback] = useState("");
 const [recipeIngredients, setRecipeIngredients] = useState([]);
+
+function setFavoriteInfo(){
+    //insert logic to check if favorited and set favorite to true or false depending on response
+    //set favoriteObject to the favorite object returned
+}
+
+setFavoriteInfo();
 
 const getRecipeIngredients = () => {
     fetch("https://localhost:7268/api/Recipe/getRecipeIngredients", {
@@ -154,24 +162,25 @@ function reportSubmit(){
 }
 
 function favoriteClick(){
-    if (favorite) {
+    if (favoriteObject) {
+        console.log(favoriteObject.listId)
         //make backend call to remove the favorite and set the heart to grey if successful
-        fetch("https://localhost:7268/api/UserFavoriteRecipe/unfavorite", {
-            method: "POST",
-            headers: {
-            "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                favID: favorite.listId
-            }),
+        fetch("https://localhost:7268/api/UserFavoriteRecipe/unfavorite?favID=" + favoriteObject.listId, {
+            method: "DELETE",
+            // headers: {
+            // "Content-Type": "application/json"
+            // },
+            // body: JSON.stringify({
+            //     favID: favoriteObject.listId
+            // }),
         })
         .then(
             response => response.json(),
             error => console.log("Error: ", error)
         )
         .then(
-            data => console.log(data),
-            setFavorite(false)
+            setFavorite(false),
+            setFavoriteObject(null)
         )
     } else {
         //make backend call to add to favorites and set the heart to red if successful
@@ -179,7 +188,7 @@ function favoriteClick(){
             method: "POST",
             headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${context.accessToken}`
+            "Authorization": `Bearer ${context.token}`
             },
                 body: JSON.stringify({
                     recipeID: recipe.recipeId
@@ -190,9 +199,11 @@ function favoriteClick(){
                 error => console.log("Error: ", error)
             )
             .then(
-                data => setFavorite(data)
+                data => setFavoriteObject(data),
+                setFavorite(true)
             )
         }
+    console.log()
     }   
 
     function rateSubmit(){ //Currently only handles creating a review
