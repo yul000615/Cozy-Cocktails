@@ -36,12 +36,19 @@ namespace cc_api.Controllers
             /* Mixing method, shaken, stirred, over ice, etc, must be added to recipe model */
             foreach (RecipeIngredient ri in recipeIngredients)
             {
+                Ingredient ingredient;
                 switch (ri.QuantityDescription)
                 {
                     case "oz":
-                        Ingredient ingredient = _unitOfWork.IngredientRepository.GetByPrimaryKey(ri.IngredientName);
+                        ingredient = _unitOfWork.IngredientRepository.GetByPrimaryKey(ri.IngredientName);
                         alcohol_vol += ri.Quantity * ingredient.AlcoholByVolume;
                         total_vol += ri.Quantity;
+                        break;
+                    case "dash":
+                        ingredient = _unitOfWork.IngredientRepository.GetByPrimaryKey(ri.IngredientName);
+                        double ozQuantity = ri.Quantity * 0.03125;
+                        alcohol_vol += ozQuantity * ingredient.AlcoholByVolume;
+                        total_vol += ozQuantity;
                         break;
                     default:
                         break;
@@ -230,17 +237,18 @@ namespace cc_api.Controllers
                 {
                     Quantity = request.quantities.ElementAt(i),
                     QuantityDescription = request.quantityDescriptions.ElementAt(i),
-                    IngredientName = request.ingredientNames.ElementAt(i),
-                    RecipeId = recipe.RecipeId
+                    RecipeId = recipe.RecipeId,
+                    IngredientName = request.ingredientNames.ElementAt(i)
+                    
                 };
 
                 _unitOfWork.RecipeIngredientRepository.Insert(ri);
                 _unitOfWork.Save();
             }
 
-            //.AlcoholByVolume = await _CalcABVAsync(recipe.RecipeId);
-            //_unitOfWork.RecipeRepository.Update(recipe);
-            //_unitOfWork.Save();
+            recipe.AlcoholByVolume = await _CalcABVAsync(recipe.RecipeId);
+            _unitOfWork.RecipeRepository.Update(recipe);
+            _unitOfWork.Save();
 
             return Ok("Recipe Created");
         }
