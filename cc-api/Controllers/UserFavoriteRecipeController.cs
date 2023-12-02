@@ -63,7 +63,7 @@ namespace cc_api.Controllers
             UserFavoriteRecipe UFR = await _unitOfWork.UserFavoriteRecipeRepository.GetByContent(tokenUserInfo.Id, request.recipeID);
             if (UFR == null)
             {
-                return NotFound();
+                return NoContent();
             }
 
             return Ok(UFR);
