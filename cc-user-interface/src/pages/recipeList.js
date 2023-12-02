@@ -167,7 +167,6 @@ function RecipeList() {
   var loggedIn;
   const context = useContext(AppContext);
   loggedIn = (context.token !== 'no token' && context.token !== '');
-  console.log(context.token);
   var routeString;
   if (loggedIn){
       routeString = "/home2"
@@ -176,7 +175,6 @@ function RecipeList() {
   }
 
   function LoggedInItems (){
-    console.log(loggedIn)
     if (!loggedIn){
         return null;
     } else{
