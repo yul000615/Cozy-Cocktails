@@ -61,6 +61,10 @@ namespace cc_api.Controllers
             var tokenUserInfo = _tokenReader.ReadToken(token);
 
             UserFavoriteRecipe UFR = await _unitOfWork.UserFavoriteRecipeRepository.GetByContent(tokenUserInfo.Id, request.recipeID);
+            if (UFR == null)
+            {
+                return NotFound();
+            }
 
             return Ok(UFR);
         }

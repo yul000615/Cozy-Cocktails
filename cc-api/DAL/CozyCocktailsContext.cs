@@ -90,9 +90,9 @@ public partial class CozyCocktailsContext : DbContext
                 //.HasForeignKey(d => d.IngredientName)
                 //.OnDelete(DeleteBehavior.ClientSetNull);
 
-            entity.HasOne(d => d.Recipe).WithMany(p => p.RecipeIngredients)
-                .HasForeignKey(d => d.RecipeId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+            //entity.HasOne(d => d.Recipe).WithMany(p => p.RecipeIngredients)
+                //.HasForeignKey(d => d.RecipeId)
+                //.OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<RefreshToken>(entity =>

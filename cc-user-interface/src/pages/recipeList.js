@@ -276,11 +276,11 @@ const searchRecipes = (useFav, useBarIgd, term) => {
     fetch("https://localhost:7268/api/Recipe/getRecipesBasic", {
     method: "POST",
     headers: {
-    "Content-Type": "application/json",
+    "Content-Type": "application/json"
     },
         body: JSON.stringify({
-            favorited: false,
-            useBarIngredients: false,
+            favorited: useFav,
+            useBarIngredients: useBarIgd,
             searchQuery: term
         }),
     })

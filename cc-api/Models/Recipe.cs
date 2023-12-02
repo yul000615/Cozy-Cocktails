@@ -17,7 +17,7 @@ public partial class Recipe
 
     public double AverageRating { get; set; }
 
-    public virtual ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
+    //public virtual ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
 
     public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
 
