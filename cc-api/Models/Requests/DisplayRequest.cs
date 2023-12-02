@@ -8,7 +8,7 @@ namespace cc_api.Models.Requests
         public bool favorited { get; set; }
 
         [Required]
-        public bool useBarIngredints { get; set; }
+        public bool useBarIngredients { get; set; }
 
         public string? searchQuery { get; set; }
     }

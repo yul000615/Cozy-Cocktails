@@ -149,7 +149,7 @@ namespace cc_api.Controllers
                 }
             }
 
-            if (request.useBarIngredints)
+            if (request.useBarIngredients)
             {
                 if (!foundRecipes.Any())
                 {
@@ -163,18 +163,20 @@ namespace cc_api.Controllers
                     barIngredients.Add(_unitOfWork.IngredientRepository.GetByPrimaryKey(UBI.IngredientName));
                 }
 
-                IEnumerable<Recipe> temp = foundRecipes;
-                foreach (Recipe recipe in temp)
+                List<Recipe> temp = foundRecipes.ToList();
+                foreach (Recipe recipe in foundRecipes)
                 {
                     IEnumerable<RecipeIngredient> RIs = await _unitOfWork.RecipeIngredientRepository.GetByRecipeID(recipe.RecipeId);
                     foreach (RecipeIngredient RI in RIs)
                     {
                         if (!barIngredients.Contains(_unitOfWork.IngredientRepository.GetByPrimaryKey(RI.IngredientName)))
                         {
-                            foundRecipes.Remove(recipe);
+                            temp.Remove(recipe);
+                            break;
                         }
                     }
                 }
+                foundRecipes = foundRecipes.Intersect(temp).ToList();
             }
 
             return Ok(foundRecipes);
