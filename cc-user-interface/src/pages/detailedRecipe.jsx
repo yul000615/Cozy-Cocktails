@@ -147,6 +147,7 @@ function getRecipeIngredients(){
 }
 
 function getRecipeUpdate(){
+    console.log(recipe.recipeId);
     fetch("https://localhost:7268/api/Recipe/getRecipeSingle?recipeID=" + recipe.recipeId, {
             method: "GET",
         })
@@ -243,7 +244,7 @@ function favoriteClick(){
     console.log()
     }
 
-    function rateSubmit(){ //Currently only handles creating a review
+    async function rateSubmit(){ //Currently only handles creating a review
         console.log(rating)
         if (rating===0) {
             setRateMessage('Must give a rating');
@@ -251,7 +252,7 @@ function favoriteClick(){
             setRateMessage('Must leave a feedback message');
         } else {
             //insert backend logic for rating here and run the below if successful
-            fetch("https://localhost:7268/api/Review/createReview", {
+            await fetch("https://localhost:7268/api/Review/createReview", {
             method: "POST",
             headers: {
             "Content-Type": "application/json",
@@ -265,12 +266,14 @@ function favoriteClick(){
             })
             .then(
                 response => response.json(),
-                error => console.log("Error: ", error)
             )
             .then(
                 data => setReview(data),
                 setToggle(!toggle)
+            ).catch(
+                error => console.log("Error: ", error)
             )
+            console.log('here');
             setRateMessage('')
             setRateOpen(false);
             getRecipeUpdate();
