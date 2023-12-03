@@ -92,6 +92,7 @@ const [rateOpen, setRateOpen] = useState(false);
 const [rateMessage, setRateMessage] = useState("");
 const [rating, setRating] = useState(0);
 
+const [recipeU, setRecipe] = useState(null);
 const [favorite, setFavorite] = useState(false);
 const [favoriteObject, setFavoriteObject] = useState(null);
 const [review, setReview] = useState(false);
@@ -145,7 +146,21 @@ function getRecipeIngredients(){
         })
 }
 
+function getRecipeUpdate(){
+    fetch("https://localhost:7268/api/Recipe/getRecipeSingle?recipeID=" + recipe.recipeId, {
+            method: "GET",
+        })
+        .then(
+            response => response.json(),
+            error => console.log("Error: ", error)
+        )
+        .then(
+            data => setRecipe(data),
+        )
+}
+
 useEffect(() => {
+    getRecipeUpdate();
     getRecipeIngredients(); 
     setInitialFavoriteInfo();
 }, [])
@@ -213,7 +228,7 @@ function favoriteClick(){
             "Authorization": `Bearer ${context.token}`
             },
                 body: JSON.stringify({
-                    recipeID: recipe.recipeId
+                    recipeID: recipeU.recipeId
                 }),
             })
             .then(
@@ -245,7 +260,7 @@ function favoriteClick(){
                 body: JSON.stringify({
                     Rating: rating,
                     Feedback: feedback,
-                    recipeID: recipe.recipeId
+                    recipeID: recipeU.recipeId
                 }),
             })
             .then(
@@ -258,6 +273,7 @@ function favoriteClick(){
             )
             setRateMessage('')
             setRateOpen(false);
+            getRecipeUpdate();
         }
     }
 
@@ -276,12 +292,12 @@ function favoriteClick(){
     const searchParams = new URLSearchParams(location.search);
     const selectedRecipeName = searchParams.get('name');
 
-    if (!recipe) {
+    if (!recipeU) {
         return <div className="ViewRecipe">No recipe found</div>;
     }
 
     const renderStars = () => {
-        const rate = recipe.averageRating;
+        const rate = recipeU.averageRating;
         const stars = [];
         const totalStars = 5;
         const integerPart = Math.floor(rate);
@@ -344,17 +360,17 @@ function favoriteClick(){
                 </Modal>
                 <div className="recipeHeader">
                     <h2>
-                        {recipe && recipe.name} Recipe
+                        {recipeU && recipeU.name} Recipe
                         {/* <span className="usernameText"> by {username}</span> */}
                     </h2>
                     <div className="recipeRate">
                         <p>
-                        Rate: {recipe.averageRating} {renderStars()}
+                        Rate: {recipeU.averageRating.toFixed(3)} {renderStars()}
                         </p>
                     </div>
                     <div className="additionalInfo">
                         {/* <p>Prep Time: {selectedRecipe.prepTime}</p> */}
-                        <p>ABV: {recipe.alcoholByVolume.toFixed(4) * 100}%</p>
+                        <p>ABV: {recipeU.alcoholByVolume.toFixed(4) * 100}%</p>
                     </div>
                 </div>
                 <div className="recipeContent">
@@ -383,7 +399,7 @@ function favoriteClick(){
                                 <li key={index}>{direction}</li>
                             ))}
                         </ol> */}
-                        <p>{recipe.description}</p>
+                        <p>{recipeU.description}</p>
                     </div>
                 </div>
             </div>

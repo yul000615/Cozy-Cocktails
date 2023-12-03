@@ -77,6 +77,20 @@ namespace cc_api.Controllers
             return Ok(RIs);
         }
 
+        [HttpGet("getRecipeSingle")]
+        public IActionResult GetRecipeSingle(long recipeID)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            Recipe recipe = _unitOfWork.RecipeRepository.GetByPrimaryKey(recipeID);
+
+            return Ok(recipe);
+
+        }
+
         [HttpPost("getRecipesBasic")]
         public async Task<IActionResult> GetRecipesBasic([FromBody] DisplayRequest request)
         {
