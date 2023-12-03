@@ -55,9 +55,10 @@ body {
     top: 55%;
     left: 50%;
     transform: translate(-50%, -50%);
-  }
+    padding-top: 30px;
+}
 
-  .searchRecipePage {
+.searchRecipePage {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -70,13 +71,23 @@ body {
     flex-direction: column;
     height: 100%;
     width: 100%;
+    padding-top: 30%;
+}
+
+.recipeButton {
+    display: block;
+    width: 105%;
+    margin-bottom: 10px;
   }
-  
 
 .listButton#addButton {
     margin-right: 10px;
     font-size: 0.8em;
     padding: 3px;
+}
+
+.listButton {
+    cursor: pointer;
 }
 
 .searchRecipePage h1 {
@@ -108,7 +119,7 @@ body {
     margin-bottom: 1em;
     position: relative;
     z-index: 1;
-  }
+}
 
 .byName ul {
     position: fixed;
@@ -178,14 +189,18 @@ body {
     position: fixed;
     bottom: -5em;
     font-size: 1em;
-  }
+}
 
-.searchButton {
+.recipeButton {
+    cursor: pointer;
+}
+
+.button {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100px;
-  height: 40px;
+  width: 90px;
+  height: 30px;
   background: transparent;
   border: 2px solid #4f483f;
   outline: none;
@@ -196,14 +211,14 @@ body {
   right: 50%;
   bottom: -11em;
   position: fixed;
-  font-size: 1.3em;
+  font-size: 1em;
   font-weight: 500;
   transform: translateX(50%);
 }
 
-.searchButton:hover {
-  background-color: #4f483f;
-  color: white;
+.button:hover {
+    background-color: #4f483f;
+    color: white;
 }
 
 .FavoritedButton {

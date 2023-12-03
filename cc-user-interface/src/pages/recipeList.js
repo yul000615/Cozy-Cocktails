@@ -167,7 +167,6 @@ function RecipeList() {
   var loggedIn;
   const context = useContext(AppContext);
   loggedIn = (context.token !== 'no token' && context.token !== '');
-  console.log(context.token);
   var routeString;
   if (loggedIn){
       routeString = "/home2"
@@ -176,7 +175,6 @@ function RecipeList() {
   }
 
   function LoggedInItems (){
-    console.log(loggedIn)
     if (!loggedIn){
         return null;
     } else{
@@ -230,7 +228,7 @@ const onChange = (event, { newValue }) => {
 };
 */
 
-const renderSuggestion = (suggestion) => <div>{suggestion}</div>;
+/*const renderSuggestion = (suggestion) => <div>{suggestion}</div>;*/
 
 /*
 const inputProps = {
@@ -251,15 +249,15 @@ const theme = {
   },
  };
 
-const searchRecipes = ({ useFav, useBarIgd, term }) => {
-  fetch("https://localhost:7268/api/Recipe/getRecipes", {
+const searchRecipes = (useFav, useBarIgd, term) => {
+  if (loggedIn) {
+    fetch("https://localhost:7268/api/Recipe/getRecipes", {
     method: "POST",
     headers: {
     "Content-Type": "application/json",
     "Authorization": `Bearer ${context.token}`
     },
         body: JSON.stringify({
-            loggedIn: loggedIn,
             favorited: useFav,
             useBarIngredients: useBarIgd,
             searchQuery: term
@@ -272,6 +270,26 @@ const searchRecipes = ({ useFav, useBarIgd, term }) => {
     .catch(
       (error) => {console.log(error)
     })
+  } else {
+    fetch("https://localhost:7268/api/Recipe/getRecipesBasic", {
+    method: "POST",
+    headers: {
+    "Content-Type": "application/json"
+    },
+        body: JSON.stringify({
+            favorited: useFav,
+            useBarIngredients: useBarIgd,
+            searchQuery: term
+        }),
+    })
+    .then(
+      (response) => response.json())
+    .then(
+      data => setRecipes(data))
+    .catch(
+      (error) => {console.log(error)
+    })
+  }
 }
 
 useEffect(() => {
@@ -293,9 +311,9 @@ const handleRecipeSelection = (selectedRecipeName) => {
 
  return (
  <div className="headerButtons">
-    <div className="logo">
+    {/* <div className="logo">
        <p>Cozy Cocktails</p>
-            </div>
+    </div>
             <div className="navigationMenu">
               <ul>
                 <li><a href="#" className="link active">Home</a></li>
@@ -305,7 +323,7 @@ const handleRecipeSelection = (selectedRecipeName) => {
             </div>
         <Link to="/home2">
           <button className="headerButton">Home</button>
-        </Link>    
+        </Link>     */}
         <div className="container">
           
           <div className="searchRecipePage">
@@ -321,9 +339,10 @@ const handleRecipeSelection = (selectedRecipeName) => {
                   {' '}
                   */}
                   <input
-                    placeholder = "Cocktail name"
+                    placeholder="Cocktail name"
                     value={value}
                     onChange={(e) => setValue(e.target.value)}
+                    style={{ width: '150px' }}
                   />
                   {/*
                   <Autosuggest
@@ -346,7 +365,7 @@ const handleRecipeSelection = (selectedRecipeName) => {
                   ? (
                       <div>
                         {recipes.map((recipe) => (
-                          <button onClick={() => {openModal(); setSelectedRecipe(recipe)}
+                          <button className="recipeButton" on onClick={() => {openModal(); setSelectedRecipe(recipe)}
                           }>{recipe.name}</button>
                         ))}
                       </div>
@@ -363,7 +382,7 @@ const handleRecipeSelection = (selectedRecipeName) => {
               <div className="additionalButtons">
                 <div className="FavoritedButton"></div>
                 <div className="IngredientsButton"></div>
-                <button className="searchButton" onClick={() => {searchRecipes(isFavoritedChecked, isIngredientsChecked, value)}}>Search</button>
+                <button className="button" onClick={() => {searchRecipes(isFavoritedChecked, isIngredientsChecked, value)}}>Search</button>
               </div>
             </div>
 
