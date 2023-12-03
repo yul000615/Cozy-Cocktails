@@ -11,7 +11,7 @@ public partial class UserBarIngredient
 
     public string IngredientName { get; set; } = null!;
 
-    public virtual Ingredient IngredientNameNavigation { get; set; } = null!;
+    //public virtual Ingredient IngredientNameNavigation { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;
 }

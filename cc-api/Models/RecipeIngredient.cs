@@ -15,7 +15,7 @@ public partial class RecipeIngredient
 
     public string IngredientName { get; set; } = null!;
 
-    public virtual Ingredient IngredientNameNavigation { get; set; } = null!;
+    //public virtual Ingredient IngredientNameNavigation { get; set; } = null!;
 
-    public virtual Recipe Recipe { get; set; } = null!;
+    //public virtual Recipe Recipe { get; set; } = null!;
 }

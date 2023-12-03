@@ -84,7 +84,7 @@ const DetailedRecipe = ({ closeDetailed, recipe }) => {
 var loggedIn;
 const context = useContext(AppContext);
 loggedIn = (context.token !== 'no token');
-console.log(context.token);
+
 const [issue, setIssue] = useState("");
 const [reportOpen, setReportOpen] = useState(false);
 const [reportMessage, setReportMessage] = useState("");
@@ -93,31 +93,60 @@ const [rateMessage, setRateMessage] = useState("");
 const [rating, setRating] = useState(0);
 
 const [favorite, setFavorite] = useState(false);
+const [favoriteObject, setFavoriteObject] = useState(null);
 const [review, setReview] = useState(false);
 const [feedback, setFeedback] = useState("");
 const [recipeIngredients, setRecipeIngredients] = useState([]);
 
-const getRecipeIngredients = () => {
-    fetch("https://localhost:7268/api/Recipe/getRecipeIngredients", {
+function setInitialFavoriteInfo(){
+    if (!loggedIn) 
+        return;
+    //insert logic to check if favorited and set favorite to true or false depending on response
+    //set favoriteObject to the favorite object returned
+    fetch("https://localhost:7268/api/UserFavoriteRecipe/getFavorited", {
         method: "POST",
         headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${context.token}`
         },
             body: JSON.stringify({
-                recipeID: recipe.recipeID
+                recipeID: recipe.recipeId
             }),
         })
         .then(
-        (response) => response.json())
+            (response) => response.json())
         .then(
-        data => setRecipeIngredients(data))
+            data => setFavoriteObject(data),
+            setFavorite(true))
         .catch(
-        (error) => {console.log(error)
+            (error) => {
+            setFavorite(false)
+            setFavoriteObject(null)
+        })
+}
+
+function getRecipeIngredients(){
+    fetch("https://localhost:7268/api/Recipe/getRecipeIngredients", {
+        method: "POST",
+        headers: {
+        "Content-Type": "application/json"
+        },
+            body: JSON.stringify({
+                recipeID: recipe.recipeId
+            }),
+        })
+        .then(
+            (response) => response.json())
+        .then(
+            data => setRecipeIngredients(data))
+        .catch(
+            (error) => {console.log(error)
         })
 }
 
 useEffect(() => {
-    getRecipeIngredients()
+    getRecipeIngredients(); 
+    setInitialFavoriteInfo();
 }, [])
 
 const handleRating = (rate) => {
@@ -146,7 +175,7 @@ function closeReport(){
 }
 
 function reportSubmit(){
-    if (issue.length==0) {
+    if (issue.length===0) {
         setReportMessage('Must enter an issue before submitting');
     } else{
         setReportMessage('Thank you! We will review your report shortly.')
@@ -154,24 +183,25 @@ function reportSubmit(){
 }
 
 function favoriteClick(){
-    if (favorite) {
+    if (favoriteObject) {
+        console.log(favoriteObject.listId)
         //make backend call to remove the favorite and set the heart to grey if successful
-        fetch("https://localhost:7268/api/UserFavoriteRecipe/unfavorite", {
-            method: "POST",
-            headers: {
-            "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                favID: favorite.listId
-            }),
+        fetch("https://localhost:7268/api/UserFavoriteRecipe/unfavorite?favID=" + favoriteObject.listId, {
+            method: "DELETE",
+            // headers: {
+            // "Content-Type": "application/json"
+            // },
+            // body: JSON.stringify({
+            //     favID: favoriteObject.listId
+            // }),
         })
         .then(
             response => response.json(),
             error => console.log("Error: ", error)
         )
         .then(
-            data => console.log(data),
-            setFavorite(false)
+            setFavorite(false),
+            setFavoriteObject(null)
         )
     } else {
         //make backend call to add to favorites and set the heart to red if successful
@@ -179,7 +209,7 @@ function favoriteClick(){
             method: "POST",
             headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${context.accessToken}`
+            "Authorization": `Bearer ${context.token}`
             },
                 body: JSON.stringify({
                     recipeID: recipe.recipeId
@@ -190,16 +220,18 @@ function favoriteClick(){
                 error => console.log("Error: ", error)
             )
             .then(
-                data => setFavorite(data)
+                data => setFavoriteObject(data),
+                setFavorite(true)
             )
         }
-    }   
+    console.log()
+    }
 
     function rateSubmit(){ //Currently only handles creating a review
         console.log(rating)
-        if (rating==0) {
+        if (rating===0) {
             setRateMessage('Must give a rating');
-        } else if (feedback.length ===0){
+        } else if (feedback.length===0){
             setRateMessage('Must leave a feedback message');
         } else {
             //insert backend logic for rating here and run the below if successful
@@ -243,10 +275,10 @@ function favoriteClick(){
 
     if (!recipe) {
         return <div className="ViewRecipe">No recipe found</div>;
-      }
+    }
 
     const renderStars = () => {
-        const rate = recipe.averagerating;
+        const rate = recipe.averageRating;
         const stars = [];
         const totalStars = 5;
         const integerPart = Math.floor(rate);
@@ -280,15 +312,12 @@ function favoriteClick(){
                     <button className='reportBtn' onClick={openReport}>Report</button>
                     <LoggedInItems/>
                 </div>
-
-                <div className='body'>
-                    <p>{recipe.description}</p>
-                </div>
                 <Modal size="md" isOpen={reportOpen} onRequestClose={closeReport} className="Modal" backdrop="static" maskClosable={false} shouldCloseOnOverlayClick={false}>
                     <div className='ReportModal'>
                         <h1>Describe your issue with this recipe:</h1>
                         <input type="issue" name="issue" value={issue} onChange={(e) => setIssue(e.target.value)} />
                         <button onClick={reportSubmit}>Submit</button>
+                        <button onClick={closeReport}>Close</button>
                         <br/>
                         <p>{reportMessage}</p>
                     </div>
@@ -317,12 +346,12 @@ function favoriteClick(){
                     </h2>
                     <div className="recipeRate">
                         <p>
-                        Rate: {recipe.average_rating} {renderStars()}
+                        Rate: {recipe.averageRating} {renderStars()}
                         </p>
                     </div>
                     <div className="additionalInfo">
                         {/* <p>Prep Time: {selectedRecipe.prepTime}</p> */}
-                        <p>ABV: {recipe.alcohol_by_volume}</p>
+                        <p>ABV: {recipe.alcoholByVolume.toFixed(4) * 100}%</p>
                     </div>
                 </div>
                 <div className="recipeContent">
@@ -331,13 +360,18 @@ function favoriteClick(){
                     </div> */}
                     <div className="ingredientSection">
                         <h3>Ingredients:</h3>
-                        <ul>
-                            {/*
-                            {recipeIngredients.map((ingredient, index) => (
-                                <li key={index}>{ingredient.ingredientName}</li>
-                            ))}
-                            */}
-                        </ul>
+                        {recipeIngredients?.length > 0
+                        ? (
+                            <ul>
+                                {recipeIngredients.map((ingredient, index) => (
+                                    <li key={index}>{ingredient.ingredientName}: {ingredient.quantity} {ingredient.quantityDescription}</li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <ul>
+                                <li>No Ingredients</li>
+                            </ul>
+                        )} 
                     </div>
                     <div className="directionSection">
                         <h3>Description:</h3>

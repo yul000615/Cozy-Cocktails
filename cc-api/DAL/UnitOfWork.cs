@@ -22,7 +22,7 @@
                 {
                     this.ingredientRepository = new IngredientRepository(context);
                 }
-                return IngredientRepository;
+                return ingredientRepository;
             }
         }
 

@@ -17,7 +17,7 @@ public partial class Recipe
 
     public double AverageRating { get; set; }
 
-    public virtual ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
+    //public virtual ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
 
     public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
 
@@ -25,5 +25,5 @@ public partial class Recipe
 
     public virtual User UserAuthorNavigation { get; set; } = null!;
 
-    public virtual ICollection<UserFavoriteRecipe> UserFavoriteRecipes { get; set; } = new List<UserFavoriteRecipe>();
+    //public virtual ICollection<UserFavoriteRecipe> UserFavoriteRecipes { get; set; } = new List<UserFavoriteRecipe>();
 }

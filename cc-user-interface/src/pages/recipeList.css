@@ -78,7 +78,8 @@ body {
     display: block;
     width: 105%;
     margin-bottom: 10px;
-  }
+    padding-top: 30px;
+ }
 
 .listButton#addButton {
     margin-right: 10px;

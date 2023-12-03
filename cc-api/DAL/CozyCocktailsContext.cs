@@ -86,13 +86,13 @@ public partial class CozyCocktailsContext : DbContext
             entity.Property(e => e.QuantityDescription).HasColumnName("quantity_description");
             entity.Property(e => e.RecipeId).HasColumnName("recipe_id");
 
-            entity.HasOne(d => d.IngredientNameNavigation).WithMany(p => p.RecipeIngredients)
-                .HasForeignKey(d => d.IngredientName)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+            //entity.HasOne(d => d.IngredientNameNavigation).WithMany(p => p.RecipeIngredients)
+                //.HasForeignKey(d => d.IngredientName)
+                //.OnDelete(DeleteBehavior.ClientSetNull);
 
-            entity.HasOne(d => d.Recipe).WithMany(p => p.RecipeIngredients)
-                .HasForeignKey(d => d.RecipeId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+            //entity.HasOne(d => d.Recipe).WithMany(p => p.RecipeIngredients)
+                //.HasForeignKey(d => d.RecipeId)
+                //.OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<RefreshToken>(entity =>
@@ -177,9 +177,9 @@ public partial class CozyCocktailsContext : DbContext
             entity.Property(e => e.IngredientName).HasColumnName("ingredient_name");
             entity.Property(e => e.UserId).HasColumnName("user_id");
 
-            entity.HasOne(d => d.IngredientNameNavigation).WithMany(p => p.UserBarIngredients)
-                .HasForeignKey(d => d.IngredientName)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+            //entity.HasOne(d => d.IngredientNameNavigation).WithMany(p => p.UserBarIngredients)
+                //.HasForeignKey(d => d.IngredientName)
+                //.OnDelete(DeleteBehavior.ClientSetNull);
 
             entity.HasOne(d => d.User).WithMany(p => p.UserBarIngredients)
                 .HasForeignKey(d => d.UserId)
@@ -198,9 +198,9 @@ public partial class CozyCocktailsContext : DbContext
             entity.Property(e => e.RecipeId).HasColumnName("recipe_id");
             entity.Property(e => e.UserId).HasColumnName("user_id");
 
-            entity.HasOne(d => d.Recipe).WithMany(p => p.UserFavoriteRecipes)
-                .HasForeignKey(d => d.RecipeId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+            //entity.HasOne(d => d.Recipe).WithMany(p => p.UserFavoriteRecipes)
+                //.HasForeignKey(d => d.RecipeId)
+                //.OnDelete(DeleteBehavior.ClientSetNull);
 
             entity.HasOne(d => d.User).WithMany(p => p.UserFavoriteRecipes)
                 .HasForeignKey(d => d.UserId)

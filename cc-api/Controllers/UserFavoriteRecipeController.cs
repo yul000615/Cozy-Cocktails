@@ -61,8 +61,12 @@ namespace cc_api.Controllers
             var tokenUserInfo = _tokenReader.ReadToken(token);
 
             UserFavoriteRecipe UFR = await _unitOfWork.UserFavoriteRecipeRepository.GetByContent(tokenUserInfo.Id, request.recipeID);
+            if (UFR == null)
+            {
+                return NoContent();
+            }
 
-            return UFR == null ? NoContent() : Ok(UFR);
+            return Ok(UFR);
         }
 
         [HttpPost("favorite")]
@@ -91,7 +95,7 @@ namespace cc_api.Controllers
             _unitOfWork.UserFavoriteRecipeRepository.Insert(UFR);
             _unitOfWork.Save();
 
-            return Ok("Recipe favorited");
+            return Ok(UFR);
         }
 
         [HttpDelete("unfavorite")]
@@ -111,7 +115,7 @@ namespace cc_api.Controllers
             _unitOfWork.UserFavoriteRecipeRepository.Delete(UFR);
             _unitOfWork.Save();
 
-            return Ok("Favorite removed");
+            return Ok(UFR);
         }
     }
 }
