@@ -97,6 +97,7 @@ const [favoriteObject, setFavoriteObject] = useState(null);
 const [review, setReview] = useState(false);
 const [feedback, setFeedback] = useState("");
 const [recipeIngredients, setRecipeIngredients] = useState([]);
+const [toggle, setToggle] = useState(false);
 
 function setInitialFavoriteInfo(){
     if (!loggedIn) 
@@ -235,25 +236,26 @@ function favoriteClick(){
             setRateMessage('Must leave a feedback message');
         } else {
             //insert backend logic for rating here and run the below if successful
-            // fetch("https://localhost:7268/api/Review/createReview", {
-            // method: "POST",
-            // headers: {
-            // "Content-Type": "application/json",
-            // "Authorization": `Bearer ${context.accessToken}`
-            // },
-            //     body: JSON.stringify({
-            //         Rating: rating,
-            //         Feedback: feedback,
-            //         recipeID: recipe.recipeId
-            //     }),
-            // })
-            // .then(
-            //     response => response.json(),
-            //     error => console.log("Error: ", error)
-            // )
-            // .then(
-            //     data => setReview(data)
-            // )
+            fetch("https://localhost:7268/api/Review/createReview", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${context.token}`
+            },
+                body: JSON.stringify({
+                    Rating: rating,
+                    Feedback: feedback,
+                    recipeID: recipe.recipeId
+                }),
+            })
+            .then(
+                response => response.json(),
+                error => console.log("Error: ", error)
+            )
+            .then(
+                data => setReview(data),
+                setToggle(!toggle)
+            )
             setRateMessage('')
             setRateOpen(false);
         }
@@ -262,6 +264,7 @@ function favoriteClick(){
     function openRate(){
         setRateOpen(true);
         setRating(0);
+        setFeedback('');
     }
     
     function closeRate(){

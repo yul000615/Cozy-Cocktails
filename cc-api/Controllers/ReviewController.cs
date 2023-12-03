@@ -28,6 +28,11 @@ namespace cc_api.Controllers
             
             double totalRating = 0.0;
 
+            if (!recipeReviews.Any())
+            {
+                return totalRating;
+            }
+
             foreach (Review review in recipeReviews)
             {
                 totalRating += review.Rating;
@@ -123,7 +128,7 @@ namespace cc_api.Controllers
             _unitOfWork.RecipeRepository.Update(recipe);
             _unitOfWork.Save();
 
-            return Ok("Review created");
+            return Ok(review);
         }
 
         [HttpPut("updateReview")]
@@ -146,7 +151,7 @@ namespace cc_api.Controllers
             Review review = await _unitOfWork.ReviewRepository.GetByContent(tokenUserInfo.Id, request.RecipeId);
             if (review == null)
             {
-                return NotFound("Could not find that review");
+                return NotFound();
             }
 
             review.Rating = request.Rating;
@@ -161,7 +166,7 @@ namespace cc_api.Controllers
             _unitOfWork.RecipeRepository.Update(recipe);
             _unitOfWork.Save();
 
-            return Ok("Recipe updated");
+            return Ok();
         }
 
         [HttpDelete("deleteReview")]
@@ -181,7 +186,7 @@ namespace cc_api.Controllers
             _unitOfWork.ReviewRepository.Delete(review);
             _unitOfWork.Save();
 
-            return Ok("Review removed");
+            return Ok();
         }
     }
 }
