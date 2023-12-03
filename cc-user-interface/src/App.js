@@ -1,4 +1,4 @@
-import React, {useState} from 'react'; 
+import React, {useState,useEffect} from 'react'; 
 import AppContext from './AppContext';
 import './App.css';
 import Home from './pages/home';
@@ -26,6 +26,7 @@ import { BrowserRouter as Router, Routes, Route }
       }
 
       async function refresh() {
+        console.log("refresh attempt")
         try {
           const response = await fetch("https://localhost:7268/api/Authentication/login", {
             method: "POST",
@@ -57,7 +58,7 @@ import { BrowserRouter as Router, Routes, Route }
             credentials: "include",
           });
     
-          tokenHandler.setAccessToken('');
+          tokenHandler.setAccessToken('no token');
           return true;
         } catch (error) {
           return false;

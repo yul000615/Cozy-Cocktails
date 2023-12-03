@@ -14,10 +14,10 @@ function Home() {
               <p>Cozy Cocktails</p>
             </div>
             <div className="navigationMenu">
-              <ul>
+              {/* <ul>
                 <li><Link to="/" className="link">Home</Link></li>
                 <li><Link to="/contact" className="link">Contact</Link></li>
-              </ul>
+              </ul> */}
             </div>
 
             <div className="navigationButton">

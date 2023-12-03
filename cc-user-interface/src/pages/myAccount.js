@@ -23,7 +23,7 @@ function MyAccount() {
                 alt="Profile Image"
               />
             </div>
-            <button className="profileButton">Change Profile Picture</button>
+            {/* <button className="profileButton">Change Profile Picture</button> */}
           </div>
         </div>
 

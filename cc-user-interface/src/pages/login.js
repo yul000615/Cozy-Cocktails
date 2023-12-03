@@ -63,7 +63,7 @@ function Login() {
         <div className="LoggedInHomePage">
           <h1>Welcome Back!</h1>
           <Link to={location.pathname === '/home2' ? '/myAccount' : '/home2'}>
-            {location.pathname === '/home2' ? 'My Account' : 'Homepage 2'}
+            {location.pathname === '/home2' ? 'My Account' : 'Homepage'}
           </Link>
         </div>
       ) : (

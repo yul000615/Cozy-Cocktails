@@ -167,7 +167,6 @@ function RecipeList() {
   var loggedIn;
   const context = useContext(AppContext);
   loggedIn = (context.token !== 'no token' && context.token !== '');
-  console.log(context.token);
   var routeString;
   if (loggedIn){
       routeString = "/home2"
@@ -176,7 +175,6 @@ function RecipeList() {
   }
 
   function LoggedInItems (){
-    console.log(loggedIn)
     if (!loggedIn){
         return null;
     } else{
@@ -332,7 +330,7 @@ const handleRecipeSelection = (selectedRecipeName) => {
             <div class="buttons">
               {/* <a class="backButton" href="#"><Link to={routeString}>Go Back to Homepage</Link></a> */}
               </div>
-              <h1>Recipe search</h1>
+              <h1 className="title">Recipe search</h1>
               <ErrorMessages error={error || apiError} />
               <div className="searchContainer">
                 <div className="byName">
@@ -341,9 +339,10 @@ const handleRecipeSelection = (selectedRecipeName) => {
                   {' '}
                   */}
                   <input
-                    placeholder = "Cocktail name"
+                    placeholder="Cocktail name"
                     value={value}
                     onChange={(e) => setValue(e.target.value)}
+                    style={{ width: '150px' }}
                   />
                   {/*
                   <Autosuggest
@@ -366,7 +365,7 @@ const handleRecipeSelection = (selectedRecipeName) => {
                   ? (
                       <div>
                         {recipes.map((recipe) => (
-                          <button onClick={() => {openModal(); setSelectedRecipe(recipe)}
+                          <button className="recipeButton" on onClick={() => {openModal(); setSelectedRecipe(recipe)}
                           }>{recipe.name}</button>
                         ))}
                       </div>
@@ -383,7 +382,7 @@ const handleRecipeSelection = (selectedRecipeName) => {
               <div className="additionalButtons">
                 <div className="FavoritedButton"></div>
                 <div className="IngredientsButton"></div>
-                <button className="searchButton" onClick={() => {searchRecipes(isFavoritedChecked, isIngredientsChecked, value)}}>Search</button>
+                <button className="button" onClick={() => {searchRecipes(isFavoritedChecked, isIngredientsChecked, value)}}>Search</button>
               </div>
             </div>
 
