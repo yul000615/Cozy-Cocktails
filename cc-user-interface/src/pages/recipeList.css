@@ -56,9 +56,9 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     padding-top: 30px;
-}
+  }
 
-.searchRecipePage {
+  .searchRecipePage {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -72,14 +72,13 @@ body {
     height: 100%;
     width: 100%;
     padding-top: 30%;
-}
+  }
 
 .recipeButton {
     display: block;
     width: 105%;
     margin-bottom: 10px;
-    padding-top: 30px;
- }
+  }
 
 .listButton#addButton {
     margin-right: 10px;
@@ -96,6 +95,7 @@ body {
     font-size: 1.8em;
     border-bottom: 2px solid #4f483f;
 }
+
 
 .dropdown-container {
     width: 60px;
@@ -120,7 +120,7 @@ body {
     margin-bottom: 1em;
     position: relative;
     z-index: 1;
-}
+  }
 
 .byName ul {
     position: fixed;
@@ -210,7 +210,7 @@ body {
   color: #4f483f;
   text-decoration: none;
   right: 50%;
-  bottom: -11em;
+  bottom: -15em;
   position: fixed;
   font-size: 1em;
   font-weight: 500;
@@ -220,7 +220,7 @@ body {
 .button:hover {
     background-color: #4f483f;
     color: white;
-}
+  }
 
 .FavoritedButton {
     position: fixed;
