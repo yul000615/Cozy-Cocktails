@@ -84,7 +84,7 @@ const DetailedRecipe = ({ closeDetailed, recipe }) => {
 var loggedIn;
 const context = useContext(AppContext);
 loggedIn = (context.token !== 'no token');
-console.log(context.token);
+
 const [issue, setIssue] = useState("");
 const [reportOpen, setReportOpen] = useState(false);
 const [reportMessage, setReportMessage] = useState("");
@@ -98,7 +98,9 @@ const [review, setReview] = useState(false);
 const [feedback, setFeedback] = useState("");
 const [recipeIngredients, setRecipeIngredients] = useState([]);
 
-function setFavoriteInfo(){
+function setInitialFavoriteInfo(){
+    if (!loggedIn) 
+        return;
     //insert logic to check if favorited and set favorite to true or false depending on response
     //set favoriteObject to the favorite object returned
     fetch("https://localhost:7268/api/UserFavoriteRecipe/getFavorited", {
@@ -114,14 +116,13 @@ function setFavoriteInfo(){
         .then(
             (response) => response.json())
         .then(
-            data => setFavoriteObject(data))
+            data => setFavoriteObject(data),
+            setFavorite(true))
         .catch(
-            (error) => {console.log(error)
+            (error) => {
+            setFavorite(false)
+            setFavoriteObject(null)
         })
-    
-    if (favoriteObject) {
-        setFavorite(true)
-    }
 }
 
 function getRecipeIngredients(){
@@ -144,7 +145,8 @@ function getRecipeIngredients(){
 }
 
 useEffect(() => {
-    getRecipeIngredients(); setFavoriteInfo()
+    getRecipeIngredients(); 
+    setInitialFavoriteInfo();
 }, [])
 
 const handleRating = (rate) => {
@@ -307,7 +309,7 @@ function favoriteClick(){
             <div className='detailedRecipeContainer'>
                 <div className='titleBar'>
                     <button className='closeBtn' onClick={handleClose}>Close</button>
-                    <button className='reportBtn' onClick={openReport}>Report</button>
+                    {/* <button className='reportBtn' onClick={openReport}>Report</button> */}
                     <LoggedInItems/>
                 </div>
                 <Modal size="md" isOpen={reportOpen} onRequestClose={closeReport} className="Modal" backdrop="static" maskClosable={false} shouldCloseOnOverlayClick={false}>
@@ -340,7 +342,7 @@ function favoriteClick(){
                 <div className="recipeHeader">
                     <h2>
                         {recipe && recipe.name} Recipe
-                        <span className="usernameText"> by {username}</span>
+                        {/* <span className="usernameText"> by {username}</span> */}
                     </h2>
                     <div className="recipeRate">
                         <p>
