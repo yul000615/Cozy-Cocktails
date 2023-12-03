@@ -128,7 +128,7 @@ namespace cc_api.Controllers
             _unitOfWork.RecipeRepository.Update(recipe);
             _unitOfWork.Save();
 
-            return Ok();
+            return Ok(review);
         }
 
         [HttpPut("updateReview")]
