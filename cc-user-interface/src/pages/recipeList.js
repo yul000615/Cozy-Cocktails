@@ -339,9 +339,10 @@ const handleRecipeSelection = (selectedRecipeName) => {
                   {' '}
                   */}
                   <input
-                    placeholder = "Cocktail name"
+                    placeholder="Cocktail name"
                     value={value}
                     onChange={(e) => setValue(e.target.value)}
+                    style={{ width: '150px' }}
                   />
                   {/*
                   <Autosuggest
@@ -364,7 +365,7 @@ const handleRecipeSelection = (selectedRecipeName) => {
                   ? (
                       <div>
                         {recipes.map((recipe) => (
-                          <button onClick={() => {openModal(); setSelectedRecipe(recipe)}
+                          <button className="recipeButton" on onClick={() => {openModal(); setSelectedRecipe(recipe)}
                           }>{recipe.name}</button>
                         ))}
                       </div>
@@ -381,7 +382,7 @@ const handleRecipeSelection = (selectedRecipeName) => {
               <div className="additionalButtons">
                 <div className="FavoritedButton"></div>
                 <div className="IngredientsButton"></div>
-                <button className="searchButton" onClick={() => {searchRecipes(isFavoritedChecked, isIngredientsChecked, value)}}>Search</button>
+                <button className="button" onClick={() => {searchRecipes(isFavoritedChecked, isIngredientsChecked, value)}}>Search</button>
               </div>
             </div>
 
