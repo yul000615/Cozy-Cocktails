@@ -330,7 +330,7 @@ const handleRecipeSelection = (selectedRecipeName) => {
             <div class="buttons">
               {/* <a class="backButton" href="#"><Link to={routeString}>Go Back to Homepage</Link></a> */}
               </div>
-              <h1>Recipe search</h1>
+              <h1 className="title">Recipe search</h1>
               <ErrorMessages error={error || apiError} />
               <div className="searchContainer">
                 <div className="byName">

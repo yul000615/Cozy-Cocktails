@@ -309,7 +309,7 @@ function favoriteClick(){
             <div className='detailedRecipeContainer'>
                 <div className='titleBar'>
                     <button className='closeBtn' onClick={handleClose}>Close</button>
-                    <button className='reportBtn' onClick={openReport}>Report</button>
+                    {/* <button className='reportBtn' onClick={openReport}>Report</button> */}
                     <LoggedInItems/>
                 </div>
                 <Modal size="md" isOpen={reportOpen} onRequestClose={closeReport} className="Modal" backdrop="static" maskClosable={false} shouldCloseOnOverlayClick={false}>
@@ -342,7 +342,7 @@ function favoriteClick(){
                 <div className="recipeHeader">
                     <h2>
                         {recipe && recipe.name} Recipe
-                        <span className="usernameText"> by {username}</span>
+                        {/* <span className="usernameText"> by {username}</span> */}
                     </h2>
                     <div className="recipeRate">
                         <p>

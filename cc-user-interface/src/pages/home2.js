@@ -13,12 +13,12 @@ function Home2() {
             <div className="logo">
               <p>Cozy Cocktails</p>
             </div>
-            <div className="navigationMenu">
+            {/* <div className="navigationMenu">
               <ul>
                 <li><Link to="/home2" className="link">Home</Link></li>
                 <li><Link to="/contact" className="link">Contact</Link></li>
               </ul>
-            </div>
+            </div> */}
 
             <div class="navigationButton">
             <Link to="/createRecipe"><button className="button" id="createRecipeBtn">Create Recipe</button></Link>
